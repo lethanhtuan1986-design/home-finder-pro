@@ -2,19 +2,21 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Menu, X, Heart, Map, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
-
-const navLinks = [
-  { to: '/', label: 'Trang chủ', icon: Home },
-  { to: '/search', label: 'Tìm phòng', icon: Search },
-  { to: '/map', label: 'Bản đồ', icon: Map },
-  { to: '/saved', label: 'Phòng đã lưu', icon: Heart },
-];
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const navLinks = [
+    { to: '/', label: t('nav.home'), icon: Home },
+    { to: '/search', label: t('nav.search'), icon: Search },
+    { to: '/map', label: t('nav.map'), icon: Map },
+    { to: '/saved', label: t('nav.saved'), icon: Heart },
+  ];
 
   return (
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border">
@@ -51,7 +53,7 @@ export const Navbar = () => {
               className="ml-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
             >
               <Search size={16} />
-              Tìm phòng ngay
+              {t('nav.searchNow')}
             </Link>
           </div>
 
@@ -97,7 +99,7 @@ export const Navbar = () => {
                 onClick={() => setOpen(false)}
                 className="block w-full text-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-medium mt-2"
               >
-                Tìm phòng ngay
+                {t('nav.searchNow')}
               </Link>
             </div>
           </motion.div>

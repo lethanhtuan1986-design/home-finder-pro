@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Calendar, Clock, Phone, User } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface ScheduleFormProps {
   propertyTitle: string;
@@ -8,24 +9,25 @@ interface ScheduleFormProps {
 
 export const ScheduleForm = ({ propertyTitle }: ScheduleFormProps) => {
   const [form, setForm] = useState({ name: '', phone: '', date: '', time: '' });
+  const { t } = useTranslation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Đặt lịch thành công!', {
-      description: `Bạn đã đặt lịch xem "${propertyTitle}" vào ${form.date} lúc ${form.time}.`,
+    toast.success(t('schedule.success'), {
+      description: t('schedule.successDesc', { title: propertyTitle, date: form.date, time: form.time }),
     });
     setForm({ name: '', phone: '', date: '', time: '' });
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-4">
-      <h3 className="font-semibold text-lg text-foreground">Đặt lịch xem phòng</h3>
+      <h3 className="font-semibold text-lg text-foreground">{t('schedule.title')}</h3>
       <div className="space-y-3">
         <div className="relative">
           <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Họ tên"
+            placeholder={t('schedule.name')}
             required
             value={form.name}
             onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -36,7 +38,7 @@ export const ScheduleForm = ({ propertyTitle }: ScheduleFormProps) => {
           <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="tel"
-            placeholder="Số điện thoại"
+            placeholder={t('schedule.phone')}
             required
             value={form.phone}
             onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
@@ -70,7 +72,7 @@ export const ScheduleForm = ({ propertyTitle }: ScheduleFormProps) => {
         type="submit"
         className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium hover:opacity-90 transition-opacity active:scale-[0.98]"
       >
-        Đặt lịch
+        {t('schedule.submit')}
       </button>
     </form>
   );

@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "map": "Map",
+    "saved": "Saved",
+    "searchNow": "Search now"
+  },
+  "hero": {
+    "title": "Find the perfect room",
+    "titleHighlight": "in seconds",
+    "subtitle": "Smart room-finding platform helping you discover the best rooms and apartments quickly.",
+    "area": "Area",
+    "roomType": "Room type",
+    "priceRange": "Price range",
+    "areaSize": "Size",
+    "allDistricts": "All districts",
+    "allTypes": "All types",
+    "allPrices": "All prices",
+    "allSizes": "All",
+    "under": "Under",
+    "above": "Above",
+    "million": "million",
+    "searchBtn": "Search"
+  },
+  "features": {
+    "fast": "Super fast search",
+    "fastDesc": "Smart filters help you find the right room in seconds.",
+    "visual": "Visual browsing",
+    "visualDesc": "Interactive maps and high-quality photos for every room.",
+    "trusted": "Verified listings",
+    "trustedDesc": "Every room is verified by the XanhStay team."
+  },
+  "listing": {
+    "featured": "Featured rooms",
+    "featuredSub": "Recommended rooms and apartments for you",
+    "viewAll": "View all",
+    "perMonth": "/month",
+    "people": "people",
+    "rooms": "rooms",
+    "floors": "floors",
+    "views": "views",
+    "deposit": "Deposit",
+    "preDeposit": "Booking deposit",
+    "room": "Room"
+  },
+  "detail": {
+    "back": "Back",
+    "description": "Description",
+    "roomTypes": "Rooms",
+    "furniture": "Furniture & Amenities",
+    "serviceCost": "Service costs",
+    "service": "Service",
+    "price": "Price",
+    "unit": "Unit",
+    "contact": "Contact info",
+    "manager": "Manager",
+    "notFound": "Not found",
+    "notFoundDesc": "This listing does not exist or has been removed.",
+    "notFoundMsg": "Listing not found.",
+    "backToSearch": "← Back to search",
+    "loadError": "Unable to load listing details."
+  },
+  "search": {
+    "title": "Search rooms & apartments",
+    "desc": "Find rooms and apartments that match your needs. Filter by price, size, area.",
+    "keyword": "Keyword",
+    "keywordPlaceholder": "Search by name, address...",
+    "area": "Area",
+    "roomType": "Room type",
+    "maxPrice": "Max price",
+    "areaSize": "Size",
+    "all": "All",
+    "noLimit": "No limit",
+    "list": "List",
+    "map": "Map",
+    "found": "rooms found",
+    "noResult": "No matching rooms found",
+    "noResultHint": "Try changing filters",
+    "loadMore": "Load more",
+    "loading": "Loading...",
+    "serverError": "Cannot connect to server. Showing sample data."
+  },
+  "schedule": {
+    "title": "Schedule a visit",
+    "name": "Full name",
+    "phone": "Phone number",
+    "submit": "Book visit",
+    "success": "Booking successful!",
+    "successDesc": "You booked a visit for \"{{title}}\" on {{date}} at {{time}}."
+  },
+  "saved": {
+    "title": "Saved rooms",
+    "count": "{{count}} rooms saved",
+    "empty": "No saved rooms yet",
+    "emptyHint": "Tap ❤️ on rooms you like to save them"
+  },
+  "mapPage": {
+    "title": "Room map",
+    "count": "{{count}} rooms on map"
+  },
+  "appDownload": {
+    "title": "Download XanhStay app",
+    "subtitle": "Find rooms faster, get notifications for new listings and manage saved rooms on your phone."
+  },
+  "footer": {
+    "description": "Smart room and apartment rental platform in Vietnam.",
+    "explore": "Explore",
+    "searchRooms": "Search",
+    "mapView": "Map",
+    "savedRooms": "Saved",
+    "support": "Support",
+    "contact": "Contact",
+    "terms": "Terms",
+    "follow": "Follow us"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Page not found",
+    "backHome": "Return to Home"
+  }
+}

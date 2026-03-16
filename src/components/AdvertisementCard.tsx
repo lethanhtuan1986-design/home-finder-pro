@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Maximize, Star, Heart, Building } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { AdvertisementData, formatVNPrice, getImageUrl } from '@/services/roomService';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
 
@@ -11,6 +12,7 @@ interface AdvertisementCardProps {
 
 export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) => {
   const { isSaved, toggleSave } = useSavedRooms();
+  const { t } = useTranslation();
   const apt = data.apartmentUu;
   const firstImage = data.images?.[0];
   const imageUrl = firstImage ? getImageUrl(firstImage) : '/placeholder.svg';
@@ -44,14 +46,14 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
               />
             </button>
             <div className="absolute bottom-3 left-3 bg-card/90 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-foreground">
-              {apt.apartmentTypeUu?.name || 'Phòng'}
+              {apt.apartmentTypeUu?.name || t('listing.room')}
             </div>
           </div>
           <div className="p-4">
             <h3 className="font-semibold text-foreground text-sm truncate mb-1" title={data.title}>
               {data.title}
             </h3>
-            <p className="price-display text-lg mb-1">{formatVNPrice(data.price)}/tháng</p>
+            <p className="price-display text-lg mb-1">{formatVNPrice(data.price)}{t('listing.perMonth')}</p>
             <p className="text-muted-foreground text-sm flex items-center gap-1 mb-1">
               <MapPin size={14} />
               <span className="truncate">
@@ -66,7 +68,7 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
                 <Maximize size={14} /> {apt.apartmentSize}m²
               </span>
               <span className="flex items-center gap-1">
-                <Building size={14} /> {apt.roomCount} phòng
+                <Building size={14} /> {apt.roomCount} {t('listing.rooms')}
               </span>
               {apt.avgStars > 0 && (
                 <span className="flex items-center gap-1 ml-auto">
@@ -77,7 +79,7 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
             </div>
             {data.deposit > 0 && (
               <p className="text-xs text-muted-foreground mt-2">
-                Đặt cọc: {formatVNPrice(data.deposit)}
+                {t('listing.deposit')}: {formatVNPrice(data.deposit)}
               </p>
             )}
           </div>

@@ -10,15 +10,17 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Zap, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const features = [
-  { icon: Zap, title: 'Tìm phòng siêu nhanh', desc: 'Bộ lọc thông minh giúp bạn tìm phòng phù hợp trong vài giây.' },
-  { icon: Eye, title: 'Xem trực quan', desc: 'Bản đồ tương tác và ảnh chất lượng cao cho mọi phòng.' },
-  { icon: Shield, title: 'Đảm bảo uy tín', desc: 'Mọi phòng đều được xác minh bởi đội ngũ XanhStay.' },
-];
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const { t } = useTranslation();
+
+  const features = [
+    { icon: Zap, title: t('features.fast'), desc: t('features.fastDesc') },
+    { icon: Eye, title: t('features.visual'), desc: t('features.visualDesc') },
+    { icon: Shield, title: t('features.trusted'), desc: t('features.trustedDesc') },
+  ];
 
   const filteredProperties = useMemo(() => {
     if (activeFilters.length === 0) return mockProperties.slice(0, 6);
@@ -27,7 +29,7 @@ const Index = () => {
       if (activeFilters.includes('under5m') && p.price >= 5000000) return false;
       if (activeFilters.includes('furnished') && !p.furnished) return false;
       if (activeFilters.includes('studio') && p.type !== 'Studio') return false;
-      if (activeFilters.includes('central') && !p.distance?.includes('km') ) return false;
+      if (activeFilters.includes('central') && !p.distance?.includes('km')) return false;
       if (activeFilters.includes('balcony') && !p.hasBalcony) return false;
       if (activeFilters.includes('apartment') && p.type !== 'Căn hộ') return false;
       if (activeFilters.includes('room') && p.type !== 'Phòng trọ') return false;
@@ -43,7 +45,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title="XanhStay - Tìm phòng trọ, căn hộ cho thuê" description="Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam. Tìm kiếm nhanh, xem bản đồ, đặt lịch xem phòng." />
+      <SEO title="XanhStay - Tìm phòng trọ, căn hộ cho thuê" description="Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam." />
       <Navbar />
       <HeroSearch />
 
@@ -52,7 +54,7 @@ const Index = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((f, i) => (
             <motion.div
-              key={f.title}
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -75,11 +77,11 @@ const Index = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="flex items-end justify-between mb-6">
           <div>
-            <h2 className="section-title">Phòng nổi bật</h2>
-            <p className="section-subtitle mt-1">Các phòng trọ và căn hộ được đề xuất cho bạn</p>
+            <h2 className="section-title">{t('listing.featured')}</h2>
+            <p className="section-subtitle mt-1">{t('listing.featuredSub')}</p>
           </div>
           <Link to="/search" className="hidden md:flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-            Xem tất cả <ArrowRight size={16} />
+            {t('listing.viewAll')} <ArrowRight size={16} />
           </Link>
         </div>
         <FilterBar activeFilters={activeFilters} onToggle={toggleFilter} />
@@ -88,7 +90,7 @@ const Index = () => {
         </div>
         <div className="mt-8 text-center md:hidden">
           <Link to="/search" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-            Xem tất cả <ArrowRight size={16} />
+            {t('listing.viewAll')} <ArrowRight size={16} />
           </Link>
         </div>
       </section>
