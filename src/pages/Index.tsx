@@ -43,6 +43,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="XanhStay - Tìm phòng trọ, căn hộ cho thuê" description="Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam. Tìm kiếm nhanh, xem bản đồ, đặt lịch xem phòng." />
       <Navbar />
       <HeroSearch />
 

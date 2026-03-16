@@ -137,6 +137,7 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Tìm phòng trọ, căn hộ cho thuê" description="Tìm kiếm phòng trọ và căn hộ cho thuê phù hợp với nhu cầu. Lọc theo giá, diện tích, khu vực." />
       <Navbar />
 
       {/* Search bar */}
