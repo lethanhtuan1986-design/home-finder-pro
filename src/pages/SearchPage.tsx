@@ -17,7 +17,10 @@ const PAGE_SIZE = 8;
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [activeFilters, setActiveFilters] = useState<string[]>(() => {
+    const f = searchParams.get('filters');
+    return f ? f.split(',') : [];
+  });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(true);
 
