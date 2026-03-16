@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { PropertyGrid } from '@/components/PropertyGrid';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
 import { mockProperties } from '@/lib/mock-data';
