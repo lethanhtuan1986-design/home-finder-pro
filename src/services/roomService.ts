@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.xanhstay.vn//api/v1";
+const BASE_URL = "https://api.xanhstay.vn/api/v1";
 
 // ==================== Types ====================
 
