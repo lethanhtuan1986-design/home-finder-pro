@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { MapView } from '@/components/MapView';
 import { PropertyCard } from '@/components/PropertyCard';
 import { mockProperties } from '@/lib/mock-data';
