@@ -15,9 +15,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 const PAGE_SIZE = 8;
 
 const SearchPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [activeFilters, setActiveFilters] = useState<string[]>(() => {
+    const f = searchParams.get('filters');
+    return f ? f.split(',') : [];
+  });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(true);
 
@@ -79,6 +82,18 @@ const SearchPage = () => {
     },
     [buildRequest]
   );
+
+  // Sync filters to URL query params
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (keyword) params.set('q', keyword);
+    if (district) params.set('district', district);
+    if (priceMax) params.set('price_max', priceMax);
+    if (roomType) params.set('type', roomType);
+    if (sizeMin) params.set('size', sizeMin);
+    if (activeFilters.length > 0) params.set('filters', activeFilters.join(','));
+    setSearchParams(params, { replace: true });
+  }, [keyword, district, priceMax, roomType, sizeMin, activeFilters, setSearchParams]);
 
   // Fetch on filter changes
   useEffect(() => {
