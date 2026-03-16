@@ -41,8 +41,13 @@ export const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="border-t border-background/10 mt-8 pt-8 text-center text-sm opacity-40">
-          © 2026 XanhStay. All rights reserved.
+        <div className="border-t border-background/10 mt-8 pt-8 text-center text-sm opacity-40 space-y-1">
+          <p>© 2026 XanhStay. All rights reserved.</p>
+          <p>Publish at {(() => {
+            const d = new Date();
+            const pad = (n: number) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}:${pad(d.getMinutes())}`;
+          })()}</p>
         </div>
       </div>
     </footer>
