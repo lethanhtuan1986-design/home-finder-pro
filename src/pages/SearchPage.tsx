@@ -80,6 +80,18 @@ const SearchPage = () => {
     [buildRequest]
   );
 
+  // Sync filters to URL query params
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (keyword) params.set('q', keyword);
+    if (district) params.set('district', district);
+    if (priceMax) params.set('price_max', priceMax);
+    if (roomType) params.set('type', roomType);
+    if (sizeMin) params.set('size', sizeMin);
+    if (activeFilters.length > 0) params.set('filters', activeFilters.join(','));
+    setSearchParams(params, { replace: true });
+  }, [keyword, district, priceMax, roomType, sizeMin, activeFilters, setSearchParams]);
+
   // Fetch on filter changes
   useEffect(() => {
     setPage(1);
