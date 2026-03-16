@@ -4,6 +4,7 @@ import { PropertyGrid } from '@/components/PropertyGrid';
 import { AppDownload } from '@/components/AppDownload';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
+import { SEO } from '@/components/SEO';
 import { mockProperties } from '@/lib/mock-data';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
