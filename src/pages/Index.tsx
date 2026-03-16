@@ -4,6 +4,7 @@ import { PropertyGrid } from '@/components/PropertyGrid';
 import { AppDownload } from '@/components/AppDownload';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
+import { SEO } from '@/components/SEO';
 import { mockProperties } from '@/lib/mock-data';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
@@ -42,6 +43,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="XanhStay - Tìm phòng trọ, căn hộ cho thuê" description="Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam. Tìm kiếm nhanh, xem bản đồ, đặt lịch xem phòng." />
       <Navbar />
       <HeroSearch />
 

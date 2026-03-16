@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { PropertyGrid } from '@/components/PropertyGrid';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
 import { mockProperties } from '@/lib/mock-data';
@@ -12,6 +13,7 @@ const SavedRooms = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Phòng đã lưu" description="Danh sách các phòng trọ và căn hộ bạn đã lưu trên XanhStay." />
       <Navbar />
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="section-title mb-2">Phòng đã lưu</h1>

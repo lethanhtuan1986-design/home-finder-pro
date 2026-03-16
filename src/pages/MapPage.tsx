@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import { MapView } from '@/components/MapView';
 import { PropertyCard } from '@/components/PropertyCard';
 import { mockProperties } from '@/lib/mock-data';
@@ -12,6 +13,7 @@ const MapPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Bản đồ phòng trọ" description="Xem phòng trọ và căn hộ cho thuê trên bản đồ tương tác tại Việt Nam." />
       <Navbar />
       <div className="flex-1 flex flex-col lg:flex-row">
         <div className="lg:w-[45%] overflow-auto p-6 space-y-4 max-h-[calc(100vh-4rem)]">

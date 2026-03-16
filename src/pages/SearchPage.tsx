@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { SEO } from '@/components/SEO';
 import { Navbar } from '@/components/Navbar';
 import { FilterBar } from '@/components/FilterBar';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
@@ -136,6 +137,7 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Tìm phòng trọ, căn hộ cho thuê" description="Tìm kiếm phòng trọ và căn hộ cho thuê phù hợp với nhu cầu. Lọc theo giá, diện tích, khu vực." />
       <Navbar />
 
       {/* Search bar */}
