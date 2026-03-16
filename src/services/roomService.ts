@@ -1,4 +1,4 @@
-const BASE_URL = "https://api-xanhstay.vn//api/v1";
+const BASE_URL = "https://api.xanhstay.vn//api/v1";
 
 // ==================== Types ====================
 
@@ -118,16 +118,13 @@ export interface GetListAdvertisementResponse {
 // ==================== API Functions ====================
 
 export async function getListAdvertisement(
-  request: GetListAdvertisementRequest
+  request: GetListAdvertisementRequest,
 ): Promise<ResponseBase<GetListAdvertisementResponse>> {
-  const res = await fetch(
-    `${BASE_URL}/Advertisement/customer-get-list-paged-advertisement`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request),
-    }
-  );
+  const res = await fetch(`${BASE_URL}/Advertisement/customer-get-list-paged-advertisement`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
 
   if (!res.ok) {
     throw new Error(`API error: ${res.status} ${res.statusText}`);
