@@ -15,7 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const PAGE_SIZE = 8;
 
 const SearchPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
