@@ -1,7 +1,10 @@
 import { Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export const AppDownload = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
@@ -12,9 +15,9 @@ export const AppDownload = () => {
             viewport={{ once: true }}
             className="flex-1"
           >
-            <h2 className="section-title mb-3">Tải ứng dụng XanhStay</h2>
+            <h2 className="section-title mb-3">{t('appDownload.title')}</h2>
             <p className="section-subtitle mb-6">
-              Tìm phòng nhanh hơn, nhận thông báo phòng mới và quản lý phòng đã lưu ngay trên điện thoại.
+              {t('appDownload.subtitle')}
             </p>
             <div className="flex flex-wrap gap-3">
               {['App Store', 'Google Play', 'AppGallery'].map(store => (
