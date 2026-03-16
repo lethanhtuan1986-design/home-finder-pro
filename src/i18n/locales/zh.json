@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "home": "首页",
+    "search": "找房",
+    "map": "地图",
+    "saved": "已收藏",
+    "searchNow": "立即搜索"
+  },
+  "hero": {
+    "title": "找到合适的房间",
+    "titleHighlight": "只需几秒",
+    "subtitle": "智能找房平台，帮您快速发现最合适的房间和公寓。",
+    "area": "地区",
+    "roomType": "房间类型",
+    "priceRange": "价格范围",
+    "areaSize": "面积",
+    "allDistricts": "所有区域",
+    "allTypes": "所有类型",
+    "allPrices": "所有价格",
+    "allSizes": "全部",
+    "under": "低于",
+    "above": "高于",
+    "million": "百万",
+    "searchBtn": "搜索"
+  },
+  "features": {
+    "fast": "超快搜索",
+    "fastDesc": "智能筛选器帮您在几秒内找到合适的房间。",
+    "visual": "可视化浏览",
+    "visualDesc": "互动地图和高清照片展示每个房间。",
+    "trusted": "认证房源",
+    "trustedDesc": "所有房间均由XanhStay团队认证。"
+  },
+  "listing": {
+    "featured": "推荐房源",
+    "featuredSub": "为您推荐的房间和公寓",
+    "viewAll": "查看全部",
+    "perMonth": "/月",
+    "people": "人",
+    "rooms": "间",
+    "floors": "层",
+    "views": "次浏览",
+    "deposit": "押金",
+    "preDeposit": "预订金",
+    "room": "房间"
+  },
+  "detail": {
+    "back": "返回",
+    "description": "描述",
+    "roomTypes": "房间",
+    "furniture": "家具与设施",
+    "serviceCost": "服务费用",
+    "service": "服务",
+    "price": "价格",
+    "unit": "单位",
+    "contact": "联系方式",
+    "manager": "管理员",
+    "notFound": "未找到",
+    "notFoundDesc": "该房源不存在或已删除。",
+    "notFoundMsg": "未找到房源。",
+    "backToSearch": "← 返回搜索",
+    "loadError": "无法加载房源信息。"
+  },
+  "search": {
+    "title": "搜索房间和公寓",
+    "desc": "找到符合您需求的房间和公寓。按价格、面积、地区筛选。",
+    "keyword": "关键词",
+    "keywordPlaceholder": "按名称、地址搜索...",
+    "area": "地区",
+    "roomType": "房间类型",
+    "maxPrice": "最高价格",
+    "areaSize": "面积",
+    "all": "全部",
+    "noLimit": "不限",
+    "list": "列表",
+    "map": "地图",
+    "found": "个房间",
+    "noResult": "未找到匹配的房间",
+    "noResultHint": "请尝试更改筛选条件",
+    "loadMore": "加载更多",
+    "loading": "加载中...",
+    "serverError": "无法连接服务器。正在显示示例数据。"
+  },
+  "schedule": {
+    "title": "预约看房",
+    "name": "姓名",
+    "phone": "电话号码",
+    "submit": "预约",
+    "success": "预约成功！",
+    "successDesc": "您已预约\"{{title}}\"，时间：{{date}} {{time}}。"
+  },
+  "saved": {
+    "title": "已收藏房间",
+    "count": "已收藏{{count}}个",
+    "empty": "暂无收藏房间",
+    "emptyHint": "点击❤️收藏喜欢的房间"
+  },
+  "mapPage": {
+    "title": "房间地图",
+    "count": "地图上{{count}}个房间"
+  },
+  "appDownload": {
+    "title": "下载XanhStay应用",
+    "subtitle": "更快找房，接收新房源通知，在手机上管理收藏。"
+  },
+  "footer": {
+    "description": "越南智能租房平台。",
+    "explore": "探索",
+    "searchRooms": "搜索",
+    "mapView": "地图",
+    "savedRooms": "已收藏",
+    "support": "支持",
+    "contact": "联系我们",
+    "terms": "条款",
+    "follow": "关注我们"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "页面未找到",
+    "backHome": "返回首页"
+  }
+}

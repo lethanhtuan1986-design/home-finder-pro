@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "search": "部屋検索",
+    "map": "地図",
+    "saved": "保存済み",
+    "searchNow": "今すぐ検索"
+  },
+  "hero": {
+    "title": "ぴったりの部屋を",
+    "titleHighlight": "数秒で見つける",
+    "subtitle": "スマートな部屋探しプラットフォームで、最適な部屋やアパートをすばやく発見。",
+    "area": "エリア",
+    "roomType": "部屋タイプ",
+    "priceRange": "価格帯",
+    "areaSize": "面積",
+    "allDistricts": "全地区",
+    "allTypes": "全タイプ",
+    "allPrices": "全価格",
+    "allSizes": "すべて",
+    "under": "以下",
+    "above": "以上",
+    "million": "百万",
+    "searchBtn": "検索"
+  },
+  "features": {
+    "fast": "超高速検索",
+    "fastDesc": "スマートフィルターで数秒でぴったりの部屋を見つけます。",
+    "visual": "ビジュアル閲覧",
+    "visualDesc": "インタラクティブマップと高品質写真で全室確認。",
+    "trusted": "認証済み物件",
+    "trustedDesc": "すべての部屋はXanhStayチームが認証済み。"
+  },
+  "listing": {
+    "featured": "おすすめの部屋",
+    "featuredSub": "あなたにおすすめの部屋とアパート",
+    "viewAll": "すべて見る",
+    "perMonth": "/月",
+    "people": "人",
+    "rooms": "室",
+    "floors": "階",
+    "views": "閲覧",
+    "deposit": "敷金",
+    "preDeposit": "予約金",
+    "room": "部屋"
+  },
+  "detail": {
+    "back": "戻る",
+    "description": "説明",
+    "roomTypes": "部屋",
+    "furniture": "家具・設備",
+    "serviceCost": "サービス費用",
+    "service": "サービス",
+    "price": "価格",
+    "unit": "単位",
+    "contact": "連絡先",
+    "manager": "管理者",
+    "notFound": "見つかりません",
+    "notFoundDesc": "この物件は存在しないか、削除されました。",
+    "notFoundMsg": "物件が見つかりません。",
+    "backToSearch": "← 検索に戻る",
+    "loadError": "物件情報を読み込めません。"
+  },
+  "search": {
+    "title": "部屋・アパート検索",
+    "desc": "ニーズに合った部屋やアパートを見つけましょう。価格、面積、エリアでフィルタ。",
+    "keyword": "キーワード",
+    "keywordPlaceholder": "名前、住所で検索...",
+    "area": "エリア",
+    "roomType": "部屋タイプ",
+    "maxPrice": "最高価格",
+    "areaSize": "面積",
+    "all": "すべて",
+    "noLimit": "制限なし",
+    "list": "リスト",
+    "map": "地図",
+    "found": "件見つかりました",
+    "noResult": "条件に合う部屋がありません",
+    "noResultHint": "フィルターを変更してみてください",
+    "loadMore": "もっと見る",
+    "loading": "読み込み中...",
+    "serverError": "サーバーに接続できません。サンプルデータを表示中。"
+  },
+  "schedule": {
+    "title": "内見予約",
+    "name": "氏名",
+    "phone": "電話番号",
+    "submit": "予約する",
+    "success": "予約完了！",
+    "successDesc": "「{{title}}」を{{date}} {{time}}に予約しました。"
+  },
+  "saved": {
+    "title": "保存済みの部屋",
+    "count": "{{count}}件保存済み",
+    "empty": "保存された部屋はありません",
+    "emptyHint": "❤️をタップして部屋を保存しましょう"
+  },
+  "mapPage": {
+    "title": "部屋マップ",
+    "count": "地図上に{{count}}件"
+  },
+  "appDownload": {
+    "title": "XanhStayアプリをダウンロード",
+    "subtitle": "より早く部屋を見つけ、新着通知を受け取り、保存した部屋をスマホで管理。"
+  },
+  "footer": {
+    "description": "ベトナムのスマート賃貸プラットフォーム。",
+    "explore": "探索",
+    "searchRooms": "検索",
+    "mapView": "地図",
+    "savedRooms": "保存済み",
+    "support": "サポート",
+    "contact": "お問い合わせ",
+    "terms": "利用規約",
+    "follow": "フォロー"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "ページが見つかりません",
+    "backHome": "ホームに戻る"
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "search": "Tìm phòng",
+    "map": "Bản đồ",
+    "saved": "Phòng đã lưu",
+    "searchNow": "Tìm phòng ngay"
+  },
+  "hero": {
+    "title": "Tìm phòng trọ phù hợp",
+    "titleHighlight": "trong vài giây",
+    "subtitle": "Nền tảng tìm phòng thông minh giúp bạn khám phá phòng trọ và căn hộ phù hợp nhanh nhất.",
+    "area": "Khu vực",
+    "roomType": "Loại phòng",
+    "priceRange": "Khoảng giá",
+    "areaSize": "Diện tích",
+    "allDistricts": "Tất cả quận",
+    "allTypes": "Tất cả loại",
+    "allPrices": "Tất cả giá",
+    "allSizes": "Tất cả",
+    "under": "Dưới",
+    "above": "Trên",
+    "million": "triệu",
+    "searchBtn": "Tìm phòng"
+  },
+  "features": {
+    "fast": "Tìm phòng siêu nhanh",
+    "fastDesc": "Bộ lọc thông minh giúp bạn tìm phòng phù hợp trong vài giây.",
+    "visual": "Xem trực quan",
+    "visualDesc": "Bản đồ tương tác và ảnh chất lượng cao cho mọi phòng.",
+    "trusted": "Đảm bảo uy tín",
+    "trustedDesc": "Mọi phòng đều được xác minh bởi đội ngũ XanhStay."
+  },
+  "listing": {
+    "featured": "Phòng nổi bật",
+    "featuredSub": "Các phòng trọ và căn hộ được đề xuất cho bạn",
+    "viewAll": "Xem tất cả",
+    "perMonth": "/tháng",
+    "people": "người",
+    "rooms": "phòng",
+    "floors": "tầng",
+    "views": "lượt xem",
+    "deposit": "Đặt cọc",
+    "preDeposit": "Đặt cọc giữ chỗ",
+    "room": "Phòng"
+  },
+  "detail": {
+    "back": "Quay lại",
+    "description": "Mô tả",
+    "roomTypes": "Phòng",
+    "furniture": "Nội thất & Tiện nghi",
+    "serviceCost": "Chi phí dịch vụ",
+    "service": "Dịch vụ",
+    "price": "Giá",
+    "unit": "Đơn vị",
+    "contact": "Thông tin liên hệ",
+    "manager": "Quản lý",
+    "notFound": "Không tìm thấy",
+    "notFoundDesc": "Bài đăng không tồn tại hoặc đã bị xóa.",
+    "notFoundMsg": "Không tìm thấy bài đăng.",
+    "backToSearch": "← Quay lại tìm kiếm",
+    "loadError": "Không thể tải thông tin bài đăng."
+  },
+  "search": {
+    "title": "Tìm phòng trọ, căn hộ cho thuê",
+    "desc": "Tìm kiếm phòng trọ và căn hộ cho thuê phù hợp với nhu cầu. Lọc theo giá, diện tích, khu vực.",
+    "keyword": "Từ khóa",
+    "keywordPlaceholder": "Tìm theo tên, địa chỉ...",
+    "area": "Khu vực",
+    "roomType": "Loại phòng",
+    "maxPrice": "Giá tối đa",
+    "areaSize": "Diện tích",
+    "all": "Tất cả",
+    "noLimit": "Không giới hạn",
+    "list": "Danh sách",
+    "map": "Bản đồ",
+    "found": "phòng được tìm thấy",
+    "noResult": "Không tìm thấy phòng phù hợp",
+    "noResultHint": "Hãy thử thay đổi bộ lọc",
+    "loadMore": "Xem thêm",
+    "loading": "Đang tải...",
+    "serverError": "Không thể kết nối đến máy chủ. Đang hiển thị dữ liệu mẫu."
+  },
+  "schedule": {
+    "title": "Đặt lịch xem phòng",
+    "name": "Họ tên",
+    "phone": "Số điện thoại",
+    "submit": "Đặt lịch",
+    "success": "Đặt lịch thành công!",
+    "successDesc": "Bạn đã đặt lịch xem \"{{title}}\" vào {{date}} lúc {{time}}."
+  },
+  "saved": {
+    "title": "Phòng đã lưu",
+    "count": "{{count}} phòng đã lưu",
+    "empty": "Chưa có phòng nào được lưu",
+    "emptyHint": "Nhấn ❤️ trên các phòng bạn thích để lưu lại"
+  },
+  "mapPage": {
+    "title": "Bản đồ phòng trọ",
+    "count": "{{count}} phòng trên bản đồ"
+  },
+  "appDownload": {
+    "title": "Tải ứng dụng XanhStay",
+    "subtitle": "Tìm phòng nhanh hơn, nhận thông báo phòng mới và quản lý phòng đã lưu ngay trên điện thoại."
+  },
+  "footer": {
+    "description": "Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam.",
+    "explore": "Khám phá",
+    "searchRooms": "Tìm phòng",
+    "mapView": "Bản đồ",
+    "savedRooms": "Phòng đã lưu",
+    "support": "Hỗ trợ",
+    "contact": "Liên hệ",
+    "terms": "Điều khoản",
+    "follow": "Theo dõi"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Trang không tồn tại",
+    "backHome": "Về trang chủ"
+  }
+}
