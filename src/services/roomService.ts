@@ -1,4 +1,4 @@
-const BASE_URL = "https://api-xanhstay.vn//api/v1";
+const BASE_URL = "https://api.xanhstay.vn/api/v1";
 
 // ==================== Types ====================
 
@@ -204,9 +204,7 @@ export async function getListAdvertisement(
   return res.json();
 }
 
-export async function getAdvertisementByUuid(
-  request: UuidBaseRequest,
-): Promise<ResponseBase<AdvertisementDetailData>> {
+export async function getAdvertisementByUuid(request: UuidBaseRequest): Promise<ResponseBase<AdvertisementDetailData>> {
   const res = await fetch(`${BASE_URL}/Advertisement/get-advertisement-by-uuid`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
