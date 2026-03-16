@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { SEO } from '@/components/SEO';
 import { Navbar } from '@/components/Navbar';
 import { FilterBar } from '@/components/FilterBar';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
