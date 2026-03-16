@@ -10,6 +10,7 @@ import { Footer } from '@/components/Footer';
 import { mockProperties, filterProperties, DISTRICTS, ROOM_TYPES } from '@/lib/mock-data';
 import { getListAdvertisement, AdvertisementData, GetListAdvertisementRequest } from '@/services/roomService';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Search, Map as MapIcon, List, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -18,6 +19,7 @@ const PAGE_SIZE = 8;
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [activeFilters, setActiveFilters] = useState<string[]>(() => {
     const f = searchParams.get('filters');
     return f ? f.split(',') : [];
@@ -25,14 +27,12 @@ const SearchPage = () => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(true);
 
-  // Filter state
   const [district, setDistrict] = useState(searchParams.get('district') || '');
   const [priceMax, setPriceMax] = useState(searchParams.get('price_max') || '');
   const [roomType, setRoomType] = useState(searchParams.get('type') || '');
   const [sizeMin, setSizeMin] = useState(searchParams.get('size') || '');
   const [keyword, setKeyword] = useState(searchParams.get('q') || '');
 
-  // API state
   const [advertisements, setAdvertisements] = useState<AdvertisementData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,17 +74,15 @@ const SearchPage = () => {
         }
       } catch (err) {
         console.error('API Error:', err);
-        setError('Không thể kết nối đến máy chủ. Đang hiển thị dữ liệu mẫu.');
-        // Fallback to mock data
+        setError(t('search.serverError'));
         setAdvertisements([]);
       } finally {
         setLoading(false);
       }
     },
-    [buildRequest]
+    [buildRequest, t]
   );
 
-  // Sync filters to URL query params
   useEffect(() => {
     const params = new URLSearchParams();
     if (keyword) params.set('q', keyword);
@@ -96,7 +94,6 @@ const SearchPage = () => {
     setSearchParams(params, { replace: true });
   }, [keyword, district, priceMax, roomType, sizeMin, activeFilters, setSearchParams]);
 
-  // Fetch on filter changes
   useEffect(() => {
     setPage(1);
     fetchData(1);
@@ -108,7 +105,6 @@ const SearchPage = () => {
     fetchData(nextPage, true);
   };
 
-  // Fallback: filter mock data when API fails
   const mockFiltered = (() => {
     let results = filterProperties({
       district: district || undefined,
@@ -137,51 +133,50 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <SEO title="Tìm phòng trọ, căn hộ cho thuê" description="Tìm kiếm phòng trọ và căn hộ cho thuê phù hợp với nhu cầu. Lọc theo giá, diện tích, khu vực." />
+      <SEO title={t('search.title')} description={t('search.desc')} />
       <Navbar />
 
-      {/* Search bar */}
       <div className="border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-wrap gap-3 items-end">
             <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Từ khóa</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('search.keyword')}</label>
               <input
                 value={keyword}
                 onChange={e => setKeyword(e.target.value)}
-                placeholder="Tìm theo tên, địa chỉ..."
+                placeholder={t('search.keywordPlaceholder')}
                 className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
               />
             </div>
             <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Khu vực</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('search.area')}</label>
               <select value={district} onChange={e => setDistrict(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm">
-                <option value="">Tất cả</option>
+                <option value="">{t('search.all')}</option>
                 {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             </div>
             <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Loại phòng</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('search.roomType')}</label>
               <select value={roomType} onChange={e => setRoomType(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm">
-                <option value="">Tất cả</option>
-                {ROOM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                <option value="">{t('search.all')}</option>
+                {ROOM_TYPES.map(rt => <option key={rt} value={rt}>{rt}</option>)}
               </select>
             </div>
             <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Giá tối đa</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('search.maxPrice')}</label>
               <select value={priceMax} onChange={e => setPriceMax(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm">
-                <option value="">Không giới hạn</option>
-                <option value="3000000">3 triệu</option>
-                <option value="5000000">5 triệu</option>
-                <option value="8000000">8 triệu</option>
-                <option value="10000000">10 triệu</option>
-                <option value="15000000">15 triệu</option>
+                <option value="">{t('search.noLimit')}</option>
+                <option value="3000000">3 {t('hero.million')}</option>
+                <option value="5000000">5 {t('hero.million')}</option>
+                <option value="8000000">8 {t('hero.million')}</option>
+                <option value="10000000">10 {t('hero.million')}</option>
+                <option value="15000000">15 {t('hero.million')}</option>
               </select>
             </div>
             <div className="flex-1 min-w-[120px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Diện tích</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('search.areaSize')}</label>
               <select value={sizeMin} onChange={e => setSizeMin(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm">
-                <option value="">Tất cả</option>
+                <option value="">{t('search.all')}</option>
                 <option value="20">≥ 20m²</option>
                 <option value="30">≥ 30m²</option>
                 <option value="40">≥ 40m²</option>
@@ -193,7 +188,7 @@ const SearchPage = () => {
               className="px-3 py-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-secondary transition-colors flex items-center gap-2 text-foreground"
             >
               {showMap ? <List size={16} /> : <MapIcon size={16} />}
-              {showMap ? 'Danh sách' : 'Bản đồ'}
+              {showMap ? t('search.list') : t('search.map')}
             </button>
           </div>
           <div className="mt-3">
@@ -202,12 +197,11 @@ const SearchPage = () => {
         </div>
       </div>
 
-      {/* Results */}
       <div className="flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-2 mb-4">
             <p className="text-sm text-muted-foreground">
-              {displayCount} phòng được tìm thấy
+              {displayCount} {t('search.found')}
             </p>
             {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
           </div>
@@ -220,7 +214,6 @@ const SearchPage = () => {
 
           <div className={`flex gap-6`}>
             <div className={showMap ? 'w-full lg:w-3/5' : 'w-full'}>
-              {/* Loading skeleton */}
               {loading && advertisements.length === 0 && (
                 <div className={`grid ${showMap ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
                   {Array.from({ length: PAGE_SIZE }).map((_, i) => (
@@ -237,46 +230,34 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {/* API data cards */}
               {hasApiData && (
                 <div className={`grid ${showMap ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
                   {advertisements.map((ad, i) => (
-                    <div
-                      key={ad.uuid}
-                      onMouseEnter={() => setHoveredId(ad.uuid)}
-                      onMouseLeave={() => setHoveredId(null)}
-                    >
+                    <div key={ad.uuid} onMouseEnter={() => setHoveredId(ad.uuid)} onMouseLeave={() => setHoveredId(null)}>
                       <AdvertisementCard data={ad} index={i} />
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Fallback mock data */}
               {!hasApiData && !loading && (
                 <div className={`grid ${showMap ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
                   {mockFiltered.slice(0, PAGE_SIZE * page).map((p, i) => (
-                    <div
-                      key={p.id}
-                      onMouseEnter={() => setHoveredId(p.id)}
-                      onMouseLeave={() => setHoveredId(null)}
-                    >
+                    <div key={p.id} onMouseEnter={() => setHoveredId(p.id)} onMouseLeave={() => setHoveredId(null)}>
                       <PropertyCard data={p} index={i} />
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Empty state */}
               {!loading && displayCount === 0 && (
                 <div className="text-center py-20 text-muted-foreground">
                   <Search size={48} className="mx-auto mb-4 opacity-30" />
-                  <p className="text-lg font-medium">Không tìm thấy phòng phù hợp</p>
-                  <p className="text-sm mt-1">Hãy thử thay đổi bộ lọc</p>
+                  <p className="text-lg font-medium">{t('search.noResult')}</p>
+                  <p className="text-sm mt-1">{t('search.noResultHint')}</p>
                 </div>
               )}
 
-              {/* Load more */}
               {hasApiData && page < totalPage && (
                 <div className="text-center mt-8">
                   <button
@@ -286,23 +267,22 @@ const SearchPage = () => {
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
-                        <Loader2 size={16} className="animate-spin" /> Đang tải...
+                        <Loader2 size={16} className="animate-spin" /> {t('search.loading')}
                       </span>
                     ) : (
-                      `Xem thêm (${totalCount - advertisements.length} phòng)`
+                      `${t('search.loadMore')} (${totalCount - advertisements.length} ${t('search.found')})`
                     )}
                   </button>
                 </div>
               )}
 
-              {/* Mock fallback load more */}
               {!hasApiData && !loading && PAGE_SIZE * page < mockFiltered.length && (
                 <div className="text-center mt-8">
                   <button
                     onClick={() => setPage(p => p + 1)}
                     className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground"
                   >
-                    Xem thêm ({mockFiltered.length - PAGE_SIZE * page} phòng)
+                    {t('search.loadMore')} ({mockFiltered.length - PAGE_SIZE * page} {t('search.found')})
                   </button>
                 </div>
               )}

@@ -6,6 +6,7 @@ import { PropertyGallery } from '@/components/PropertyGallery';
 import { ScheduleForm } from '@/components/ScheduleForm';
 import { SEO } from '@/components/SEO';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
+import { useTranslation } from 'react-i18next';
 import {
   getAdvertisementByUuid,
   AdvertisementDetailData,
@@ -14,7 +15,7 @@ import {
 } from '@/services/roomService';
 import {
   MapPin, Maximize, Heart, ChevronLeft, Check, Phone,
-  Building, Star, Eye, Zap, Droplets, Loader2, Bed, Sofa,
+  Building, Star, Eye, Zap, Droplets, Bed, Sofa,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,6 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { isSaved, toggleSave } = useSavedRooms();
+  const { t } = useTranslation();
   const [detail, setDetail] = useState<AdvertisementDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,9 +40,9 @@ const PropertyDetail = () => {
           setError(res.error.message);
         }
       })
-      .catch(() => setError('Không thể tải thông tin bài đăng.'))
+      .catch(() => setError(t('detail.loadError')))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, t]);
 
   if (loading) {
     return (
@@ -67,11 +69,11 @@ const PropertyDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <SEO title="Không tìm thấy" description="Bài đăng không tồn tại hoặc đã bị xóa." />
+        <SEO title={t('detail.notFound')} description={t('detail.notFoundDesc')} />
         <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-          <p className="text-muted-foreground text-lg">{error || 'Không tìm thấy bài đăng.'}</p>
+          <p className="text-muted-foreground text-lg">{error || t('detail.notFoundMsg')}</p>
           <Link to="/search" className="text-primary font-medium mt-4 inline-block hover:underline">
-            ← Quay lại tìm kiếm
+            {t('detail.backToSearch')}
           </Link>
         </div>
       </div>
@@ -83,7 +85,6 @@ const PropertyDetail = () => {
   const address = `${apt.address}, ${apt.ward?.fullName}, ${apt.province?.fullName}`;
   const descriptionText = apt.description || detail.description || detail.title;
 
-  // JSON-LD structured data
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
@@ -115,8 +116,8 @@ const PropertyDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title={`${detail.title} - ${formatVNPrice(detail.price)}/tháng`}
-        description={`${descriptionText.slice(0, 150)}. Diện tích ${apt.apartmentSize}m², ${apt.roomCount} phòng. Địa chỉ: ${address}`}
+        title={`${detail.title} - ${formatVNPrice(detail.price)}${t('listing.perMonth')}`}
+        description={`${descriptionText.slice(0, 150)}. ${apt.apartmentSize}m², ${apt.roomCount} ${t('listing.rooms')}. ${address}`}
         ogImage={images[0]}
         ogType="article"
         jsonLd={jsonLd}
@@ -125,7 +126,7 @@ const PropertyDetail = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Link to="/search" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
-          <ChevronLeft size={16} /> Quay lại
+          <ChevronLeft size={16} /> {t('detail.back')}
         </Link>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
@@ -133,13 +134,12 @@ const PropertyDetail = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8 mt-8">
-          {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
-                    {apt.apartmentTypeUu?.name || 'Phòng'}
+                    {apt.apartmentTypeUu?.name || t('listing.room')}
                   </span>
                   <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground">{detail.title}</h1>
                   <p className="text-muted-foreground flex items-center gap-1 mt-2">
@@ -156,13 +156,13 @@ const PropertyDetail = () => {
 
               <div className="flex items-baseline gap-2 mt-4">
                 <span className="price-display text-3xl">{formatVNPrice(detail.price)}</span>
-                <span className="text-muted-foreground text-sm">/tháng</span>
+                <span className="text-muted-foreground text-sm">{t('listing.perMonth')}</span>
               </div>
 
               <div className="flex flex-wrap gap-6 mt-6 py-4 border-y border-border text-sm text-muted-foreground">
                 <span className="flex items-center gap-2"><Maximize size={16} /> {apt.apartmentSize}m²</span>
-                <span className="flex items-center gap-2"><Building size={16} /> {apt.numFloor} tầng</span>
-                <span className="flex items-center gap-2"><Eye size={16} /> {detail.viewCount} lượt xem</span>
+                <span className="flex items-center gap-2"><Building size={16} /> {apt.numFloor} {t('listing.floors')}</span>
+                <span className="flex items-center gap-2"><Eye size={16} /> {detail.viewCount} {t('listing.views')}</span>
                 {apt.avgStars > 0 && (
                   <span className="flex items-center gap-2">
                     <Star size={16} className="fill-yellow-400 text-yellow-400" /> {apt.avgStars}
@@ -171,18 +171,16 @@ const PropertyDetail = () => {
               </div>
             </motion.div>
 
-            {/* Description */}
             {descriptionText && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">Mô tả</h2>
+                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.description')}</h2>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{descriptionText}</p>
               </motion.div>
             )}
 
-            {/* Room types */}
             {apt.roomTypeGroups && apt.roomTypeGroups.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">Phòng</h2>
+                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.roomTypes')}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {apt.roomTypeGroups.map(g => (
                     <div key={g.roomUu.uuid} className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 rounded-lg px-3 py-2">
@@ -194,10 +192,9 @@ const PropertyDetail = () => {
               </motion.div>
             )}
 
-            {/* Furniture */}
             {apt.furnitureTypeGroups && apt.furnitureTypeGroups.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">Nội thất & Tiện nghi</h2>
+                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.furniture')}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {apt.furnitureTypeGroups.map(g => (
                     <div key={g.furnitureUu.uuid} className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -209,17 +206,16 @@ const PropertyDetail = () => {
               </motion.div>
             )}
 
-            {/* Service prices */}
             {detail.adPrices && detail.adPrices.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">Chi phí dịch vụ</h2>
+                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.serviceCost')}</h2>
                 <div className="border border-border rounded-xl overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-secondary/50">
-                        <th className="text-left px-4 py-2.5 font-medium text-foreground">Dịch vụ</th>
-                        <th className="text-right px-4 py-2.5 font-medium text-foreground">Giá</th>
-                        <th className="text-right px-4 py-2.5 font-medium text-foreground">Đơn vị</th>
+                        <th className="text-left px-4 py-2.5 font-medium text-foreground">{t('detail.service')}</th>
+                        <th className="text-right px-4 py-2.5 font-medium text-foreground">{t('detail.price')}</th>
+                        <th className="text-right px-4 py-2.5 font-medium text-foreground">{t('detail.unit')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -243,32 +239,30 @@ const PropertyDetail = () => {
               </motion.div>
             )}
 
-            {/* Deposit info */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
               <div className="bg-accent/50 rounded-xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tiền cọc</span>
+                  <span className="text-muted-foreground">{t('listing.deposit')}</span>
                   <span className="font-semibold text-foreground">{formatVNPrice(detail.deposit)}</span>
                 </div>
                 {detail.preDeposit > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Đặt cọc giữ chỗ</span>
+                    <span className="text-muted-foreground">{t('listing.preDeposit')}</span>
                     <span className="font-semibold text-foreground">{formatVNPrice(detail.preDeposit)}</span>
                   </div>
                 )}
               </div>
             </motion.div>
 
-            {/* Owner / Manager info */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <h2 className="font-semibold text-lg mb-3 text-foreground">Thông tin liên hệ</h2>
+              <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.contact')}</h2>
               <div className="flex items-center gap-4 bg-card border border-border rounded-xl p-4">
                 <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-primary font-bold text-lg">
                   {(apt.managerUu?.name || apt.ownerUu?.name || 'X').charAt(0)}
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-foreground">{apt.managerUu?.name || apt.ownerUu?.name}</p>
-                  <p className="text-sm text-muted-foreground">Quản lý</p>
+                  <p className="text-sm text-muted-foreground">{t('detail.manager')}</p>
                 </div>
                 {detail.phoneNumber && (
                   <a
@@ -282,7 +276,6 @@ const PropertyDetail = () => {
             </motion.div>
           </div>
 
-          {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-20">
               <ScheduleForm propertyTitle={detail.title} />

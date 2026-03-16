@@ -6,19 +6,21 @@ import { MapView } from '@/components/MapView';
 import { PropertyCard } from '@/components/PropertyCard';
 import { mockProperties } from '@/lib/mock-data';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const MapPage = () => {
   const navigate = useNavigate();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <SEO title="Bản đồ phòng trọ" description="Xem phòng trọ và căn hộ cho thuê trên bản đồ tương tác tại Việt Nam." />
+      <SEO title={t('mapPage.title')} description={t('mapPage.title')} />
       <Navbar />
       <div className="flex-1 flex flex-col lg:flex-row">
         <div className="lg:w-[45%] overflow-auto p-6 space-y-4 max-h-[calc(100vh-4rem)]">
-          <h2 className="section-title">Bản đồ phòng trọ</h2>
-          <p className="text-sm text-muted-foreground mb-4">{mockProperties.length} phòng trên bản đồ</p>
+          <h2 className="section-title">{t('mapPage.title')}</h2>
+          <p className="text-sm text-muted-foreground mb-4">{t('mapPage.count', { count: mockProperties.length })}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
             {mockProperties.map((p, i) => (
               <div

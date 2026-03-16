@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Maximize, Users, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Property, formatPrice } from '@/lib/mock-data';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
 
@@ -11,6 +12,7 @@ interface PropertyCardProps {
 
 export const PropertyCard = ({ data, index = 0 }: PropertyCardProps) => {
   const { isSaved, toggleSave } = useSavedRooms();
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -45,13 +47,13 @@ export const PropertyCard = ({ data, index = 0 }: PropertyCardProps) => {
             <div className="flex justify-between items-start gap-2 mb-1">
               <h3 className="font-semibold text-foreground truncate text-sm">{data.title}</h3>
             </div>
-            <p className="price-display text-lg mb-1">{formatPrice(data.price)}/tháng</p>
+            <p className="price-display text-lg mb-1">{formatPrice(data.price)}{t('listing.perMonth')}</p>
             <p className="text-muted-foreground text-sm flex items-center gap-1 mb-3">
               <MapPin size={14} /> {data.ward}, {data.district}
             </p>
             <div className="flex gap-4 border-t border-border pt-3 text-muted-foreground text-xs">
               <span className="flex items-center gap-1"><Maximize size={14} /> {data.size}m²</span>
-              <span className="flex items-center gap-1"><Users size={14} /> {data.capacity} người</span>
+              <span className="flex items-center gap-1"><Users size={14} /> {data.capacity} {t('listing.people')}</span>
               {data.distance && (
                 <span className="hidden sm:flex items-center gap-1 ml-auto text-muted-foreground">
                   {data.distance}
