@@ -1,49 +1,50 @@
-import { useEffect, useRef, useMemo, useCallback } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import L, { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import { formatVNPrice, getImageUrl } from "@/services/index";
 import { Loader2 } from "lucide-react";
+import type { MapLocationGroup } from "@/services/advertisement.service";
 
 const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
 const DEFAULT_ZOOM = 13;
 
 interface MapViewProps {
-  advertisements?: any[];
+  locations?: MapLocationGroup[];
   hoveredId?: string | null;
   loading?: boolean;
   onMarkerClick?: (id: string) => void;
 }
 
-const safeCoords = (apt: any): LatLngTuple | null => {
-  // Try parsing "point" field first: "[lat,lng]"
-  if (apt?.point) {
-    try {
-      const parsed = JSON.parse(apt.point);
-      if (Array.isArray(parsed) && parsed.length >= 2) {
-        const [lat, lng] = parsed.map(Number);
-        if (isFinite(lat) && isFinite(lng) && !(lat === 0 && lng === 0)) {
-          return [lat, lng];
-        }
+const parsePoint = (point: string): LatLngTuple | null => {
+  try {
+    const parsed = JSON.parse(point);
+    if (Array.isArray(parsed) && parsed.length >= 2) {
+      const [lat, lng] = parsed.map(Number);
+      if (isFinite(lat) && isFinite(lng) && !(lat === 0 && lng === 0)) {
+        return [lat, lng];
       }
-    } catch {}
-  }
-
-  let lat = apt?.latitude;
-  let lng = apt?.longitude;
-  if (lat == null || lng == null || !isFinite(lat) || !isFinite(lng)) return null;
-  if (lat === 0 && lng === 0) return null;
-  if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) {
-    [lat, lng] = [lng, lat];
-  }
-  return [lat, lng];
+    }
+  } catch {}
+  return null;
 };
 
-const createPriceMarkerIcon = (price: number, isHovered: boolean) => {
-  const priceText = (price / 1000000).toFixed(1).replace(".0", "") + "tr";
+const createClusterIcon = (totalAds: number, minPrice: number, isHovered: boolean) => {
+  const priceText = (minPrice / 1000000).toFixed(1).replace(".0", "") + "tr";
+  const badge = totalAds > 1 ? `<span style="
+    position:absolute;top:-6px;right:-8px;
+    background:hsl(var(--destructive, 0 84% 60%));color:white;
+    font-size:10px;font-weight:700;
+    min-width:18px;height:18px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:9px;border:2px solid white;
+    padding:0 4px;
+  ">${totalAds}</span>` : "";
+
   return L.divIcon({
     className: "custom-map-marker",
     html: `<div style="
+      position:relative;
       background: ${isHovered ? "hsl(var(--xanh-700))" : "hsl(var(--primary))"};
       color: white;
       border-radius: 8px;
@@ -56,50 +57,55 @@ const createPriceMarkerIcon = (price: number, isHovered: boolean) => {
       transition: transform 0.2s ease, background 0.2s ease;
       border: 2px solid white;
       cursor: pointer;
-    ">${priceText}</div>`,
+    ">${priceText}${badge}</div>`,
     iconSize: [0, 0],
     iconAnchor: [20, 15],
   });
 };
 
-const buildPopupHtml = (ad: any) => {
-  const apt = ad.apartmentUu;
-  const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
-  const addressParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(", ");
+const buildPopupHtml = (loc: MapLocationGroup) => {
+  const ads = loc.ads;
+  const items = ads.slice(0, 3).map((ad) => {
+    const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
+    return `
+      <a href="/property/${ad.uuid}" style="display:flex;gap:8px;padding:8px;text-decoration:none;color:inherit;border-bottom:1px solid #eee;">
+        <div style="width:60px;height:45px;border-radius:6px;overflow:hidden;flex-shrink:0;">
+          <img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/placeholder.svg'" />
+        </div>
+        <div style="min-width:0;flex:1;">
+          <p style="font-size:12px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${ad.apartmentUu?.name || "Phòng"}
+          </p>
+          <p style="font-size:13px;font-weight:700;color:hsl(var(--primary));margin:2px 0 0;">
+            ${formatVNPrice(ad.price)}/tháng
+          </p>
+        </div>
+      </a>`;
+  }).join("");
+
+  const more = ads.length > 3 ? `<p style="text-align:center;font-size:11px;color:#888;padding:6px;margin:0;">+${ads.length - 3} phòng khác</p>` : "";
 
   return `
-    <a href="/property/${ad.uuid}" style="display:block;width:240px;text-decoration:none;color:inherit;">
-      <div style="width:100%;height:130px;overflow:hidden;border-radius:8px 8px 0 0;">
-        <img src="${imageUrl}" alt="${ad.title || ""}" 
-          style="width:100%;height:100%;object-fit:cover;" 
-          onerror="this.src='/placeholder.svg'" />
+    <div style="width:240px;">
+      <div style="padding:8px 10px;border-bottom:1px solid #eee;">
+        <p style="font-size:12px;font-weight:600;margin:0;">📍 ${loc.address || "Không rõ vị trí"}</p>
+        <p style="font-size:11px;color:#888;margin:2px 0 0;">${loc.totalAds} phòng</p>
       </div>
-      <div style="padding:10px;">
-        <p style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 6px;">
-          ${ad.title || "Không có tiêu đề"}
-        </p>
-        <p style="font-size:14px;font-weight:700;color:hsl(var(--primary));margin:0 0 4px;">
-          ${formatVNPrice(ad.price)}/tháng
-        </p>
-        ${ad.deposit > 0 ? `<p style="font-size:11px;color:#888;margin:0 0 4px;">Cọc: ${formatVNPrice(ad.deposit)}</p>` : ""}
-        <div style="display:flex;gap:6px;margin:0 0 4px;">
-          ${apt?.apartmentSize > 0 ? `<span style="font-size:11px;background:#f3f4f6;padding:2px 6px;border-radius:4px;">${apt.apartmentSize}m²</span>` : ""}
-          ${apt?.roomCount > 0 ? `<span style="font-size:11px;background:#f3f4f6;padding:2px 6px;border-radius:4px;">${apt.roomCount} phòng</span>` : ""}
-        </div>
-        <p style="font-size:11px;color:#888;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-          📍 ${addressParts || "Không rõ vị trí"}
-        </p>
-      </div>
-    </a>
+      ${items}
+      ${more}
+    </div>
   `;
 };
 
-export const MapView = ({ advertisements = [], hoveredId, loading = false, onMarkerClick }: MapViewProps) => {
+export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick }: MapViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
 
-  const validAds = useMemo(() => advertisements.filter((ad) => safeCoords(ad?.apartmentUu) !== null), [advertisements]);
+  const validLocations = useMemo(() =>
+    locations.filter((loc) => parsePoint(loc.point) !== null),
+    [locations]
+  );
 
   // Initialize map
   useEffect(() => {
@@ -118,7 +124,6 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
     }).addTo(map);
 
     mapRef.current = map;
-
     setTimeout(() => map.invalidateSize(), 200);
 
     return () => {
@@ -132,51 +137,54 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
     const map = mapRef.current;
     if (!map) return;
 
-    // Clear old markers
     markersRef.current.forEach((m) => m.remove());
     markersRef.current.clear();
 
     const points: LatLngTuple[] = [];
 
-    validAds.forEach((ad) => {
-      const coords = safeCoords(ad.apartmentUu)!;
+    validLocations.forEach((loc) => {
+      const coords = parsePoint(loc.point)!;
       points.push(coords);
 
-      const isHovered = hoveredId === ad.uuid;
+      const minPrice = Math.min(...loc.ads.map((a) => a.price));
+      const isHovered = loc.ads.some((a) => hoveredId === a.uuid);
+      const key = loc.point;
+
       const marker = L.marker(coords, {
-        icon: createPriceMarkerIcon(ad.price, isHovered),
+        icon: createClusterIcon(loc.totalAds, minPrice, isHovered),
         zIndexOffset: isHovered ? 1000 : 0,
       });
 
-      const apt = ad.apartmentUu;
-      const addressParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(", ");
-
-      marker.bindTooltip(addressParts || "Không rõ vị trí", {
+      marker.bindTooltip(loc.address || "Không rõ vị trí", {
         direction: "top",
         offset: [0, -10],
         className: "map-tooltip",
       });
 
-      marker.bindPopup(buildPopupHtml(ad), {
+      marker.bindPopup(buildPopupHtml(loc), {
         closeButton: false,
         maxWidth: 260,
       });
 
-      marker.on("click", () => onMarkerClick?.(ad.uuid));
+      marker.on("click", () => {
+        if (loc.ads.length === 1) {
+          onMarkerClick?.(loc.ads[0].uuid);
+        }
+      });
+
       marker.addTo(map);
-      markersRef.current.set(ad.uuid, marker);
+      markersRef.current.set(key, marker);
     });
 
-    // Fit bounds
     if (points.length > 0) {
       const bounds = L.latLngBounds(points);
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
     } else {
       map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
     }
-  }, [validAds, hoveredId, onMarkerClick]);
+  }, [validLocations, hoveredId, onMarkerClick]);
 
-  // Invalidate on resize
+  // Resize observer
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -198,7 +206,7 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
         </div>
       )}
 
-      {!loading && validAds.length === 0 && (
+      {!loading && validLocations.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-secondary/30 pointer-events-none z-[1000]">
           <p className="text-sm text-muted-foreground">Chưa có dữ liệu bản đồ</p>
         </div>

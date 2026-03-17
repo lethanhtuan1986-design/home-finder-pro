@@ -199,6 +199,18 @@ export interface GetListAdvertisementResponse {
   pagination: Pagination;
 }
 
+export interface MapLocationGroup {
+  point: string; // "[lat,lng]"
+  longitude: number;
+  address: string;
+  totalAds: number;
+  ads: AdvertisementData[];
+}
+
+export interface GetAdvertisementsForMapResponse {
+  data: MapLocationGroup[];
+}
+
 // ==================== API Functions (axios) ====================
 
 const advertisementService = {
@@ -210,7 +222,7 @@ const advertisementService = {
     return axiosInstance.post('/Advertisement/get-similar-advertisement', request);
   },
 
-  getForMap: (request: GetAdvertisementsForMapRequest): Promise<ResponseBase<GetListAdvertisementResponse>> => {
+  getForMap: (request: GetAdvertisementsForMapRequest): Promise<ResponseBase<MapLocationGroup[]>> => {
     return axiosInstance.post('/Advertisement/get-advertisements-for-map', request);
   },
 

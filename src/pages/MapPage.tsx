@@ -5,8 +5,8 @@ import { MapView } from '@/components/MapView';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import advertisementService, { GetAdvertisementsForMapRequest } from '@/services/advertisement.service';
+import { useQuery } from '@tanstack/react-query';
+import advertisementService, { GetAdvertisementsForMapRequest, MapLocationGroup } from '@/services/advertisement.service';
 import provinceService, { ProvinceItem } from '@/services/province.service';
 import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
 import { filterPrices, filterApartmentSizes } from '@/lib/filter-options';
@@ -20,8 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-const PAGE_SIZE = 20;
 
 const MapPage = () => {
   const navigate = useNavigate();
@@ -80,8 +78,8 @@ const MapPage = () => {
       }),
   });
 
-  const buildRequest = (pageNum: number): GetAdvertisementsForMapRequest => {
-    const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: pageNum, pageSize: PAGE_SIZE };
+  const buildRequest = (): GetAdvertisementsForMapRequest => {
+    const req: GetAdvertisementsForMapRequest = { isPaging: 0 };
     if (keyword) req.keyword = keyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
@@ -94,25 +92,15 @@ const MapPage = () => {
   };
 
   const {
-    data: infiniteData,
+    data: mapLocations = [],
     isLoading: loading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+  } = useQuery<MapLocationGroup[]>({
     queryKey: ['map-advertisements', keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo],
-    queryFn: ({ pageParam = 1 }) =>
-      httpRequest({ http: advertisementService.getForMap(buildRequest(pageParam as number)) }),
-    getNextPageParam: (lastPage: any, allPages) => {
-      if (!lastPage?.pagination) return undefined;
-      const next = allPages.length + 1;
-      return next <= lastPage.pagination.totalPage ? next : undefined;
-    },
-    initialPageParam: 1,
+    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildRequest()) }),
   });
 
-  const advertisements = infiniteData?.pages.flatMap((p: any) => p?.items || []) ?? [];
-  const totalCount = infiniteData?.pages[0]?.pagination?.totalCount ?? 0;
+  const advertisements = mapLocations.flatMap((loc) => loc.ads);
+  const totalCount = advertisements.length;
 
   const handlePriceSelect = (uuid: string) => {
     if (uuid === '__all__' || uuid === selectedPriceUuid) {
@@ -276,32 +264,15 @@ const MapPage = () => {
             ))}
           </div>
 
-          {hasNextPage && (
-            <div className="text-center py-4">
-              <button
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-                className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground disabled:opacity-50"
-              >
-                {isFetchingNextPage ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 size={16} className="animate-spin" /> {t('search.loading')}
-                  </span>
-                ) : (
-                  t('search.loadMore')
-                )}
-              </button>
-            </div>
-          )}
-        </div>
+          </div>
 
         {/* Map panel */}
         <div className="lg:w-[55%] h-[50vh] lg:h-auto lg:sticky lg:top-16">
           <div className="h-full p-4 lg:p-0 lg:pr-4 lg:py-4">
             <MapView
-              advertisements={advertisements}
+              locations={mapLocations}
               hoveredId={hoveredId}
-              loading={loading && advertisements.length === 0}
+              loading={loading && mapLocations.length === 0}
               onMarkerClick={(id) => navigate(`/property/${id}`)}
             />
           </div>
