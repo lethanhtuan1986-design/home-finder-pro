@@ -28,7 +28,7 @@ const PropertyDetail = () => {
     if (!id) return;
     setLoading(true);
     setError(null);
-    getAdvertisementByUuid({ uuid: id })
+    advertisementService.getByUuid(id)
       .then(res => {
         if (res.error.code === 0) {
           setDetail(res.data);

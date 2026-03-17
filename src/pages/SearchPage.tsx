@@ -64,7 +64,7 @@ const SearchPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await getListAdvertisement(buildRequest(pageNum));
+        const res = await advertisementService.getListPaged(buildRequest(pageNum));
         if (res.error.code === 0) {
           setAdvertisements(prev => (append ? [...prev, ...res.data.items] : res.data.items));
           setTotalCount(res.data.pagination.totalCount);
