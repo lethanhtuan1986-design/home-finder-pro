@@ -86,7 +86,7 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
 
-  const validAds = useMemo(() => advertisements.filter((ad) => safeCoords(ad?.point) !== null), [advertisements]);
+  const validAds = useMemo(() => advertisements.filter((ad) => safeCoords(ad?.apartmentUu) !== null), [advertisements]);
 
   // Initialize map
   useEffect(() => {
