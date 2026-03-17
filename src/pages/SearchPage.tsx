@@ -18,7 +18,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 8;
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
