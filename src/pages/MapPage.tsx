@@ -21,8 +21,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const PAGE_SIZE = 20;
-
 const MapPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
