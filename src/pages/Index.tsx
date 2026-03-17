@@ -48,26 +48,7 @@ const Index = () => {
       }),
   });
 
-  // Recent rooms query
-  const { data: recentData, isLoading: recentLoading } = useQuery<{ items: AdvertisementData[] }>({
-    queryKey: ['recent-advertisements', recentIds],
-    queryFn: () =>
-      httpRequest({
-        http: advertisementService.getListPaged({
-          isPaging: 0,
-          adsLikeds: recentIds,
-        }),
-      }),
-    enabled: recentIds.length > 0,
-  });
-
   const featuredAds = (featuredData?.items ?? []).filter(Boolean);
-  const recentAds = (recentData?.items ?? []).filter(Boolean);
-
-  // Sort recent ads to match recentIds order
-  const sortedRecentAds = recentIds
-    .map((id) => recentAds.find((ad) => ad.uuid === id))
-    .filter(Boolean) as AdvertisementData[];
 
   const features = [
     { icon: Zap, title: t('features.fast'), desc: t('features.fastDesc') },
