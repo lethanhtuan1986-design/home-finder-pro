@@ -51,7 +51,14 @@ const SearchPage = () => {
   const [apartmentSizeFrom, setApartmentSizeFrom] = useState(searchParams.get("apartmentSizeFrom") || "");
   const [apartmentSizeTo, setApartmentSizeTo] = useState(searchParams.get("apartmentSizeTo") || "");
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
+  const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+
+  // Debounce keyword
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedKeyword(keyword), 500);
+    return () => clearTimeout(timer);
+  }, [keyword]);
 
   const selectedPriceUuid =
     filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
