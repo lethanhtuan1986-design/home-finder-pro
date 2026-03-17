@@ -15,6 +15,8 @@
     "priceRange": "가격대",
     "areaSize": "면적",
     "allDistricts": "전체 지역",
+    "ward": "동/면",
+    "allWards": "전체 동/면",
     "allTypes": "전체 유형",
     "allPrices": "전체 가격",
     "allSizes": "전체",
