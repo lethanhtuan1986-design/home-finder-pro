@@ -100,7 +100,7 @@ const SearchPage = () => {
   // Build API request for list
   const buildRequest = (): GetListAdvertisementRequest => {
     const req: GetListAdvertisementRequest = { isPaging: 1, page, pageSize: PAGE_SIZE };
-    if (keyword) req.keyword = keyword;
+    if (debouncedKeyword) req.keyword = debouncedKeyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
     if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
