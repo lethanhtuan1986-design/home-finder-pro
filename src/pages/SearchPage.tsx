@@ -132,7 +132,7 @@ const SearchPage = () => {
   } = useQuery({
     queryKey: [
       "advertisements",
-      keyword,
+      debouncedKeyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
