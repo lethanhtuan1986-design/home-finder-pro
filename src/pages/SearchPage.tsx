@@ -357,6 +357,7 @@ const SearchPage = () => {
                   <MapView
                     advertisements={advertisements}
                     hoveredId={hoveredId}
+                    loading={loading && advertisements.length === 0}
                     onMarkerClick={(id) => navigate(`/property/${id}`)}
                   />
                 </div>
