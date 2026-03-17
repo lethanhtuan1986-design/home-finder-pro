@@ -248,14 +248,14 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {hasApiData && page < totalPage && (
+              {hasApiData && hasNextPage && (
                 <div className="text-center mt-8">
                   <button
                     onClick={loadMore}
-                    disabled={loading}
+                    disabled={isFetchingNextPage}
                     className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground disabled:opacity-50"
                   >
-                    {loading ? (
+                    {isFetchingNextPage ? (
                       <span className="flex items-center gap-2">
                         <Loader2 size={16} className="animate-spin" /> {t('search.loading')}
                       </span>
