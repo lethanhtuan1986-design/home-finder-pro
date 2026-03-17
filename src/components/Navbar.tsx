@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Menu, X, Heart, Map, Home } from 'lucide-react';
+import { Search, Menu, X, Heart, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -14,7 +14,6 @@ export const Navbar = () => {
   const navLinks = [
     { to: '/', label: t('nav.home'), icon: Home },
     { to: '/search', label: t('nav.search'), icon: Search },
-    { to: '/map', label: t('nav.map'), icon: Map },
     { to: '/saved', label: t('nav.saved'), icon: Heart },
   ];
 
