@@ -189,7 +189,7 @@ const SearchPage = () => {
     if (page > 1) params.set("page", String(page));
     setSearchParams(params, { replace: true });
   }, [
-    keyword,
+    debouncedKeyword,
     provinceId,
     wardId,
     apartmentTypeUuid,
