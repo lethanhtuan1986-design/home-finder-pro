@@ -1,9 +1,9 @@
-import { useEffect, useRef, useMemo, useCallback } from 'react';
-import L, { LatLngTuple } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-defaulticon-compatibility';
-import { formatVNPrice, getImageUrl } from '@/services/index';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useRef, useMemo, useCallback } from "react";
+import L, { LatLngTuple } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import "leaflet-defaulticon-compatibility";
+import { formatVNPrice, getImageUrl } from "@/services/index";
+import { Loader2 } from "lucide-react";
 
 const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
 const DEFAULT_ZOOM = 13;
@@ -27,11 +27,11 @@ const safeCoords = (apt: any): LatLngTuple | null => {
 };
 
 const createPriceMarkerIcon = (price: number, isHovered: boolean) => {
-  const priceText = (price / 1000000).toFixed(1).replace('.0', '') + 'tr';
+  const priceText = (price / 1000000).toFixed(1).replace(".0", "") + "tr";
   return L.divIcon({
-    className: 'custom-map-marker',
+    className: "custom-map-marker",
     html: `<div style="
-      background: ${isHovered ? 'hsl(var(--xanh-700))' : 'hsl(var(--primary))'};
+      background: ${isHovered ? "hsl(var(--xanh-700))" : "hsl(var(--primary))"};
       color: white;
       border-radius: 8px;
       padding: 4px 10px;
@@ -39,7 +39,7 @@ const createPriceMarkerIcon = (price: number, isHovered: boolean) => {
       font-weight: 700;
       white-space: nowrap;
       box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-      transform: ${isHovered ? 'scale(1.18)' : 'scale(1)'};
+      transform: ${isHovered ? "scale(1.18)" : "scale(1)"};
       transition: transform 0.2s ease, background 0.2s ease;
       border: 2px solid white;
       cursor: pointer;
@@ -51,30 +51,30 @@ const createPriceMarkerIcon = (price: number, isHovered: boolean) => {
 
 const buildPopupHtml = (ad: any) => {
   const apt = ad.apartmentUu;
-  const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : '/placeholder.svg';
-  const addressParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(', ');
+  const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
+  const addressParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(", ");
 
   return `
     <a href="/property/${ad.uuid}" style="display:block;width:240px;text-decoration:none;color:inherit;">
       <div style="width:100%;height:130px;overflow:hidden;border-radius:8px 8px 0 0;">
-        <img src="${imageUrl}" alt="${ad.title || ''}" 
+        <img src="${imageUrl}" alt="${ad.title || ""}" 
           style="width:100%;height:100%;object-fit:cover;" 
           onerror="this.src='/placeholder.svg'" />
       </div>
       <div style="padding:10px;">
         <p style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 6px;">
-          ${ad.title || 'Không có tiêu đề'}
+          ${ad.title || "Không có tiêu đề"}
         </p>
         <p style="font-size:14px;font-weight:700;color:hsl(var(--primary));margin:0 0 4px;">
           ${formatVNPrice(ad.price)}/tháng
         </p>
-        ${ad.deposit > 0 ? `<p style="font-size:11px;color:#888;margin:0 0 4px;">Cọc: ${formatVNPrice(ad.deposit)}</p>` : ''}
+        ${ad.deposit > 0 ? `<p style="font-size:11px;color:#888;margin:0 0 4px;">Cọc: ${formatVNPrice(ad.deposit)}</p>` : ""}
         <div style="display:flex;gap:6px;margin:0 0 4px;">
-          ${apt?.apartmentSize > 0 ? `<span style="font-size:11px;background:#f3f4f6;padding:2px 6px;border-radius:4px;">${apt.apartmentSize}m²</span>` : ''}
-          ${apt?.roomCount > 0 ? `<span style="font-size:11px;background:#f3f4f6;padding:2px 6px;border-radius:4px;">${apt.roomCount} phòng</span>` : ''}
+          ${apt?.apartmentSize > 0 ? `<span style="font-size:11px;background:#f3f4f6;padding:2px 6px;border-radius:4px;">${apt.apartmentSize}m²</span>` : ""}
+          ${apt?.roomCount > 0 ? `<span style="font-size:11px;background:#f3f4f6;padding:2px 6px;border-radius:4px;">${apt.roomCount} phòng</span>` : ""}
         </div>
         <p style="font-size:11px;color:#888;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-          📍 ${addressParts || 'Không rõ vị trí'}
+          📍 ${addressParts || "Không rõ vị trí"}
         </p>
       </div>
     </a>
@@ -86,10 +86,7 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
 
-  const validAds = useMemo(
-    () => advertisements.filter((ad) => safeCoords(ad?.apartmentUu) !== null),
-    [advertisements],
-  );
+  const validAds = useMemo(() => advertisements.filter((ad) => safeCoords(ad?.point) !== null), [advertisements]);
 
   // Initialize map
   useEffect(() => {
@@ -102,8 +99,8 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
       zoomControl: false,
     });
 
-    L.tileLayer('https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-      attribution: 'Google',
+    L.tileLayer("https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+      attribution: "Google",
       maxZoom: 20,
     }).addTo(map);
 
@@ -139,12 +136,12 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
       });
 
       const apt = ad.apartmentUu;
-      const addressParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(', ');
+      const addressParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(", ");
 
-      marker.bindTooltip(addressParts || 'Không rõ vị trí', {
-        direction: 'top',
+      marker.bindTooltip(addressParts || "Không rõ vị trí", {
+        direction: "top",
         offset: [0, -10],
-        className: 'map-tooltip',
+        className: "map-tooltip",
       });
 
       marker.bindPopup(buildPopupHtml(ad), {
@@ -152,7 +149,7 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
         maxWidth: 260,
       });
 
-      marker.on('click', () => onMarkerClick?.(ad.uuid));
+      marker.on("click", () => onMarkerClick?.(ad.uuid));
       marker.addTo(map);
       markersRef.current.set(ad.uuid, marker);
     });
@@ -177,7 +174,7 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
 
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border min-h-[400px]">
-      <div ref={containerRef} style={{ width: '100%', height: '100%', minHeight: 400, zIndex: 0 }} />
+      <div ref={containerRef} style={{ width: "100%", height: "100%", minHeight: 400, zIndex: 0 }} />
 
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-[1000] pointer-events-none">
