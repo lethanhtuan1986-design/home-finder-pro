@@ -1,19 +1,18 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
 import { MapView } from '@/components/MapView';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import advertisementService, { GetAdvertisementsForMapRequest } from '@/services/advertisement.service';
 import provinceService, { ProvinceItem } from '@/services/province.service';
 import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
-import { filterPrices, filterApartmentSizes, FilterOption } from '@/lib/filter-options';
+import { filterPrices, filterApartmentSizes } from '@/lib/filter-options';
 import { httpRequest } from '@/services/index';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, Search, MapPin } from 'lucide-react';
+import { Loader2, MapPin } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -26,18 +25,30 @@ const PAGE_SIZE = 20;
 
 const MapPage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { t } = useTranslation();
 
-  // Filter states
-  const [provinceId, setProvinceId] = useState('');
-  const [wardId, setWardId] = useState('');
-  const [apartmentTypeUuid, setApartmentTypeUuid] = useState('');
-  const [priceFrom, setPriceFrom] = useState('');
-  const [priceTo, setPriceTo] = useState('');
-  const [apartmentSizeFrom, setApartmentSizeFrom] = useState('');
-  const [apartmentSizeTo, setApartmentSizeTo] = useState('');
-  const [keyword, setKeyword] = useState('');
+  // Read filters from URL params
+  const keyword = searchParams.get('keyword') || '';
+  const provinceId = searchParams.get('provinceId') || '';
+  const wardId = searchParams.get('wardId') || '';
+  const apartmentTypeUuid = searchParams.get('apartmentTypeUuid') || '';
+  const priceFrom = searchParams.get('priceFrom') || '';
+  const priceTo = searchParams.get('priceTo') || '';
+  const apartmentSizeFrom = searchParams.get('apartmentSizeFrom') || '';
+  const apartmentSizeTo = searchParams.get('apartmentSizeTo') || '';
+
+  const updateParam = useCallback((updates: Record<string, string>) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      Object.entries(updates).forEach(([k, v]) => {
+        if (v) next.set(k, v);
+        else next.delete(k);
+      });
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
 
   const selectedPriceUuid = filterPrices.find(
     (fp) => String(fp.value || '') === priceFrom && String(fp.valueTo || '') === priceTo
@@ -105,24 +116,28 @@ const MapPage = () => {
 
   const handlePriceSelect = (uuid: string) => {
     if (uuid === '__all__' || uuid === selectedPriceUuid) {
-      setPriceFrom(''); setPriceTo('');
+      updateParam({ priceFrom: '', priceTo: '' });
     } else {
       const fp = filterPrices.find((p) => p.uuid === uuid);
       if (fp) {
-        setPriceFrom(fp.value ? String(fp.value) : '');
-        setPriceTo(fp.valueTo ? String(fp.valueTo) : '');
+        updateParam({
+          priceFrom: fp.value ? String(fp.value) : '',
+          priceTo: fp.valueTo ? String(fp.valueTo) : '',
+        });
       }
     }
   };
 
   const handleSizeSelect = (uuid: string) => {
     if (uuid === '__all__' || uuid === selectedSizeUuid) {
-      setApartmentSizeFrom(''); setApartmentSizeTo('');
+      updateParam({ apartmentSizeFrom: '', apartmentSizeTo: '' });
     } else {
       const fs = filterApartmentSizes.find((s) => s.uuid === uuid);
       if (fs) {
-        setApartmentSizeFrom(fs.value ? String(fs.value) : '');
-        setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : '');
+        updateParam({
+          apartmentSizeFrom: fs.value ? String(fs.value) : '',
+          apartmentSizeTo: fs.valueTo ? String(fs.valueTo) : '',
+        });
       }
     }
   };
@@ -137,13 +152,13 @@ const MapPage = () => {
         <div className="max-w-[1600px] mx-auto flex flex-wrap gap-2 items-center">
           <input
             value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) => updateParam({ keyword: e.target.value })}
             placeholder={t('search.keywordPlaceholder')}
             className="custom-input flex-1 min-w-[120px] max-w-[200px]"
           />
           <Select
             value={provinceId || '__all__'}
-            onValueChange={(val) => { setProvinceId(val === '__all__' ? '' : val); setWardId(''); }}
+            onValueChange={(val) => updateParam({ provinceId: val === '__all__' ? '' : val, wardId: '' })}
           >
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder={t('hero.area')} />
@@ -157,7 +172,7 @@ const MapPage = () => {
           </Select>
           <Select
             value={wardId || '__all__'}
-            onValueChange={(val) => setWardId(val === '__all__' ? '' : val)}
+            onValueChange={(val) => updateParam({ wardId: val === '__all__' ? '' : val })}
             disabled={!provinceId || (wardsLoading && wards.length === 0)}
           >
             <SelectTrigger className="w-[160px]">
@@ -172,7 +187,7 @@ const MapPage = () => {
           </Select>
           <Select
             value={apartmentTypeUuid || '__all__'}
-            onValueChange={(val) => setApartmentTypeUuid(val === '__all__' ? '' : val)}
+            onValueChange={(val) => updateParam({ apartmentTypeUuid: val === '__all__' ? '' : val })}
           >
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder={t('hero.roomType')} />
