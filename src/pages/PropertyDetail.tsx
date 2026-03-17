@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,10 +24,7 @@ const PropertyDetail = () => {
 
   const { data: detail, isLoading: loading, error: queryError } = useQuery<AdvertisementDetailData>({
     queryKey: ['advertisement-detail', id],
-    queryFn: () =>
-      httpRequest({
-        http: advertisementService.getByUuid(id!),
-      }),
+    queryFn: () => httpRequest({ http: advertisementService.getByUuid(id!) }),
     enabled: !!id,
   });
 
@@ -72,6 +70,8 @@ const PropertyDetail = () => {
   const images = detail.images.map(getImageUrl);
   const address = `${apt.address}, ${apt.ward?.fullName}, ${apt.province?.fullName}`;
   const descriptionText = apt.description || detail.description || detail.title;
+  const manager = apt.managerUu || apt.ownerUu;
+  const managerAvatar = manager?.profileImage ? getImageUrl(manager.profileImage) : null;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -245,11 +245,16 @@ const PropertyDetail = () => {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
               <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.contact')}</h2>
               <div className="flex items-center gap-4 bg-card border border-border rounded-xl p-4">
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-primary font-bold text-lg">
-                  {(apt.managerUu?.name || apt.ownerUu?.name || 'X').charAt(0)}
-                </div>
+                <Avatar className="h-12 w-12">
+                  {managerAvatar && (
+                    <AvatarImage src={managerAvatar} alt={manager?.name || ''} />
+                  )}
+                  <AvatarFallback className="bg-accent text-primary font-bold text-lg">
+                    {(manager?.name || 'X').charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1">
-                  <p className="font-semibold text-foreground">{apt.managerUu?.name || apt.ownerUu?.name}</p>
+                  <p className="font-semibold text-foreground">{manager?.name}</p>
                   <p className="text-sm text-muted-foreground">{t('detail.manager')}</p>
                 </div>
                 {detail.phoneNumber && (
@@ -266,7 +271,11 @@ const PropertyDetail = () => {
 
           <div className="lg:col-span-1">
             <div className="sticky top-20">
-              <ScheduleForm propertyTitle={detail.title} />
+              <ScheduleForm
+                propertyTitle={detail.title}
+                apartmentUuid={apt.uuid}
+                advertisementUuid={detail.uuid}
+              />
             </div>
           </div>
         </div>

@@ -161,6 +161,39 @@ export interface GetListAdvertisementRequest {
   address?: string;
 }
 
+export interface GetSimilarAdvertisementRequest {
+  keyword?: string;
+  isPaging?: number;
+  page?: number;
+  pageSize?: number;
+  uuid: string;
+}
+
+export interface GetAdvertisementsForMapRequest {
+  keyword?: string;
+  isPaging?: number;
+  page?: number;
+  pageSize?: number;
+  typeFinding?: number;
+  parentApartmentUuid?: string;
+  apartmentCode?: string;
+  apartmentUuid?: string;
+  priceFrom?: number;
+  priceTo?: number;
+  apartmentTypeUuid?: string;
+  apartmentSizeFrom?: number;
+  apartmentSizeTo?: number;
+  numRoomFrom?: number;
+  numRoomTo?: number;
+  provinceId?: string;
+  wardId?: string;
+  address?: string;
+  neLat?: number;
+  neLng?: number;
+  swLat?: number;
+  swLng?: number;
+}
+
 export interface GetListAdvertisementResponse {
   items: AdvertisementData[];
   pagination: Pagination;
@@ -171,6 +204,14 @@ export interface GetListAdvertisementResponse {
 const advertisementService = {
   getListPaged: (request: GetListAdvertisementRequest): Promise<ResponseBase<GetListAdvertisementResponse>> => {
     return axiosInstance.post('/Advertisement/customer-get-list-paged-advertisement', request);
+  },
+
+  getSimilar: (request: GetSimilarAdvertisementRequest): Promise<ResponseBase<GetListAdvertisementResponse>> => {
+    return axiosInstance.post('/Advertisement/get-similar-advertisement', request);
+  },
+
+  getForMap: (request: GetAdvertisementsForMapRequest): Promise<ResponseBase<GetListAdvertisementResponse>> => {
+    return axiosInstance.post('/Advertisement/get-advertisements-for-map', request);
   },
 
   getByUuid: (uuid: string): Promise<ResponseBase<AdvertisementDetailData>> => {

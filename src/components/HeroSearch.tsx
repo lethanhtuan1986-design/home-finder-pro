@@ -8,7 +8,7 @@ import heroImage from '@/assets/hero-illustration.png';
 import { httpRequest } from '@/services/index';
 import provinceService, { ProvinceItem } from '@/services/province.service';
 import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
-import { filterPrices, filterApartmentSizes, FilterOption } from '@/lib/filter-options';
+import { filterPrices, filterApartmentSizes } from '@/lib/filter-options';
 
 export const HeroSearch = () => {
   const navigate = useNavigate();
@@ -21,18 +21,12 @@ export const HeroSearch = () => {
 
   const { data: provinces = [] } = useQuery<ProvinceItem[]>({
     queryKey: ['dropdown-province'],
-    queryFn: () =>
-      httpRequest({
-        http: provinceService.listProvince({ keyword: '' }),
-      }),
+    queryFn: () => httpRequest({ http: provinceService.listProvince({ keyword: '' }) }),
   });
 
   const { data: wards = [] } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
     queryKey: ['dropdown-ward', provinceId],
-    queryFn: () =>
-      httpRequest({
-        http: provinceService.listWard({ keyword: '', provinceCode: provinceId }),
-      }),
+    queryFn: () => httpRequest({ http: provinceService.listWard({ keyword: '', provinceCode: provinceId }) }),
     enabled: !!provinceId,
   });
 
@@ -41,12 +35,7 @@ export const HeroSearch = () => {
     queryFn: () =>
       httpRequest({
         http: apartmentTypeService.listApartmentType({
-          isPaging: 0,
-          typeFinding: 0,
-          page: 1,
-          pageSize: 100,
-          keyword: '',
-          status: 1,
+          isPaging: 0, typeFinding: 0, page: 1, pageSize: 100, keyword: '', status: 1,
         }),
       }),
   });
@@ -113,17 +102,12 @@ export const HeroSearch = () => {
                 <label className="search-field-label">{t('hero.area')}</label>
                 <select
                   value={provinceId}
-                  onChange={(e) => {
-                    setProvinceId(e.target.value);
-                    setWardId('');
-                  }}
-                  className="search-field-input"
+                  onChange={(e) => { setProvinceId(e.target.value); setWardId(''); }}
+                  className="search-field-select"
                 >
                   <option value="">{t('hero.allDistricts')}</option>
                   {provinces.map((p) => (
-                    <option key={p.code} value={p.code}>
-                      {p.fullName}
-                    </option>
+                    <option key={p.code} value={p.code}>{p.fullName}</option>
                   ))}
                 </select>
               </div>
@@ -134,14 +118,12 @@ export const HeroSearch = () => {
                 <select
                   value={wardId}
                   onChange={(e) => setWardId(e.target.value)}
-                  className="search-field-input"
+                  className="search-field-select"
                   disabled={!provinceId}
                 >
                   <option value="">{t('hero.allWards')}</option>
                   {wards.map((w) => (
-                    <option key={w.code} value={w.code}>
-                      {w.fullName}
-                    </option>
+                    <option key={w.code} value={w.code}>{w.fullName}</option>
                   ))}
                 </select>
               </div>
@@ -152,13 +134,11 @@ export const HeroSearch = () => {
                 <select
                   value={apartmentTypeUuid}
                   onChange={(e) => setApartmentTypeUuid(e.target.value)}
-                  className="search-field-input"
+                  className="search-field-select"
                 >
                   <option value="">{t('hero.allTypes')}</option>
                   {apartmentTypes.map((at) => (
-                    <option key={at.uuid} value={at.uuid}>
-                      {at.name}
-                    </option>
+                    <option key={at.uuid} value={at.uuid}>{at.name}</option>
                   ))}
                 </select>
               </div>
@@ -169,13 +149,11 @@ export const HeroSearch = () => {
                 <select
                   value={priceUuid}
                   onChange={(e) => setPriceUuid(e.target.value)}
-                  className="search-field-input"
+                  className="search-field-select"
                 >
                   <option value="">{t('hero.allPrices')}</option>
                   {filterPrices.map((fp) => (
-                    <option key={fp.uuid} value={fp.uuid}>
-                      {fp.name}
-                    </option>
+                    <option key={fp.uuid} value={fp.uuid}>{fp.name}</option>
                   ))}
                 </select>
               </div>
@@ -186,13 +164,11 @@ export const HeroSearch = () => {
                 <select
                   value={sizeUuid}
                   onChange={(e) => setSizeUuid(e.target.value)}
-                  className="search-field-input"
+                  className="search-field-select"
                 >
                   <option value="">{t('hero.allSizes')}</option>
                   {filterApartmentSizes.map((fs) => (
-                    <option key={fs.uuid} value={fs.uuid}>
-                      {fs.name}
-                    </option>
+                    <option key={fs.uuid} value={fs.uuid}>{fs.name}</option>
                   ))}
                 </select>
               </div>

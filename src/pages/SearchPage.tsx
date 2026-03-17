@@ -4,10 +4,8 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { SEO } from '@/components/SEO';
 import { Navbar } from '@/components/Navbar';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
-import { PropertyCard } from '@/components/PropertyCard';
 import { MapView } from '@/components/MapView';
 import { Footer } from '@/components/Footer';
-import { mockProperties, filterProperties } from '@/lib/mock-data';
 import { filterPrices, filterApartmentSizes, FilterOption } from '@/lib/filter-options';
 import advertisementService, { GetListAdvertisementRequest } from '@/services/advertisement.service';
 import provinceService, { ProvinceItem } from '@/services/province.service';
@@ -26,7 +24,6 @@ const SearchPage = () => {
   const { t } = useTranslation();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(true);
-  const [mockPage, setMockPage] = useState(1);
 
   // Filter states from URL
   const [provinceId, setProvinceId] = useState(searchParams.get('provinceId') || '');
@@ -38,32 +35,23 @@ const SearchPage = () => {
   const [apartmentSizeTo, setApartmentSizeTo] = useState(searchParams.get('apartmentSizeTo') || '');
   const [keyword, setKeyword] = useState(searchParams.get('q') || '');
 
-  // Derive selected price/size uuid from URL params
   const selectedPriceUuid = filterPrices.find(
-    (fp) =>
-      String(fp.value || '') === priceFrom && String(fp.valueTo || '') === priceTo
+    (fp) => String(fp.value || '') === priceFrom && String(fp.valueTo || '') === priceTo
   )?.uuid || '';
 
   const selectedSizeUuid = filterApartmentSizes.find(
-    (fs) =>
-      String(fs.value || '') === apartmentSizeFrom && String(fs.valueTo || '') === apartmentSizeTo
+    (fs) => String(fs.value || '') === apartmentSizeFrom && String(fs.valueTo || '') === apartmentSizeTo
   )?.uuid || '';
 
   // API data: provinces, wards, apartment types
   const { data: provinces = [] } = useQuery<ProvinceItem[]>({
     queryKey: ['dropdown-province'],
-    queryFn: () =>
-      httpRequest({
-        http: provinceService.listProvince({ keyword: '' }),
-      }),
+    queryFn: () => httpRequest({ http: provinceService.listProvince({ keyword: '' }) }),
   });
 
   const { data: wards = [] } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
     queryKey: ['dropdown-ward', provinceId],
-    queryFn: () =>
-      httpRequest({
-        http: provinceService.listWard({ keyword: '', provinceCode: provinceId }),
-      }),
+    queryFn: () => httpRequest({ http: provinceService.listWard({ keyword: '', provinceCode: provinceId }) }),
     enabled: !!provinceId,
   });
 
@@ -72,23 +60,14 @@ const SearchPage = () => {
     queryFn: () =>
       httpRequest({
         http: apartmentTypeService.listApartmentType({
-          isPaging: 0,
-          typeFinding: 0,
-          page: 1,
-          pageSize: 100,
-          keyword: '',
-          status: 1,
+          isPaging: 0, typeFinding: 0, page: 1, pageSize: 100, keyword: '', status: 1,
         }),
       }),
   });
 
   // Build API request
   const buildRequest = (pageNum: number): GetListAdvertisementRequest => {
-    const req: GetListAdvertisementRequest = {
-      isPaging: 1,
-      page: pageNum,
-      pageSize: PAGE_SIZE,
-    };
+    const req: GetListAdvertisementRequest = { isPaging: 1, page: pageNum, pageSize: PAGE_SIZE };
     if (keyword) req.keyword = keyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
@@ -110,9 +89,7 @@ const SearchPage = () => {
   } = useInfiniteQuery({
     queryKey: ['advertisements', keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo],
     queryFn: ({ pageParam = 1 }) =>
-      httpRequest({
-        http: advertisementService.getListPaged(buildRequest(pageParam as number)),
-      }),
+      httpRequest({ http: advertisementService.getListPaged(buildRequest(pageParam as number)) }),
     getNextPageParam: (lastPage: any, allPages) => {
       if (!lastPage?.pagination) return undefined;
       const nextPage = allPages.length + 1;
@@ -143,27 +120,14 @@ const SearchPage = () => {
   }, [keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo, setSearchParams]);
 
   const handlePriceSelect = (fp: FilterOption) => {
-    if (selectedPriceUuid === fp.uuid) {
-      setPriceFrom('');
-      setPriceTo('');
-    } else {
-      setPriceFrom(fp.value ? String(fp.value) : '');
-      setPriceTo(fp.valueTo ? String(fp.valueTo) : '');
-    }
+    if (selectedPriceUuid === fp.uuid) { setPriceFrom(''); setPriceTo(''); }
+    else { setPriceFrom(fp.value ? String(fp.value) : ''); setPriceTo(fp.valueTo ? String(fp.valueTo) : ''); }
   };
 
   const handleSizeSelect = (fs: FilterOption) => {
-    if (selectedSizeUuid === fs.uuid) {
-      setApartmentSizeFrom('');
-      setApartmentSizeTo('');
-    } else {
-      setApartmentSizeFrom(fs.value ? String(fs.value) : '');
-      setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : '');
-    }
+    if (selectedSizeUuid === fs.uuid) { setApartmentSizeFrom(''); setApartmentSizeTo(''); }
+    else { setApartmentSizeFrom(fs.value ? String(fs.value) : ''); setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : ''); }
   };
-
-  const hasApiData = advertisements.length > 0;
-  const displayCount = hasApiData ? totalCount : mockProperties.length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -181,18 +145,15 @@ const SearchPage = () => {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder={t('search.keywordPlaceholder')}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
+                className="custom-input w-full"
               />
             </div>
             <div className="flex-1 min-w-[140px]">
               <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('search.area')}</label>
               <select
                 value={provinceId}
-                onChange={(e) => {
-                  setProvinceId(e.target.value);
-                  setWardId('');
-                }}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
+                onChange={(e) => { setProvinceId(e.target.value); setWardId(''); }}
+                className="custom-select w-full"
               >
                 <option value="">{t('search.all')}</option>
                 {provinces.map((p) => (
@@ -205,7 +166,7 @@ const SearchPage = () => {
               <select
                 value={wardId}
                 onChange={(e) => setWardId(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
+                className="custom-select w-full"
                 disabled={!provinceId}
               >
                 <option value="">{t('search.all')}</option>
@@ -216,7 +177,7 @@ const SearchPage = () => {
             </div>
             <button
               onClick={() => setShowMap(!showMap)}
-              className="px-3 py-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-secondary transition-colors flex items-center gap-2 text-foreground"
+              className="px-3 py-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-secondary transition-colors flex items-center gap-2 text-foreground h-10"
             >
               {showMap ? <List size={16} /> : <MapIcon size={16} />}
               {showMap ? t('search.list') : t('search.map')}
@@ -295,7 +256,7 @@ const SearchPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-2 mb-4">
             <p className="text-sm text-muted-foreground">
-              {displayCount} {t('search.found')}
+              {totalCount} {t('search.found')}
             </p>
             {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
           </div>
@@ -324,7 +285,7 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {hasApiData && (
+              {advertisements.length > 0 && (
                 <div className={`grid ${showMap ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
                   {advertisements.map((ad: any, i: number) => (
                     <div key={ad.uuid} onMouseEnter={() => setHoveredId(ad.uuid)} onMouseLeave={() => setHoveredId(null)}>
@@ -334,25 +295,15 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {!hasApiData && !loading && (
-                <div className={`grid ${showMap ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
-                  {mockProperties.slice(0, PAGE_SIZE * mockPage).map((p, i) => (
-                    <div key={p.id} onMouseEnter={() => setHoveredId(p.id)} onMouseLeave={() => setHoveredId(null)}>
-                      <PropertyCard data={p} index={i} />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {!loading && displayCount === 0 && (
+              {!loading && advertisements.length === 0 && (
                 <div className="text-center py-20 text-muted-foreground">
                   <Search size={48} className="mx-auto mb-4 opacity-30" />
-                  <p className="text-lg font-medium">{t('search.noResult')}</p>
+                  <p className="text-lg font-medium text-foreground">{t('search.noResult')}</p>
                   <p className="text-sm mt-1">{t('search.noResultHint')}</p>
                 </div>
               )}
 
-              {hasApiData && hasNextPage && (
+              {hasNextPage && (
                 <div className="text-center mt-8">
                   <button
                     onClick={() => fetchNextPage()}
@@ -369,24 +320,13 @@ const SearchPage = () => {
                   </button>
                 </div>
               )}
-
-              {!hasApiData && !loading && PAGE_SIZE * mockPage < mockProperties.length && (
-                <div className="text-center mt-8">
-                  <button
-                    onClick={() => setMockPage((p) => p + 1)}
-                    className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground"
-                  >
-                    {t('search.loadMore')}
-                  </button>
-                </div>
-              )}
             </div>
 
             {showMap && (
               <div className="hidden lg:block w-2/5">
                 <div className="sticky top-20 h-[calc(100vh-8rem)]">
                   <MapView
-                    properties={hasApiData ? [] : mockProperties}
+                    properties={[]}
                     hoveredId={hoveredId}
                     onMarkerClick={(id) => navigate(`/property/${id}`)}
                   />
