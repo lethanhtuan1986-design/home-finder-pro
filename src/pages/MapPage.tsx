@@ -284,6 +284,7 @@ const MapPage = () => {
         <div className="lg:w-[55%] h-[50vh] lg:h-auto lg:sticky lg:top-16">
           <div className="h-full p-4 lg:p-0 lg:pr-4 lg:py-4">
             <MapView
+              advertisements={advertisements}
               hoveredId={hoveredId}
               onMarkerClick={(id) => navigate(`/property/${id}`)}
             />
