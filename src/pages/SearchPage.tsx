@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { SEO } from '@/components/SEO';
 import { Navbar } from '@/components/Navbar';
 import { FilterBar } from '@/components/FilterBar';
@@ -9,6 +10,7 @@ import { MapView } from '@/components/MapView';
 import { Footer } from '@/components/Footer';
 import { mockProperties, filterProperties, DISTRICTS, ROOM_TYPES } from '@/lib/mock-data';
 import advertisementService, { AdvertisementData, GetListAdvertisementRequest } from '@/services/advertisement.service';
+import { httpRequest } from '@/services/index';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, Map as MapIcon, List, Loader2 } from 'lucide-react';
@@ -26,6 +28,7 @@ const SearchPage = () => {
   });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(true);
+  const [mockPage, setMockPage] = useState(1);
 
   const [district, setDistrict] = useState(searchParams.get('district') || '');
   const [priceMax, setPriceMax] = useState(searchParams.get('price_max') || '');
@@ -33,55 +36,49 @@ const SearchPage = () => {
   const [sizeMin, setSizeMin] = useState(searchParams.get('size') || '');
   const [keyword, setKeyword] = useState(searchParams.get('q') || '');
 
-  const [advertisements, setAdvertisements] = useState<AdvertisementData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalPage, setTotalPage] = useState(0);
+  const buildRequest = (pageNum: number): GetListAdvertisementRequest => {
+    const req: GetListAdvertisementRequest = {
+      isPaging: 1,
+      page: pageNum,
+      pageSize: PAGE_SIZE,
+    };
+    if (keyword) req.keyword = keyword;
+    if (district) req.provinceId = district;
+    if (priceMax) req.priceTo = Number(priceMax);
+    if (sizeMin) req.apartmentSizeFrom = Number(sizeMin);
+    if (activeFilters.includes('under3m')) req.priceTo = 3000000;
+    if (activeFilters.includes('under5m') && !activeFilters.includes('under3m')) req.priceTo = 5000000;
+    if (activeFilters.includes('furnished')) req.keyword = (req.keyword || '') + ' nội thất';
+    return req;
+  };
 
-  const buildRequest = useCallback(
-    (pageNum: number): GetListAdvertisementRequest => {
-      const req: GetListAdvertisementRequest = {
-        isPaging: 1,
-        page: pageNum,
-        pageSize: PAGE_SIZE,
-      };
-      if (keyword) req.keyword = keyword;
-      if (district) req.provinceId = district;
-      if (priceMax) req.priceTo = Number(priceMax);
-      if (sizeMin) req.apartmentSizeFrom = Number(sizeMin);
-      if (activeFilters.includes('under3m')) req.priceTo = 3000000;
-      if (activeFilters.includes('under5m') && !activeFilters.includes('under3m')) req.priceTo = 5000000;
-      if (activeFilters.includes('furnished')) req.keyword = (req.keyword || '') + ' nội thất';
-      return req;
+  const {
+    data: infiniteData,
+    isLoading: loading,
+    error: queryError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['advertisements', keyword, district, priceMax, sizeMin, activeFilters],
+    queryFn: ({ pageParam = 1 }) =>
+      httpRequest({
+        http: advertisementService.getListPaged(buildRequest(pageParam as number)),
+      }),
+    getNextPageParam: (lastPage: any, allPages) => {
+      if (!lastPage?.pagination) return undefined;
+      const nextPage = allPages.length + 1;
+      return nextPage <= lastPage.pagination.totalPage ? nextPage : undefined;
     },
-    [keyword, district, priceMax, sizeMin, activeFilters]
-  );
+    initialPageParam: 1,
+  });
 
-  const fetchData = useCallback(
-    async (pageNum: number, append = false) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await advertisementService.getListPaged(buildRequest(pageNum));
-        if (res.error.code === 0) {
-          setAdvertisements(prev => (append ? [...prev, ...res.data.items] : res.data.items));
-          setTotalCount(res.data.pagination.totalCount);
-          setTotalPage(res.data.pagination.totalPage);
-        } else {
-          setError(res.error.message);
-        }
-      } catch (err) {
-        console.error('API Error:', err);
-        setError(t('search.serverError'));
-        setAdvertisements([]);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [buildRequest, t]
+  const advertisements = useMemo(
+    () => infiniteData?.pages.flatMap((p: any) => p?.items || []) ?? [],
+    [infiniteData]
   );
+  const totalCount = infiniteData?.pages[0]?.pagination?.totalCount ?? 0;
+  const error = queryError ? t('search.serverError') : null;
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -94,15 +91,8 @@ const SearchPage = () => {
     setSearchParams(params, { replace: true });
   }, [keyword, district, priceMax, roomType, sizeMin, activeFilters, setSearchParams]);
 
-  useEffect(() => {
-    setPage(1);
-    fetchData(1);
-  }, [district, priceMax, roomType, sizeMin, activeFilters, keyword]);
-
   const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchData(nextPage, true);
+    fetchNextPage();
   };
 
   const mockFiltered = (() => {
@@ -242,7 +232,7 @@ const SearchPage = () => {
 
               {!hasApiData && !loading && (
                 <div className={`grid ${showMap ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
-                  {mockFiltered.slice(0, PAGE_SIZE * page).map((p, i) => (
+                  {mockFiltered.slice(0, PAGE_SIZE * mockPage).map((p, i) => (
                     <div key={p.id} onMouseEnter={() => setHoveredId(p.id)} onMouseLeave={() => setHoveredId(null)}>
                       <PropertyCard data={p} index={i} />
                     </div>
@@ -258,14 +248,14 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {hasApiData && page < totalPage && (
+              {hasApiData && hasNextPage && (
                 <div className="text-center mt-8">
                   <button
                     onClick={loadMore}
-                    disabled={loading}
+                    disabled={isFetchingNextPage}
                     className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground disabled:opacity-50"
                   >
-                    {loading ? (
+                    {isFetchingNextPage ? (
                       <span className="flex items-center gap-2">
                         <Loader2 size={16} className="animate-spin" /> {t('search.loading')}
                       </span>
@@ -276,13 +266,13 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {!hasApiData && !loading && PAGE_SIZE * page < mockFiltered.length && (
+              {!hasApiData && !loading && PAGE_SIZE * mockPage < mockFiltered.length && (
                 <div className="text-center mt-8">
                   <button
-                    onClick={() => setPage(p => p + 1)}
+                    onClick={() => setMockPage(p => p + 1)}
                     className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground"
                   >
-                    {t('search.loadMore')} ({mockFiltered.length - PAGE_SIZE * page} {t('search.found')})
+                    {t('search.loadMore')} ({mockFiltered.length - PAGE_SIZE * mockPage} {t('search.found')})
                   </button>
                 </div>
               )}

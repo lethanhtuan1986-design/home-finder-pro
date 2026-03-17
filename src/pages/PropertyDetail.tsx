@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { PropertyGallery } from '@/components/PropertyGallery';
@@ -8,7 +8,7 @@ import { SEO } from '@/components/SEO';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
 import { useTranslation } from 'react-i18next';
 import advertisementService, { AdvertisementDetailData } from '@/services/advertisement.service';
-import { formatVNPrice, getImageUrl } from '@/services/index';
+import { formatVNPrice, getImageUrl, httpRequest } from '@/services/index';
 import {
   MapPin, Maximize, Heart, ChevronLeft, Check, Phone,
   Building, Star, Eye, Zap, Droplets, Bed, Sofa,
@@ -20,25 +20,17 @@ const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { isSaved, toggleSave } = useSavedRooms();
   const { t } = useTranslation();
-  const [detail, setDetail] = useState<AdvertisementDetailData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    setError(null);
-    advertisementService.getByUuid(id)
-      .then(res => {
-        if (res.error.code === 0) {
-          setDetail(res.data);
-        } else {
-          setError(res.error.message);
-        }
-      })
-      .catch(() => setError(t('detail.loadError')))
-      .finally(() => setLoading(false));
-  }, [id, t]);
+  const { data: detail, isLoading: loading, error: queryError } = useQuery<AdvertisementDetailData>({
+    queryKey: ['advertisement-detail', id],
+    queryFn: () =>
+      httpRequest({
+        http: advertisementService.getByUuid(id!),
+      }),
+    enabled: !!id,
+  });
+
+  const error = queryError ? t('detail.loadError') : null;
 
   if (loading) {
     return (
