@@ -9,6 +9,10 @@ export interface ListApartmentTypeRequest {
   status: number;
 }
 
+export interface GetApartmentTypeRequest {
+  uuid: string;
+}
+
 export interface ApartmentTypeItem {
   uuid: string;
   code: string;
