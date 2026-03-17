@@ -1,20 +1,37 @@
 import { HeroSearch } from '@/components/HeroSearch';
-import { FilterBar } from '@/components/FilterBar';
 import { PropertyGrid } from '@/components/PropertyGrid';
 import { AppDownload } from '@/components/AppDownload';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
 import { SEO } from '@/components/SEO';
+import { useQuery } from '@tanstack/react-query';
+import { httpRequest } from '@/services/index';
+import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
+import { filterPrices, filterApartmentSizes, FilterOption } from '@/lib/filter-options';
 import { mockProperties } from '@/lib/mock-data';
-import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Zap, Eye } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const Index = () => {
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const { data: apartmentTypes = [] } = useQuery<ApartmentTypeItem[]>({
+    queryKey: ['dropdown-apartment-type'],
+    queryFn: () =>
+      httpRequest({
+        http: apartmentTypeService.listApartmentType({
+          isPaging: 0,
+          typeFinding: 0,
+          page: 1,
+          pageSize: 100,
+          keyword: '',
+          status: 1,
+        }),
+      }),
+  });
 
   const features = [
     { icon: Zap, title: t('features.fast'), desc: t('features.fastDesc') },
@@ -22,26 +39,25 @@ const Index = () => {
     { icon: Shield, title: t('features.trusted'), desc: t('features.trustedDesc') },
   ];
 
-  const filteredProperties = useMemo(() => {
-    if (activeFilters.length === 0) return mockProperties.slice(0, 6);
-    return mockProperties.filter(p => {
-      if (activeFilters.includes('under3m') && p.price >= 3000000) return false;
-      if (activeFilters.includes('under5m') && p.price >= 5000000) return false;
-      if (activeFilters.includes('furnished') && !p.furnished) return false;
-      if (activeFilters.includes('studio') && p.type !== 'Studio') return false;
-      if (activeFilters.includes('central') && !p.distance?.includes('km')) return false;
-      if (activeFilters.includes('balcony') && !p.hasBalcony) return false;
-      if (activeFilters.includes('apartment') && p.type !== 'Căn hộ') return false;
-      if (activeFilters.includes('room') && p.type !== 'Phòng trọ') return false;
-      return true;
-    }).slice(0, 6);
-  }, [activeFilters]);
-
-  const toggleFilter = (key: string) => {
-    setActiveFilters(prev =>
-      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
-    );
+  const handleFilterClick = (params: Record<string, string>) => {
+    const searchParams = new URLSearchParams(params);
+    navigate(`/search?${searchParams.toString()}`);
   };
+
+  // Quick filter chips that redirect to search
+  const quickFilters = [
+    ...apartmentTypes.map((at) => ({
+      label: at.name,
+      params: { apartmentTypeUuid: at.uuid },
+    })),
+    ...filterPrices.slice(0, 3).map((fp) => ({
+      label: fp.name,
+      params: {
+        ...(fp.value ? { priceFrom: String(fp.value) } : {}),
+        ...(fp.valueTo ? { priceTo: String(fp.valueTo) } : {}),
+      },
+    })),
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,9 +100,22 @@ const Index = () => {
             {t('listing.viewAll')} <ArrowRight size={16} />
           </Link>
         </div>
-        <FilterBar activeFilters={activeFilters} onToggle={toggleFilter} />
+
+        {/* Quick filter chips - redirect to SearchPage */}
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+          {quickFilters.map((qf, i) => (
+            <button
+              key={i}
+              onClick={() => handleFilterClick(qf.params)}
+              className="filter-chip whitespace-nowrap"
+            >
+              {qf.label}
+            </button>
+          ))}
+        </div>
+
         <div className="mt-6">
-          <PropertyGrid properties={filteredProperties} />
+          <PropertyGrid properties={mockProperties.slice(0, 6)} />
         </div>
         <div className="mt-8 text-center md:hidden">
           <Link to="/search" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">

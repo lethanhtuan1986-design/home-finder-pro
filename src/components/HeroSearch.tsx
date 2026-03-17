@@ -1,25 +1,74 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import heroImage from '@/assets/hero-illustration.png';
-import { DISTRICTS, ROOM_TYPES } from '@/lib/mock-data';
+import { httpRequest } from '@/services/index';
+import provinceService, { ProvinceItem } from '@/services/province.service';
+import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
+import { filterPrices, filterApartmentSizes, FilterOption } from '@/lib/filter-options';
 
 export const HeroSearch = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [area, setArea] = useState('');
-  const [priceRange, setPriceRange] = useState('');
-  const [sizeRange, setSizeRange] = useState('');
-  const [roomType, setRoomType] = useState('');
+  const [provinceId, setProvinceId] = useState('');
+  const [wardId, setWardId] = useState('');
+  const [priceUuid, setPriceUuid] = useState('');
+  const [sizeUuid, setSizeUuid] = useState('');
+  const [apartmentTypeUuid, setApartmentTypeUuid] = useState('');
+
+  const { data: provinces = [] } = useQuery<ProvinceItem[]>({
+    queryKey: ['dropdown-province'],
+    queryFn: () =>
+      httpRequest({
+        http: provinceService.listProvince({ keyword: '' }),
+      }),
+  });
+
+  const { data: wards = [] } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
+    queryKey: ['dropdown-ward', provinceId],
+    queryFn: () =>
+      httpRequest({
+        http: provinceService.listWard({ keyword: '', provinceCode: provinceId }),
+      }),
+    enabled: !!provinceId,
+  });
+
+  const { data: apartmentTypes = [] } = useQuery<ApartmentTypeItem[]>({
+    queryKey: ['dropdown-apartment-type'],
+    queryFn: () =>
+      httpRequest({
+        http: apartmentTypeService.listApartmentType({
+          isPaging: 0,
+          typeFinding: 0,
+          page: 1,
+          pageSize: 100,
+          keyword: '',
+          status: 1,
+        }),
+      }),
+  });
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (area) params.set('district', area);
-    if (priceRange) params.set('price_max', priceRange);
-    if (sizeRange) params.set('size', sizeRange);
-    if (roomType) params.set('type', roomType);
+    if (provinceId) params.set('provinceId', provinceId);
+    if (wardId) params.set('wardId', wardId);
+    if (apartmentTypeUuid) params.set('apartmentTypeUuid', apartmentTypeUuid);
+
+    const selectedPrice = filterPrices.find((p) => p.uuid === priceUuid);
+    if (selectedPrice) {
+      if (selectedPrice.value) params.set('priceFrom', String(selectedPrice.value));
+      if (selectedPrice.valueTo) params.set('priceTo', String(selectedPrice.valueTo));
+    }
+
+    const selectedSize = filterApartmentSizes.find((s) => s.uuid === sizeUuid);
+    if (selectedSize) {
+      if (selectedSize.value) params.set('apartmentSizeFrom', String(selectedSize.value));
+      if (selectedSize.valueTo) params.set('apartmentSizeTo', String(selectedSize.valueTo));
+    }
+
     navigate(`/search?${params.toString()}`);
   };
 
@@ -58,40 +107,93 @@ export const HeroSearch = () => {
           className="mt-4 md:-mt-4 relative z-20"
         >
           <div className="bg-card rounded-2xl shadow-soft border border-border p-2 flex flex-col md:flex-row items-stretch gap-2">
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border">
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-border">
+              {/* Khu vực */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.area')}</label>
-                <select value={area} onChange={e => setArea(e.target.value)} className="search-field-input">
+                <select
+                  value={provinceId}
+                  onChange={(e) => {
+                    setProvinceId(e.target.value);
+                    setWardId('');
+                  }}
+                  className="search-field-input"
+                >
                   <option value="">{t('hero.allDistricts')}</option>
-                  {DISTRICTS.map(d => (<option key={d} value={d}>{d}</option>))}
+                  {provinces.map((p) => (
+                    <option key={p.code} value={p.code}>
+                      {p.fullName}
+                    </option>
+                  ))}
                 </select>
               </div>
+
+              {/* Phường/xã */}
+              <div className="search-field">
+                <label className="search-field-label">{t('hero.ward')}</label>
+                <select
+                  value={wardId}
+                  onChange={(e) => setWardId(e.target.value)}
+                  className="search-field-input"
+                  disabled={!provinceId}
+                >
+                  <option value="">{t('hero.allWards')}</option>
+                  {wards.map((w) => (
+                    <option key={w.code} value={w.code}>
+                      {w.fullName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Loại hình */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.roomType')}</label>
-                <select value={roomType} onChange={e => setRoomType(e.target.value)} className="search-field-input">
+                <select
+                  value={apartmentTypeUuid}
+                  onChange={(e) => setApartmentTypeUuid(e.target.value)}
+                  className="search-field-input"
+                >
                   <option value="">{t('hero.allTypes')}</option>
-                  {ROOM_TYPES.map(t2 => (<option key={t2} value={t2}>{t2}</option>))}
+                  {apartmentTypes.map((at) => (
+                    <option key={at.uuid} value={at.uuid}>
+                      {at.name}
+                    </option>
+                  ))}
                 </select>
               </div>
+
+              {/* Khoảng giá */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.priceRange')}</label>
-                <select value={priceRange} onChange={e => setPriceRange(e.target.value)} className="search-field-input">
+                <select
+                  value={priceUuid}
+                  onChange={(e) => setPriceUuid(e.target.value)}
+                  className="search-field-input"
+                >
                   <option value="">{t('hero.allPrices')}</option>
-                  <option value="3000000">{t('hero.under')} 3 {t('hero.million')}</option>
-                  <option value="5000000">{t('hero.under')} 5 {t('hero.million')}</option>
-                  <option value="8000000">{t('hero.under')} 8 {t('hero.million')}</option>
-                  <option value="10000000">{t('hero.under')} 10 {t('hero.million')}</option>
-                  <option value="15000000">{t('hero.under')} 15 {t('hero.million')}</option>
+                  {filterPrices.map((fp) => (
+                    <option key={fp.uuid} value={fp.uuid}>
+                      {fp.name}
+                    </option>
+                  ))}
                 </select>
               </div>
+
+              {/* Diện tích */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.areaSize')}</label>
-                <select value={sizeRange} onChange={e => setSizeRange(e.target.value)} className="search-field-input">
+                <select
+                  value={sizeUuid}
+                  onChange={(e) => setSizeUuid(e.target.value)}
+                  className="search-field-input"
+                >
                   <option value="">{t('hero.allSizes')}</option>
-                  <option value="20">{t('hero.above')} 20m²</option>
-                  <option value="30">{t('hero.above')} 30m²</option>
-                  <option value="40">{t('hero.above')} 40m²</option>
-                  <option value="50">{t('hero.above')} 50m²</option>
+                  {filterApartmentSizes.map((fs) => (
+                    <option key={fs.uuid} value={fs.uuid}>
+                      {fs.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
