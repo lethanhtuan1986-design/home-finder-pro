@@ -358,7 +358,13 @@ const SearchPage = () => {
               <div className="hidden lg:block w-2/5">
                 <div className="sticky top-20 h-[calc(100vh-8rem)]">
                   <MapView
-                    advertisements={advertisements}
+                    locations={advertisements.map((ad: any) => ({
+                      point: ad.apartmentUu?.point ? String(ad.apartmentUu.point) : `[${ad.apartmentUu?.latitude || 0},${ad.apartmentUu?.longitude || 0}]`,
+                      longitude: ad.apartmentUu?.longitude || 0,
+                      address: ad.apartmentUu?.address || '',
+                      totalAds: 1,
+                      ads: [ad],
+                    }))}
                     hoveredId={hoveredId}
                     loading={loading && advertisements.length === 0}
                     onMarkerClick={(id) => navigate(`/property/${id}`)}
