@@ -7,12 +7,8 @@ import { ScheduleForm } from '@/components/ScheduleForm';
 import { SEO } from '@/components/SEO';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
 import { useTranslation } from 'react-i18next';
-import {
-  getAdvertisementByUuid,
-  AdvertisementDetailData,
-  formatVNPrice,
-  getImageUrl,
-} from '@/services/roomService';
+import advertisementService, { AdvertisementDetailData } from '@/services/advertisement.service';
+import { formatVNPrice, getImageUrl } from '@/services/index';
 import {
   MapPin, Maximize, Heart, ChevronLeft, Check, Phone,
   Building, Star, Eye, Zap, Droplets, Bed, Sofa,
@@ -32,7 +28,7 @@ const PropertyDetail = () => {
     if (!id) return;
     setLoading(true);
     setError(null);
-    getAdvertisementByUuid({ uuid: id })
+    advertisementService.getByUuid(id)
       .then(res => {
         if (res.error.code === 0) {
           setDetail(res.data);

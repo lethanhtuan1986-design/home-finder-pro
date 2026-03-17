@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.xanhstay.vn/api/v1";
+import axiosInstance, { ResponseBase, Pagination, fetchForSEO } from './index';
 
 // ==================== Types ====================
 
@@ -139,22 +139,6 @@ export interface AdvertisementDetailData {
   isMarketplace: number;
 }
 
-export interface Pagination {
-  totalCount: number;
-  totalPage: number;
-}
-
-export interface ResponseError {
-  code: number;
-  message: string;
-  trace: string | null;
-}
-
-export interface ResponseBase<T> {
-  error: ResponseError;
-  data: T;
-}
-
 export interface GetListAdvertisementRequest {
   keyword?: string;
   isPaging?: number;
@@ -182,53 +166,26 @@ export interface GetListAdvertisementResponse {
   pagination: Pagination;
 }
 
-export interface UuidBaseRequest {
-  uuid: string;
+// ==================== API Functions (axios) ====================
+
+const advertisementService = {
+  getListPaged: (request: GetListAdvertisementRequest): Promise<ResponseBase<GetListAdvertisementResponse>> => {
+    return axiosInstance.post('/Advertisement/customer-get-list-paged-advertisement', request);
+  },
+
+  getByUuid: (uuid: string): Promise<ResponseBase<AdvertisementDetailData>> => {
+    return axiosInstance.post('/Advertisement/get-advertisement-by-uuid', { uuid });
+  },
+};
+
+export default advertisementService;
+
+// ==================== Server-side fetch for SEO ====================
+
+export function fetchAdvertisementByUuid(uuid: string) {
+  return fetchForSEO<AdvertisementDetailData>('Advertisement/get-advertisement-by-uuid', { uuid });
 }
 
-// ==================== API Functions ====================
-
-export async function getListAdvertisement(
-  request: GetListAdvertisementRequest,
-): Promise<ResponseBase<GetListAdvertisementResponse>> {
-  const res = await fetch(`${BASE_URL}/Advertisement/customer-get-list-paged-advertisement`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(request),
-  });
-
-  if (!res.ok) {
-    throw new Error(`API error: ${res.status} ${res.statusText}`);
-  }
-
-  return res.json();
-}
-
-export async function getAdvertisementByUuid(request: UuidBaseRequest): Promise<ResponseBase<AdvertisementDetailData>> {
-  const res = await fetch(`${BASE_URL}/Advertisement/get-advertisement-by-uuid`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(request),
-  });
-
-  if (!res.ok) {
-    throw new Error(`API error: ${res.status} ${res.statusText}`);
-  }
-
-  return res.json();
-}
-
-// ==================== Helpers ====================
-
-export function getImageUrl(path: string): string {
-  if (path.startsWith("http")) return path;
-  return `${BASE_URL.replace("/api/v1", "")}/${path}`;
-}
-
-export function formatVNPrice(price: number): string {
-  if (price >= 1000000) {
-    const m = price / 1000000;
-    return m % 1 === 0 ? `${m} triệu` : `${m.toFixed(1)} triệu`;
-  }
-  return price.toLocaleString("vi-VN") + "đ";
+export function fetchListAdvertisement(request: GetListAdvertisementRequest) {
+  return fetchForSEO<GetListAdvertisementResponse>('Advertisement/customer-get-list-paged-advertisement', request);
 }

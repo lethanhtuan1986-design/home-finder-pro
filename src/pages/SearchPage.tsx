@@ -8,7 +8,7 @@ import { PropertyCard } from '@/components/PropertyCard';
 import { MapView } from '@/components/MapView';
 import { Footer } from '@/components/Footer';
 import { mockProperties, filterProperties, DISTRICTS, ROOM_TYPES } from '@/lib/mock-data';
-import { getListAdvertisement, AdvertisementData, GetListAdvertisementRequest } from '@/services/roomService';
+import advertisementService, { AdvertisementData, GetListAdvertisementRequest } from '@/services/advertisement.service';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, Map as MapIcon, List, Loader2 } from 'lucide-react';
@@ -64,7 +64,7 @@ const SearchPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await getListAdvertisement(buildRequest(pageNum));
+        const res = await advertisementService.getListPaged(buildRequest(pageNum));
         if (res.error.code === 0) {
           setAdvertisements(prev => (append ? [...prev, ...res.data.items] : res.data.items));
           setTotalCount(res.data.pagination.totalCount);
