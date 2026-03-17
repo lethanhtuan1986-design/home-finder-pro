@@ -14,7 +14,6 @@ export const Navbar = () => {
   const navLinks = [
     { to: '/', label: t('nav.home'), icon: Home },
     { to: '/search', label: t('nav.search'), icon: Search },
-    { to: '/map', label: t('nav.map'), icon: Map },
     { to: '/saved', label: t('nav.saved'), icon: Heart },
   ];
 
