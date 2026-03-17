@@ -9,7 +9,7 @@ import { httpRequest } from '@/services/index';
 import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
 import advertisementService, { AdvertisementData } from '@/services/advertisement.service';
 import { filterPrices } from '@/lib/filter-options';
-import { useRecentRooms } from '@/hooks/useRecentRooms';
+
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Zap, Eye, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
