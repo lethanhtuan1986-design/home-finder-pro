@@ -86,9 +86,9 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
         </PopoverContent>
       </Popover>
 
-      {/* Name, Phone, Email - single row */}
-      <div className="flex gap-3">
-        <div className="relative flex-1 min-w-0">
+      {/* Name, Phone, Email - stacked full width */}
+      <div className="space-y-3">
+        <div className="relative">
           <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
@@ -100,7 +100,7 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
             className="custom-input pl-10 w-full"
           />
         </div>
-        <div className="relative flex-1 min-w-0">
+        <div className="relative">
           <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="tel"
@@ -112,7 +112,7 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
             className="custom-input pl-10 w-full"
           />
         </div>
-        <div className="relative flex-1 min-w-0">
+        <div className="relative">
           <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="email"
