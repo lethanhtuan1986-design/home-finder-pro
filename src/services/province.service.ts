@@ -9,6 +9,10 @@ export interface ListWardRequest {
   provinceCode: string;
 }
 
+export interface GetProvinceByCodeRequest {
+  code: string;
+}
+
 export interface ProvinceItem {
   code: string;
   fullName: string;
@@ -29,6 +33,10 @@ const provinceService = {
 
   listWard: (request: ListWardRequest) => {
     return axiosInstance.post('/Province/get-list-ward', request);
+  },
+
+  getProvinceByCode: (request: GetProvinceByCodeRequest) => {
+    return axiosInstance.post('/Province/get-province-by-code', request);
   },
 };
 
