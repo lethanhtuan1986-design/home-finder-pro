@@ -173,7 +173,7 @@ const SearchPage = () => {
       return;
     }
     setPage(1);
-  }, [keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
+  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
 
   // Sync state to URL
   useEffect(() => {
