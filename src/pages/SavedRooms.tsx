@@ -6,10 +6,10 @@ import { useSavedRooms } from '@/hooks/useSavedRooms';
 import { useQuery } from '@tanstack/react-query';
 import advertisementService, { AdvertisementData } from '@/services/advertisement.service';
 import { httpRequest } from '@/services/index';
-import { Heart, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/EmptyState';
 
 const SavedRooms = () => {
   const { savedIds } = useSavedRooms();
@@ -61,25 +61,21 @@ const SavedRooms = () => {
         )}
 
         {!isLoading && savedIds.length === 0 && (
-          <div className="text-center py-20">
-            <Heart size={48} className="mx-auto mb-4 text-muted-foreground/30" />
-            <p className="text-lg font-medium text-foreground">{t('saved.empty')}</p>
-            <p className="text-sm text-muted-foreground mt-1 mb-6">{t('saved.emptyHint')}</p>
-            <Link
-              to="/search"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
-            >
-              {t('nav.searchNow')}
-            </Link>
-          </div>
+          <EmptyState
+            icon={Heart}
+            title={t('saved.empty')}
+            description={t('saved.emptyHint')}
+            actionLabel={t('nav.searchNow')}
+            actionTo="/search"
+          />
         )}
 
         {!isLoading && savedIds.length > 0 && savedProperties.length === 0 && (
-          <div className="text-center py-20">
-            <Heart size={48} className="mx-auto mb-4 text-muted-foreground/30" />
-            <p className="text-lg font-medium text-foreground">{t('search.noResult')}</p>
-            <p className="text-sm text-muted-foreground mt-1">{t('search.noResultHint')}</p>
-          </div>
+          <EmptyState
+            icon={Heart}
+            title={t('search.noResult')}
+            description={t('search.noResultHint')}
+          />
         )}
       </div>
       <Footer />

@@ -14,6 +14,7 @@ import { httpRequest } from '@/services/index';
 import { useTranslation } from 'react-i18next';
 import { Search, Map as MapIcon, List, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/EmptyState';
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -325,11 +326,13 @@ const SearchPage = () => {
               )}
 
               {!loading && advertisements.length === 0 && (
-                <div className="text-center py-20 text-muted-foreground">
-                  <Search size={48} className="mx-auto mb-4 opacity-30" />
-                  <p className="text-lg font-medium text-foreground">{t('search.noResult')}</p>
-                  <p className="text-sm mt-1">{t('search.noResultHint')}</p>
-                </div>
+                <EmptyState
+                  icon={Search}
+                  title={t('search.noResult')}
+                  description={t('search.noResultHint')}
+                  actionLabel={t('nav.searchNow')}
+                  actionTo="/search"
+                />
               )}
 
               {hasNextPage && (

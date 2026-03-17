@@ -1,11 +1,13 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { PropertyGallery } from '@/components/PropertyGallery';
 import { ScheduleForm } from '@/components/ScheduleForm';
 import { SEO } from '@/components/SEO';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
+import { useRecentRooms } from '@/hooks/useRecentRooms';
 import { useTranslation } from 'react-i18next';
 import advertisementService, { AdvertisementDetailData } from '@/services/advertisement.service';
 import { formatVNPrice, getImageUrl, httpRequest } from '@/services/index';
@@ -20,7 +22,13 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { isSaved, toggleSave } = useSavedRooms();
+  const { addRecent } = useRecentRooms();
   const { t } = useTranslation();
+
+  // Track recently viewed
+  useEffect(() => {
+    if (id) addRecent(id);
+  }, [id, addRecent]);
 
   const { data: detail, isLoading: loading, error: queryError } = useQuery<AdvertisementDetailData>({
     queryKey: ['advertisement-detail', id],
