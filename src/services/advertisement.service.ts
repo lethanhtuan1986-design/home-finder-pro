@@ -222,7 +222,7 @@ const advertisementService = {
     return axiosInstance.post('/Advertisement/get-similar-advertisement', request);
   },
 
-  getForMap: (request: GetAdvertisementsForMapRequest): Promise<ResponseBase<GetListAdvertisementResponse>> => {
+  getForMap: (request: GetAdvertisementsForMapRequest): Promise<ResponseBase<MapLocationGroup[]>> => {
     return axiosInstance.post('/Advertisement/get-advertisements-for-map', request);
   },
 
