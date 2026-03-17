@@ -16,6 +16,19 @@ interface MapViewProps {
 }
 
 const safeCoords = (apt: any): LatLngTuple | null => {
+  // Try parsing "point" field first: "[lat,lng]"
+  if (apt?.point) {
+    try {
+      const parsed = JSON.parse(apt.point);
+      if (Array.isArray(parsed) && parsed.length >= 2) {
+        const [lat, lng] = parsed.map(Number);
+        if (isFinite(lat) && isFinite(lng) && !(lat === 0 && lng === 0)) {
+          return [lat, lng];
+        }
+      }
+    } catch {}
+  }
+
   let lat = apt?.latitude;
   let lng = apt?.longitude;
   if (lat == null || lng == null || !isFinite(lat) || !isFinite(lng)) return null;
