@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
@@ -51,7 +51,14 @@ const SearchPage = () => {
   const [apartmentSizeFrom, setApartmentSizeFrom] = useState(searchParams.get("apartmentSizeFrom") || "");
   const [apartmentSizeTo, setApartmentSizeTo] = useState(searchParams.get("apartmentSizeTo") || "");
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
+  const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+
+  // Debounce keyword
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedKeyword(keyword), 500);
+    return () => clearTimeout(timer);
+  }, [keyword]);
 
   const selectedPriceUuid =
     filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
@@ -93,7 +100,7 @@ const SearchPage = () => {
   // Build API request for list
   const buildRequest = (): GetListAdvertisementRequest => {
     const req: GetListAdvertisementRequest = { isPaging: 1, page, pageSize: PAGE_SIZE };
-    if (keyword) req.keyword = keyword;
+    if (debouncedKeyword) req.keyword = debouncedKeyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
     if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
@@ -107,7 +114,7 @@ const SearchPage = () => {
   // Build API request for map
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = { isPaging: 0 };
-    if (keyword) req.keyword = keyword;
+    if (debouncedKeyword) req.keyword = debouncedKeyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
     if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
@@ -125,7 +132,7 @@ const SearchPage = () => {
   } = useQuery({
     queryKey: [
       "advertisements",
-      keyword,
+      debouncedKeyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
@@ -141,7 +148,7 @@ const SearchPage = () => {
   const { data: mapLocations = [], isLoading: mapLoading } = useQuery<MapLocationGroup[]>({
     queryKey: [
       "map-advertisements",
-      keyword,
+      debouncedKeyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
@@ -166,7 +173,7 @@ const SearchPage = () => {
       return;
     }
     setPage(1);
-  }, [keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
+  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
 
   // Sync state to URL
   useEffect(() => {
