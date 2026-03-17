@@ -78,8 +78,8 @@ const MapPage = () => {
       }),
   });
 
-  const buildRequest = (pageNum: number): GetAdvertisementsForMapRequest => {
-    const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: pageNum, pageSize: PAGE_SIZE };
+  const buildRequest = (): GetAdvertisementsForMapRequest => {
+    const req: GetAdvertisementsForMapRequest = { isPaging: 0 };
     if (keyword) req.keyword = keyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
@@ -92,25 +92,15 @@ const MapPage = () => {
   };
 
   const {
-    data: infiniteData,
+    data: mapLocations = [],
     isLoading: loading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+  } = useQuery<MapLocationGroup[]>({
     queryKey: ['map-advertisements', keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo],
-    queryFn: ({ pageParam = 1 }) =>
-      httpRequest({ http: advertisementService.getForMap(buildRequest(pageParam as number)) }),
-    getNextPageParam: (lastPage: any, allPages) => {
-      if (!lastPage?.pagination) return undefined;
-      const next = allPages.length + 1;
-      return next <= lastPage.pagination.totalPage ? next : undefined;
-    },
-    initialPageParam: 1,
+    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildRequest()) }),
   });
 
-  const advertisements = infiniteData?.pages.flatMap((p: any) => p?.items || []) ?? [];
-  const totalCount = infiniteData?.pages[0]?.pagination?.totalCount ?? 0;
+  const advertisements = mapLocations.flatMap((loc) => loc.ads);
+  const totalCount = advertisements.length;
 
   const handlePriceSelect = (uuid: string) => {
     if (uuid === '__all__' || uuid === selectedPriceUuid) {
