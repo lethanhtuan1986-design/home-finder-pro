@@ -14,6 +14,7 @@ import { httpRequest } from '@/services/index';
 import { useTranslation } from 'react-i18next';
 import { Search, Map as MapIcon, List, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/EmptyState';
 import { cn } from '@/lib/utils';
 import {
   Select,
