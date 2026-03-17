@@ -148,7 +148,7 @@ const SearchPage = () => {
   const { data: mapLocations = [], isLoading: mapLoading } = useQuery<MapLocationGroup[]>({
     queryKey: [
       "map-advertisements",
-      keyword,
+      debouncedKeyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
