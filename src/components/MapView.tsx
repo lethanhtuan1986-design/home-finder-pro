@@ -1,11 +1,14 @@
-import { useEffect, useRef, useMemo } from 'react';
-import L from 'leaflet';
+import { useEffect, useMemo, Fragment } from 'react';
+import L, { LatLngTuple } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-defaulticon-compatibility';
+import { MapContainer, Marker, Popup, TileLayer, Tooltip, useMap } from 'react-leaflet';
 import { formatVNPrice, getImageUrl } from '@/services/index';
 import { Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Default center: Ho Chi Minh City
-const DEFAULT_CENTER: L.LatLngTuple = [10.79, 106.71];
+const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
 const DEFAULT_ZOOM = 13;
 
 interface MapViewProps {
@@ -18,12 +21,11 @@ interface MapViewProps {
 // ==================== Coordinate Helper ====================
 
 /** Safely extract [lat, lng] from apartment data, auto-swapping if lat > 90 */
-const safeCoords = (apt: any): L.LatLngTuple | null => {
+const safeCoords = (apt: any): LatLngTuple | null => {
   let lat = apt?.latitude;
   let lng = apt?.longitude;
   if (lat == null || lng == null || !isFinite(lat) || !isFinite(lng)) return null;
   if (lat === 0 && lng === 0) return null;
-  // Auto-swap if latitude is out of range (API sometimes returns lng in lat field)
   if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) {
     [lat, lng] = [lng, lat];
   }
@@ -55,189 +57,150 @@ const createPriceMarkerIcon = (price: number, isHovered: boolean) => {
   });
 };
 
-// ==================== Popup Content ====================
+// ==================== Sub-components ====================
 
-const createPopupContent = (ad: any): string => {
-  const apt = ad.apartmentUu;
-  const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : '/placeholder.svg';
-  const location = apt?.ward?.fullName || '';
-  const province = apt?.province?.fullName || '';
-  const addressParts = [location, province].filter(Boolean).join(', ');
-  const deposit = ad.deposit ? `Cọc: ${formatVNPrice(ad.deposit)}` : '';
+function InvalidateMapSize() {
+  const map = useMap();
 
-  return `
-    <div class="leaflet-popup-card">
-      <a href="/property/${ad.uuid}" style="display:block;width:240px;text-decoration:none;color:inherit;">
-        <div style="position:relative;width:100%;height:130px;overflow:hidden;border-radius:10px 10px 0 0;">
-          <img
-            src="${imageUrl}"
-            alt="${ad.title || ''}"
-            style="width:100%;height:100%;object-fit:cover;"
-            onerror="this.src='/placeholder.svg'"
-          />
-        </div>
-        <div style="padding:10px 12px;">
-          <p style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0 0 6px;color:var(--foreground,#1a1a1a);">
-            ${ad.title || 'Không có tiêu đề'}
-          </p>
-          <p style="font-size:14px;font-weight:700;color:hsl(160,84%,30%);margin:0 0 4px;">
-            ${formatVNPrice(ad.price)}/tháng
-          </p>
-          ${deposit ? `<p style="font-size:11px;color:#666;margin:0 0 4px;">${deposit}</p>` : ''}
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
-            ${apt?.apartmentSize ? `<span style="font-size:11px;color:#888;background:#f5f5f5;padding:2px 6px;border-radius:4px;">${apt.apartmentSize}m²</span>` : ''}
-            ${apt?.roomCount ? `<span style="font-size:11px;color:#888;background:#f5f5f5;padding:2px 6px;border-radius:4px;">${apt.roomCount} phòng</span>` : ''}
-          </div>
-          <p style="font-size:11px;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0;">
-            📍 ${addressParts || 'Không rõ vị trí'}
-          </p>
-        </div>
-      </a>
-    </div>
-  `;
-};
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [map]);
 
-// ==================== Component ====================
+  return null;
+}
+
+function FitBounds({ points }: { points: LatLngTuple[] }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!points || points.length === 0) {
+      map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+      return;
+    }
+
+    const bounds = L.latLngBounds(points);
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+  }, [points, map]);
+
+  return null;
+}
+
+function MapMarkers({ ads, hoveredId, onMarkerClick }: {
+  ads: any[];
+  hoveredId?: string | null;
+  onMarkerClick?: (id: string) => void;
+}) {
+  return (
+    <Fragment>
+      {ads.map((ad) => {
+        const coords = safeCoords(ad.apartmentUu);
+        if (!coords) return null;
+
+        const apt = ad.apartmentUu;
+        const isHovered = hoveredId === ad.uuid;
+        const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : '/placeholder.svg';
+        const addressParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(', ');
+
+        return (
+          <Marker
+            key={ad.uuid}
+            position={coords}
+            icon={createPriceMarkerIcon(ad.price, isHovered)}
+            zIndexOffset={isHovered ? 1000 : 0}
+            eventHandlers={{
+              click: () => onMarkerClick?.(ad.uuid),
+            }}
+          >
+            <Tooltip permanent={false} direction="top" offset={[0, -10]}>
+              <div className="text-xs font-medium">
+                {addressParts || 'Không rõ vị trí'}
+              </div>
+            </Tooltip>
+            <Popup closeButton={false} maxHeight={300}>
+              <Link to={`/property/${ad.uuid}`} className="block w-[240px] no-underline text-inherit">
+                <div className="relative w-full h-[130px] overflow-hidden rounded-t-lg">
+                  <img
+                    src={imageUrl}
+                    alt={ad.title || ''}
+                    className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+                  />
+                </div>
+                <div className="p-2.5">
+                  <p className="text-[13px] font-semibold truncate mb-1.5 text-foreground">
+                    {ad.title || 'Không có tiêu đề'}
+                  </p>
+                  <p className="text-sm font-bold text-primary mb-1">
+                    {formatVNPrice(ad.price)}/tháng
+                  </p>
+                  {ad.deposit > 0 && (
+                    <p className="text-[11px] text-muted-foreground mb-1">
+                      Cọc: {formatVNPrice(ad.deposit)}
+                    </p>
+                  )}
+                  <div className="flex gap-2 items-center mb-1">
+                    {apt?.apartmentSize > 0 && (
+                      <span className="text-[11px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
+                        {apt.apartmentSize}m²
+                      </span>
+                    )}
+                    {apt?.roomCount > 0 && (
+                      <span className="text-[11px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
+                        {apt.roomCount} phòng
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground truncate">
+                    📍 {addressParts || 'Không rõ vị trí'}
+                  </p>
+                </div>
+              </Link>
+            </Popup>
+          </Marker>
+        );
+      })}
+    </Fragment>
+  );
+}
+
+// ==================== Main Component ====================
 
 export const MapView = ({ advertisements = [], hoveredId, loading = false, onMarkerClick }: MapViewProps) => {
-  const mapRef = useRef<L.Map | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const markersRef = useRef<Map<string, L.Marker>>(new Map());
-  const prevAdsRef = useRef<string>('');
-
-  // Filter valid ads with safe coordinate checks (auto-swap included)
   const validAds = useMemo(
-    () =>
-      advertisements.filter((ad) => safeCoords(ad?.apartmentUu) !== null),
+    () => advertisements.filter((ad) => safeCoords(ad?.apartmentUu) !== null),
     [advertisements],
   );
 
-  const positions = useMemo<L.LatLngTuple[]>(
+  const positions = useMemo<LatLngTuple[]>(
     () => validAds.map((ad) => safeCoords(ad.apartmentUu)!),
     [validAds],
   );
 
-  // ---- Initialize map (once) ----
-  useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
-
-    const map = L.map(containerRef.current, {
-      center: DEFAULT_CENTER,
-      zoom: DEFAULT_ZOOM,
-      scrollWheelZoom: true,
-      zoomControl: false,
-    });
-
-    L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-    }).addTo(map);
-
-    mapRef.current = map;
-
-    // Fix Leaflet size calculation when container is initially hidden/resized
-    setTimeout(() => map.invalidateSize(), 400);
-
-    return () => {
-      map.remove();
-      mapRef.current = null;
-    };
-  }, []);
-
-  // ---- Dark mode ----
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const applyDarkFilter = () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      const tiles = containerRef.current?.querySelector('.leaflet-tile-pane') as HTMLElement | null;
-      if (tiles) {
-        tiles.style.filter = isDark
-          ? 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)'
-          : 'none';
-      }
-    };
-
-    const observer = new MutationObserver(applyDarkFilter);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-    const tryApply = () => {
-      if (containerRef.current?.querySelector('.leaflet-tile-pane')) {
-        applyDarkFilter();
-      } else {
-        requestAnimationFrame(tryApply);
-      }
-    };
-    tryApply();
-
-    return () => observer.disconnect();
-  }, []);
-
-  // ---- Sync markers (only when ad list actually changes) ----
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    // Dedupe: skip if same ad set
-    const adsKey = validAds.map((a) => a.uuid).join(',');
-    if (adsKey === prevAdsRef.current) return;
-    prevAdsRef.current = adsKey;
-
-    // Clear old markers
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current.clear();
-
-    // Add markers
-    validAds.forEach((ad) => {
-      const coords = safeCoords(ad.apartmentUu)!;
-      const marker = L.marker(coords, {
-        icon: createPriceMarkerIcon(ad.price, false),
-      });
-
-      marker.bindPopup(createPopupContent(ad), {
-        closeButton: false,
-        className: 'leaflet-popup-custom',
-        maxHeight: 300,
-      });
-      marker.on('click', () => onMarkerClick?.(ad.uuid));
-      marker.addTo(map);
-      markersRef.current.set(ad.uuid, marker);
-    });
-
-    // Fit bounds or reset to default
-    if (positions.length > 0) {
-      const bounds = L.latLngBounds(positions);
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
-    } else {
-      map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
-    }
-
-    // Re-invalidate after data changes (container might have resized)
-    setTimeout(() => map.invalidateSize(), 400);
-  }, [validAds, positions, onMarkerClick]);
-
-  // ---- Hover highlight (cheap icon swap, no marker recreation) ----
-  useEffect(() => {
-    markersRef.current.forEach((marker, id) => {
-      const ad = validAds.find((a) => a.uuid === id);
-      if (!ad) return;
-      const isHovered = hoveredId === id;
-      marker.setIcon(createPriceMarkerIcon(ad.price, isHovered));
-      marker.setZIndexOffset(isHovered ? 1000 : 0);
-      if (isHovered) {
-        marker.openPopup();
-      }
-    });
-  }, [hoveredId, validAds]);
-
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border min-h-[400px]">
-      <div ref={containerRef} className="w-full h-full min-h-[400px]" style={{ zIndex: 0 }} />
+      <MapContainer
+        center={DEFAULT_CENTER}
+        zoom={DEFAULT_ZOOM}
+        scrollWheelZoom
+        zoomControl={false}
+        style={{ width: '100%', height: '100%', minHeight: 400, zIndex: 0 }}
+      >
+        <InvalidateMapSize />
+        <TileLayer
+          attribution="Google"
+          url="https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+          maxZoom={20}
+        />
+        <FitBounds points={positions} />
+        <MapMarkers ads={validAds} hoveredId={hoveredId} onMarkerClick={onMarkerClick} />
+      </MapContainer>
 
       {/* Loading overlay */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-20 pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-[1000] pointer-events-none">
           <div className="flex items-center gap-2 bg-card px-4 py-2.5 rounded-xl shadow-lg border border-border">
             <Loader2 size={18} className="animate-spin text-primary" />
             <span className="text-sm font-medium text-foreground">Đang tải bản đồ...</span>
@@ -247,7 +210,7 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
 
       {/* Empty state */}
       {!loading && validAds.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-secondary/30 pointer-events-none z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-secondary/30 pointer-events-none z-[1000]">
           <p className="text-sm text-muted-foreground">Chưa có dữ liệu bản đồ</p>
         </div>
       )}
