@@ -48,7 +48,15 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
               }}
             />
             <button
-              onClick={e => { e.preventDefault(); e.stopPropagation(); toggleSave(data?.uuid); }}
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                const wasSaved = isSaved(data?.uuid);
+                toggleSave(data?.uuid);
+                toast(wasSaved ? 'Đã bỏ lưu phòng' : 'Đã lưu phòng thành công!', {
+                  duration: 2000,
+                });
+              }}
               className="absolute top-3 right-3 w-9 h-9 rounded-full bg-card/90 backdrop-blur flex items-center justify-center transition-colors hover:bg-card"
             >
               <Heart

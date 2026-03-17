@@ -15,6 +15,21 @@ interface MapViewProps {
   onMarkerClick?: (id: string) => void;
 }
 
+// ==================== Coordinate Helper ====================
+
+/** Safely extract [lat, lng] from apartment data, auto-swapping if lat > 90 */
+const safeCoords = (apt: any): L.LatLngTuple | null => {
+  let lat = apt?.latitude;
+  let lng = apt?.longitude;
+  if (lat == null || lng == null || !isFinite(lat) || !isFinite(lng)) return null;
+  if (lat === 0 && lng === 0) return null;
+  // Auto-swap if latitude is out of range (API sometimes returns lng in lat field)
+  if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) {
+    [lat, lng] = [lng, lat];
+  }
+  return [lat, lng];
+};
+
 // ==================== Marker Icon ====================
 
 const createPriceMarkerIcon = (price: number, isHovered: boolean) => {
@@ -90,19 +105,15 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const prevAdsRef = useRef<string>('');
 
-  // Filter valid ads with safe coordinate checks
+  // Filter valid ads with safe coordinate checks (auto-swap included)
   const validAds = useMemo(
     () =>
-      advertisements.filter((ad) => {
-        const lat = ad?.apartmentUu?.latitude;
-        const lng = ad?.apartmentUu?.longitude;
-        return lat != null && lng != null && isFinite(lat) && isFinite(lng) && !(lat === 0 && lng === 0);
-      }),
+      advertisements.filter((ad) => safeCoords(ad?.apartmentUu) !== null),
     [advertisements],
   );
 
   const positions = useMemo<L.LatLngTuple[]>(
-    () => validAds.map((ad) => [ad.apartmentUu.latitude, ad.apartmentUu.longitude] as L.LatLngTuple),
+    () => validAds.map((ad) => safeCoords(ad.apartmentUu)!),
     [validAds],
   );
 
@@ -124,6 +135,9 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
     }).addTo(map);
 
     mapRef.current = map;
+
+    // Fix Leaflet size calculation when container is initially hidden/resized
+    setTimeout(() => map.invalidateSize(), 400);
 
     return () => {
       map.remove();
@@ -148,7 +162,6 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
     const observer = new MutationObserver(applyDarkFilter);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-    // Wait for tiles to render then apply
     const tryApply = () => {
       if (containerRef.current?.querySelector('.leaflet-tile-pane')) {
         applyDarkFilter();
@@ -177,8 +190,8 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
 
     // Add markers
     validAds.forEach((ad) => {
-      const apt = ad.apartmentUu;
-      const marker = L.marker([apt.latitude, apt.longitude], {
+      const coords = safeCoords(ad.apartmentUu)!;
+      const marker = L.marker(coords, {
         icon: createPriceMarkerIcon(ad.price, false),
       });
 
@@ -199,6 +212,9 @@ export const MapView = ({ advertisements = [], hoveredId, loading = false, onMar
     } else {
       map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
     }
+
+    // Re-invalidate after data changes (container might have resized)
+    setTimeout(() => map.invalidateSize(), 400);
   }, [validAds, positions, onMarkerClick]);
 
   // ---- Hover highlight (cheap icon swap, no marker recreation) ----

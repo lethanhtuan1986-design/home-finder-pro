@@ -326,11 +326,13 @@ const SearchPage = () => {
               )}
 
               {!loading && advertisements.length === 0 && (
-                <div className="text-center py-20 text-muted-foreground">
-                  <Search size={48} className="mx-auto mb-4 opacity-30" />
-                  <p className="text-lg font-medium text-foreground">{t('search.noResult')}</p>
-                  <p className="text-sm mt-1">{t('search.noResultHint')}</p>
-                </div>
+                <EmptyState
+                  icon={Search}
+                  title={t('search.noResult')}
+                  description={t('search.noResultHint')}
+                  actionLabel={t('nav.searchNow')}
+                  actionTo="/search"
+                />
               )}
 
               {hasNextPage && (
