@@ -35,55 +35,49 @@ const SearchPage = () => {
   const [sizeMin, setSizeMin] = useState(searchParams.get('size') || '');
   const [keyword, setKeyword] = useState(searchParams.get('q') || '');
 
-  const [advertisements, setAdvertisements] = useState<AdvertisementData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalPage, setTotalPage] = useState(0);
+  const buildRequest = (pageNum: number): GetListAdvertisementRequest => {
+    const req: GetListAdvertisementRequest = {
+      isPaging: 1,
+      page: pageNum,
+      pageSize: PAGE_SIZE,
+    };
+    if (keyword) req.keyword = keyword;
+    if (district) req.provinceId = district;
+    if (priceMax) req.priceTo = Number(priceMax);
+    if (sizeMin) req.apartmentSizeFrom = Number(sizeMin);
+    if (activeFilters.includes('under3m')) req.priceTo = 3000000;
+    if (activeFilters.includes('under5m') && !activeFilters.includes('under3m')) req.priceTo = 5000000;
+    if (activeFilters.includes('furnished')) req.keyword = (req.keyword || '') + ' nội thất';
+    return req;
+  };
 
-  const buildRequest = useCallback(
-    (pageNum: number): GetListAdvertisementRequest => {
-      const req: GetListAdvertisementRequest = {
-        isPaging: 1,
-        page: pageNum,
-        pageSize: PAGE_SIZE,
-      };
-      if (keyword) req.keyword = keyword;
-      if (district) req.provinceId = district;
-      if (priceMax) req.priceTo = Number(priceMax);
-      if (sizeMin) req.apartmentSizeFrom = Number(sizeMin);
-      if (activeFilters.includes('under3m')) req.priceTo = 3000000;
-      if (activeFilters.includes('under5m') && !activeFilters.includes('under3m')) req.priceTo = 5000000;
-      if (activeFilters.includes('furnished')) req.keyword = (req.keyword || '') + ' nội thất';
-      return req;
+  const {
+    data: infiniteData,
+    isLoading: loading,
+    error: queryError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['advertisements', keyword, district, priceMax, sizeMin, activeFilters],
+    queryFn: ({ pageParam = 1 }) =>
+      httpRequest({
+        http: advertisementService.getListPaged(buildRequest(pageParam as number)),
+      }),
+    getNextPageParam: (lastPage: any, allPages) => {
+      if (!lastPage?.pagination) return undefined;
+      const nextPage = allPages.length + 1;
+      return nextPage <= lastPage.pagination.totalPage ? nextPage : undefined;
     },
-    [keyword, district, priceMax, sizeMin, activeFilters]
-  );
+    initialPageParam: 1,
+  });
 
-  const fetchData = useCallback(
-    async (pageNum: number, append = false) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await advertisementService.getListPaged(buildRequest(pageNum));
-        if (res.error.code === 0) {
-          setAdvertisements(prev => (append ? [...prev, ...res.data.items] : res.data.items));
-          setTotalCount(res.data.pagination.totalCount);
-          setTotalPage(res.data.pagination.totalPage);
-        } else {
-          setError(res.error.message);
-        }
-      } catch (err) {
-        console.error('API Error:', err);
-        setError(t('search.serverError'));
-        setAdvertisements([]);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [buildRequest, t]
+  const advertisements = useMemo(
+    () => infiniteData?.pages.flatMap((p: any) => p?.items || []) ?? [],
+    [infiniteData]
   );
+  const totalCount = infiniteData?.pages[0]?.pagination?.totalCount ?? 0;
+  const error = queryError ? t('search.serverError') : null;
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -96,15 +90,8 @@ const SearchPage = () => {
     setSearchParams(params, { replace: true });
   }, [keyword, district, priceMax, roomType, sizeMin, activeFilters, setSearchParams]);
 
-  useEffect(() => {
-    setPage(1);
-    fetchData(1);
-  }, [district, priceMax, roomType, sizeMin, activeFilters, keyword]);
-
   const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchData(nextPage, true);
+    fetchNextPage();
   };
 
   const mockFiltered = (() => {
