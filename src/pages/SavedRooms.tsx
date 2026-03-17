@@ -15,7 +15,7 @@ const SavedRooms = () => {
   const { savedIds } = useSavedRooms();
   const { t } = useTranslation();
 
-  const { data: savedData, isLoading } = useQuery<{ items: AdvertisementData[] }>({
+  const { data: savedProperties = [], isLoading } = useQuery<AdvertisementData[]>({
     queryKey: ['saved-advertisements', savedIds],
     queryFn: () =>
       httpRequest({
@@ -26,8 +26,6 @@ const SavedRooms = () => {
       }),
     enabled: savedIds.length > 0,
   });
-
-  const savedProperties = savedData?.items ?? [];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
