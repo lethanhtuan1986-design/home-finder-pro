@@ -232,7 +232,7 @@ const SearchPage = () => {
 
               {!hasApiData && !loading && (
                 <div className={`grid ${showMap ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
-                  {mockFiltered.slice(0, PAGE_SIZE * page).map((p, i) => (
+                  {mockFiltered.slice(0, PAGE_SIZE * mockPage).map((p, i) => (
                     <div key={p.id} onMouseEnter={() => setHoveredId(p.id)} onMouseLeave={() => setHoveredId(null)}>
                       <PropertyCard data={p} index={i} />
                     </div>
