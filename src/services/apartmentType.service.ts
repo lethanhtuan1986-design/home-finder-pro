@@ -21,7 +21,11 @@ export interface ApartmentTypeItem {
 
 const apartmentTypeService = {
   listApartmentType: (request: ListApartmentTypeRequest) => {
-    return axiosInstance.post('/ApartmentType/get-list-paged-apartment-type', request);
+    return axiosInstance.post('/ApartmentType/get-list-apartment-type', request);
+  },
+
+  getApartmentType: (request: GetApartmentTypeRequest) => {
+    return axiosInstance.post('/ApartmentType/get-apartment-type', request);
   },
 };
 

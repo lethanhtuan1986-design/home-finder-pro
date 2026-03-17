@@ -34,6 +34,10 @@ const provinceService = {
   listWard: (request: ListWardRequest) => {
     return axiosInstance.post('/Province/get-list-ward', request);
   },
+
+  getProvinceByCode: (request: GetProvinceByCodeRequest) => {
+    return axiosInstance.post('/Province/get-province-by-code', request);
+  },
 };
 
 export default provinceService;
