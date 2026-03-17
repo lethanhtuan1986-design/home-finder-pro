@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { SEO } from '@/components/SEO';
 import { Navbar } from '@/components/Navbar';
 import { FilterBar } from '@/components/FilterBar';
@@ -9,6 +10,7 @@ import { MapView } from '@/components/MapView';
 import { Footer } from '@/components/Footer';
 import { mockProperties, filterProperties, DISTRICTS, ROOM_TYPES } from '@/lib/mock-data';
 import advertisementService, { AdvertisementData, GetListAdvertisementRequest } from '@/services/advertisement.service';
+import { httpRequest } from '@/services/index';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, Map as MapIcon, List, Loader2 } from 'lucide-react';
