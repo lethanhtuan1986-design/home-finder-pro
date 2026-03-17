@@ -199,6 +199,18 @@ export interface GetListAdvertisementResponse {
   pagination: Pagination;
 }
 
+export interface MapLocationGroup {
+  point: string; // "[lat,lng]"
+  longitude: number;
+  address: string;
+  totalAds: number;
+  ads: AdvertisementData[];
+}
+
+export interface GetAdvertisementsForMapResponse {
+  data: MapLocationGroup[];
+}
+
 // ==================== API Functions (axios) ====================
 
 const advertisementService = {
