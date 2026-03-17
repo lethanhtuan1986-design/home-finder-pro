@@ -14,7 +14,13 @@ import { filterPrices, filterApartmentSizes, FilterOption } from '@/lib/filter-o
 import { httpRequest } from '@/services/index';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2, Search, MapPin } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const PAGE_SIZE = 20;
 
@@ -47,7 +53,7 @@ const MapPage = () => {
     queryFn: () => httpRequest({ http: provinceService.listProvince({ keyword: '' }) }),
   });
 
-  const { data: wards = [] } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
+  const { data: wards = [], isLoading: wardsLoading } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
     queryKey: ['dropdown-ward', provinceId],
     queryFn: () => httpRequest({ http: provinceService.listWard({ keyword: '', provinceCode: provinceId }) }),
     enabled: !!provinceId,
@@ -97,14 +103,28 @@ const MapPage = () => {
   const advertisements = infiniteData?.pages.flatMap((p: any) => p?.items || []) ?? [];
   const totalCount = infiniteData?.pages[0]?.pagination?.totalCount ?? 0;
 
-  const handlePriceSelect = (fp: FilterOption) => {
-    if (selectedPriceUuid === fp.uuid) { setPriceFrom(''); setPriceTo(''); }
-    else { setPriceFrom(fp.value ? String(fp.value) : ''); setPriceTo(fp.valueTo ? String(fp.valueTo) : ''); }
+  const handlePriceSelect = (uuid: string) => {
+    if (uuid === '__all__' || uuid === selectedPriceUuid) {
+      setPriceFrom(''); setPriceTo('');
+    } else {
+      const fp = filterPrices.find((p) => p.uuid === uuid);
+      if (fp) {
+        setPriceFrom(fp.value ? String(fp.value) : '');
+        setPriceTo(fp.valueTo ? String(fp.valueTo) : '');
+      }
+    }
   };
 
-  const handleSizeSelect = (fs: FilterOption) => {
-    if (selectedSizeUuid === fs.uuid) { setApartmentSizeFrom(''); setApartmentSizeTo(''); }
-    else { setApartmentSizeFrom(fs.value ? String(fs.value) : ''); setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : ''); }
+  const handleSizeSelect = (uuid: string) => {
+    if (uuid === '__all__' || uuid === selectedSizeUuid) {
+      setApartmentSizeFrom(''); setApartmentSizeTo('');
+    } else {
+      const fs = filterApartmentSizes.find((s) => s.uuid === uuid);
+      if (fs) {
+        setApartmentSizeFrom(fs.value ? String(fs.value) : '');
+        setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : '');
+      }
+    }
   };
 
   return (
@@ -119,57 +139,79 @@ const MapPage = () => {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder={t('search.keywordPlaceholder')}
-            className="custom-select flex-1 min-w-[120px] max-w-[200px]"
+            className="custom-input flex-1 min-w-[120px] max-w-[200px]"
           />
-          <select
-            value={provinceId}
-            onChange={(e) => { setProvinceId(e.target.value); setWardId(''); }}
-            className="custom-select"
+          <Select
+            value={provinceId || '__all__'}
+            onValueChange={(val) => { setProvinceId(val === '__all__' ? '' : val); setWardId(''); }}
           >
-            <option value="">{t('hero.area')}</option>
-            {provinces.map((p) => <option key={p.code} value={p.code}>{p.fullName}</option>)}
-          </select>
-          <select
-            value={wardId}
-            onChange={(e) => setWardId(e.target.value)}
-            className="custom-select"
-            disabled={!provinceId}
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={t('hero.area')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t('hero.area')}</SelectItem>
+              {provinces.map((p) => (
+                <SelectItem key={p.code} value={p.code}>{p.fullName}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={wardId || '__all__'}
+            onValueChange={(val) => setWardId(val === '__all__' ? '' : val)}
+            disabled={!provinceId || (wardsLoading && wards.length === 0)}
           >
-            <option value="">{t('hero.ward')}</option>
-            {wards.map((w) => <option key={w.code} value={w.code}>{w.fullName}</option>)}
-          </select>
-          <select
-            value={apartmentTypeUuid}
-            onChange={(e) => setApartmentTypeUuid(e.target.value)}
-            className="custom-select"
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={t('hero.ward')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t('hero.ward')}</SelectItem>
+              {wards.map((w) => (
+                <SelectItem key={w.code} value={w.code}>{w.fullName}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={apartmentTypeUuid || '__all__'}
+            onValueChange={(val) => setApartmentTypeUuid(val === '__all__' ? '' : val)}
           >
-            <option value="">{t('hero.roomType')}</option>
-            {apartmentTypes.map((at) => <option key={at.uuid} value={at.uuid}>{at.name}</option>)}
-          </select>
-          <select
-            value={selectedPriceUuid}
-            onChange={(e) => {
-              const fp = filterPrices.find((p) => p.uuid === e.target.value);
-              if (fp) handlePriceSelect(fp);
-              else { setPriceFrom(''); setPriceTo(''); }
-            }}
-            className="custom-select"
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={t('hero.roomType')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t('hero.roomType')}</SelectItem>
+              {apartmentTypes.map((at) => (
+                <SelectItem key={at.uuid} value={at.uuid}>{at.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={selectedPriceUuid || '__all__'}
+            onValueChange={handlePriceSelect}
           >
-            <option value="">{t('hero.priceRange')}</option>
-            {filterPrices.map((fp) => <option key={fp.uuid} value={fp.uuid}>{fp.name}</option>)}
-          </select>
-          <select
-            value={selectedSizeUuid}
-            onChange={(e) => {
-              const fs = filterApartmentSizes.find((s) => s.uuid === e.target.value);
-              if (fs) handleSizeSelect(fs);
-              else { setApartmentSizeFrom(''); setApartmentSizeTo(''); }
-            }}
-            className="custom-select"
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={t('hero.priceRange')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t('hero.priceRange')}</SelectItem>
+              {filterPrices.map((fp) => (
+                <SelectItem key={fp.uuid} value={fp.uuid}>{fp.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={selectedSizeUuid || '__all__'}
+            onValueChange={handleSizeSelect}
           >
-            <option value="">{t('hero.areaSize')}</option>
-            {filterApartmentSizes.map((fs) => <option key={fs.uuid} value={fs.uuid}>{fs.name}</option>)}
-          </select>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={t('hero.areaSize')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t('hero.areaSize')}</SelectItem>
+              {filterApartmentSizes.map((fs) => (
+                <SelectItem key={fs.uuid} value={fs.uuid}>{fs.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -242,7 +284,6 @@ const MapPage = () => {
         <div className="lg:w-[55%] h-[50vh] lg:h-auto lg:sticky lg:top-16">
           <div className="h-full p-4 lg:p-0 lg:pr-4 lg:py-4">
             <MapView
-              properties={[]}
               hoveredId={hoveredId}
               onMarkerClick={(id) => navigate(`/property/${id}`)}
             />
