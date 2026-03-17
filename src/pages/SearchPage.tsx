@@ -490,45 +490,6 @@ const SearchPage = () => {
                 actionTo="/search"
               />
             )}
-
-            {/* Bottom pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex justify-center">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() => page > 1 && handlePageChange(page - 1)}
-                        className={cn(page <= 1 && "pointer-events-none opacity-50", "cursor-pointer")}
-                      />
-                    </PaginationItem>
-                    {getPageNumbers().map((p, i) =>
-                      p === "ellipsis" ? (
-                        <PaginationItem key={`ellipsis-${i}`}>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      ) : (
-                        <PaginationItem key={p}>
-                          <PaginationLink
-                            isActive={page === p}
-                            onClick={() => handlePageChange(p as number)}
-                            className="cursor-pointer"
-                          >
-                            {p}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ),
-                    )}
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() => page < totalPages && handlePageChange(page + 1)}
-                        className={cn(page >= totalPages && "pointer-events-none opacity-50", "cursor-pointer")}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
           </div>
 
           {/* Map section below list */}
