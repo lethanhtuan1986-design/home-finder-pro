@@ -28,6 +28,7 @@ const SearchPage = () => {
   });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(true);
+  const [mockPage, setMockPage] = useState(1);
 
   const [district, setDistrict] = useState(searchParams.get('district') || '');
   const [priceMax, setPriceMax] = useState(searchParams.get('price_max') || '');
