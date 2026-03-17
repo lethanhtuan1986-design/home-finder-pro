@@ -6,10 +6,10 @@ import { useSavedRooms } from '@/hooks/useSavedRooms';
 import { useQuery } from '@tanstack/react-query';
 import advertisementService, { AdvertisementData } from '@/services/advertisement.service';
 import { httpRequest } from '@/services/index';
-import { Heart, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/EmptyState';
 
 const SavedRooms = () => {
   const { savedIds } = useSavedRooms();
