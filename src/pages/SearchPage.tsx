@@ -178,7 +178,7 @@ const SearchPage = () => {
   // Sync state to URL
   useEffect(() => {
     const params = new URLSearchParams();
-    if (keyword) params.set("q", keyword);
+    if (debouncedKeyword) params.set("q", debouncedKeyword);
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
@@ -189,7 +189,7 @@ const SearchPage = () => {
     if (page > 1) params.set("page", String(page));
     setSearchParams(params, { replace: true });
   }, [
-    keyword,
+    debouncedKeyword,
     provinceId,
     wardId,
     apartmentTypeUuid,
