@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { MapPin, Maximize, Star, Heart, Building } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { AdvertisementData, formatVNPrice, getImageUrl } from '@/services/roomService';
+import { AdvertisementData } from '@/services/advertisement.service';
+import { formatVNPrice, getImageUrl } from '@/services/index';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
 
 interface AdvertisementCardProps {
