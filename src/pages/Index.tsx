@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Zap, Eye, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Skeleton } from '@/components/ui/skeleton';
+
 
 const Index = () => {
   const { t } = useTranslation();
