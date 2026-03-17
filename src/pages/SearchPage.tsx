@@ -15,6 +15,13 @@ import { useTranslation } from 'react-i18next';
 import { Search, Map as MapIcon, List, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const PAGE_SIZE = 8;
 
@@ -49,7 +56,7 @@ const SearchPage = () => {
     queryFn: () => httpRequest({ http: provinceService.listProvince({ keyword: '' }) }),
   });
 
-  const { data: wards = [] } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
+  const { data: wards = [], isLoading: wardsLoading } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
     queryKey: ['dropdown-ward', provinceId],
     queryFn: () => httpRequest({ http: provinceService.listWard({ keyword: '', provinceCode: provinceId }) }),
     enabled: !!provinceId,
@@ -119,14 +126,28 @@ const SearchPage = () => {
     setSearchParams(params, { replace: true });
   }, [keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo, setSearchParams]);
 
-  const handlePriceSelect = (fp: FilterOption) => {
-    if (selectedPriceUuid === fp.uuid) { setPriceFrom(''); setPriceTo(''); }
-    else { setPriceFrom(fp.value ? String(fp.value) : ''); setPriceTo(fp.valueTo ? String(fp.valueTo) : ''); }
+  const handlePriceSelect = (uuid: string) => {
+    if (uuid === '__all__' || uuid === selectedPriceUuid) {
+      setPriceFrom(''); setPriceTo('');
+    } else {
+      const fp = filterPrices.find((p) => p.uuid === uuid);
+      if (fp) {
+        setPriceFrom(fp.value ? String(fp.value) : '');
+        setPriceTo(fp.valueTo ? String(fp.valueTo) : '');
+      }
+    }
   };
 
-  const handleSizeSelect = (fs: FilterOption) => {
-    if (selectedSizeUuid === fs.uuid) { setApartmentSizeFrom(''); setApartmentSizeTo(''); }
-    else { setApartmentSizeFrom(fs.value ? String(fs.value) : ''); setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : ''); }
+  const handleSizeSelect = (uuid: string) => {
+    if (uuid === '__all__' || uuid === selectedSizeUuid) {
+      setApartmentSizeFrom(''); setApartmentSizeTo('');
+    } else {
+      const fs = filterApartmentSizes.find((s) => s.uuid === uuid);
+      if (fs) {
+        setApartmentSizeFrom(fs.value ? String(fs.value) : '');
+        setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : '');
+      }
+    }
   };
 
   return (
@@ -150,30 +171,38 @@ const SearchPage = () => {
             </div>
             <div className="flex-1 min-w-[140px]">
               <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('search.area')}</label>
-              <select
-                value={provinceId}
-                onChange={(e) => { setProvinceId(e.target.value); setWardId(''); }}
-                className="custom-select w-full"
+              <Select
+                value={provinceId || '__all__'}
+                onValueChange={(val) => { setProvinceId(val === '__all__' ? '' : val); setWardId(''); }}
               >
-                <option value="">{t('search.all')}</option>
-                {provinces.map((p) => (
-                  <option key={p.code} value={p.code}>{p.fullName}</option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={t('search.all')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t('search.all')}</SelectItem>
+                  {provinces.map((p) => (
+                    <SelectItem key={p.code} value={p.code}>{p.fullName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex-1 min-w-[140px]">
               <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('hero.ward')}</label>
-              <select
-                value={wardId}
-                onChange={(e) => setWardId(e.target.value)}
-                className="custom-select w-full"
-                disabled={!provinceId}
+              <Select
+                value={wardId || '__all__'}
+                onValueChange={(val) => setWardId(val === '__all__' ? '' : val)}
+                disabled={!provinceId || (wardsLoading && wards.length === 0)}
               >
-                <option value="">{t('search.all')}</option>
-                {wards.map((w) => (
-                  <option key={w.code} value={w.code}>{w.fullName}</option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={!provinceId ? t('hero.selectAreaFirst') : wardsLoading ? t('search.loading') : t('search.all')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t('search.all')}</SelectItem>
+                  {wards.map((w) => (
+                    <SelectItem key={w.code} value={w.code}>{w.fullName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <button
               onClick={() => setShowMap(!showMap)}
@@ -214,7 +243,7 @@ const SearchPage = () => {
               {filterPrices.map((fp) => (
                 <button
                   key={fp.uuid}
-                  onClick={() => handlePriceSelect(fp)}
+                  onClick={() => handlePriceSelect(fp.uuid)}
                   className={cn(
                     'px-3 py-1.5 rounded-lg border text-sm transition-colors',
                     selectedPriceUuid === fp.uuid
@@ -235,7 +264,7 @@ const SearchPage = () => {
               {filterApartmentSizes.map((fs) => (
                 <button
                   key={fs.uuid}
-                  onClick={() => handleSizeSelect(fs)}
+                  onClick={() => handleSizeSelect(fs.uuid)}
                   className={cn(
                     'px-3 py-1.5 rounded-lg border text-sm transition-colors',
                     selectedSizeUuid === fs.uuid
@@ -326,7 +355,6 @@ const SearchPage = () => {
               <div className="hidden lg:block w-2/5">
                 <div className="sticky top-20 h-[calc(100vh-8rem)]">
                   <MapView
-                    properties={[]}
                     hoveredId={hoveredId}
                     onMarkerClick={(id) => navigate(`/property/${id}`)}
                   />

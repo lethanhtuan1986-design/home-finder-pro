@@ -9,6 +9,13 @@ import { httpRequest } from '@/services/index';
 import provinceService, { ProvinceItem } from '@/services/province.service';
 import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
 import { filterPrices, filterApartmentSizes } from '@/lib/filter-options';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export const HeroSearch = () => {
   const navigate = useNavigate();
@@ -24,7 +31,7 @@ export const HeroSearch = () => {
     queryFn: () => httpRequest({ http: provinceService.listProvince({ keyword: '' }) }),
   });
 
-  const { data: wards = [] } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
+  const { data: wards = [], isLoading: wardsLoading } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
     queryKey: ['dropdown-ward', provinceId],
     queryFn: () => httpRequest({ http: provinceService.listWard({ keyword: '', provinceCode: provinceId }) }),
     enabled: !!provinceId,
@@ -100,77 +107,97 @@ export const HeroSearch = () => {
               {/* Khu vực */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.area')}</label>
-                <select
+                <Select
                   value={provinceId}
-                  onChange={(e) => { setProvinceId(e.target.value); setWardId(''); }}
-                  className="search-field-select"
+                  onValueChange={(val) => { setProvinceId(val === '__all__' ? '' : val); setWardId(''); }}
                 >
-                  <option value="">{t('hero.allDistricts')}</option>
-                  {provinces.map((p) => (
-                    <option key={p.code} value={p.code}>{p.fullName}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="search-field-select-trigger">
+                    <SelectValue placeholder={t('hero.allDistricts')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t('hero.allDistricts')}</SelectItem>
+                    {provinces.map((p) => (
+                      <SelectItem key={p.code} value={p.code}>{p.fullName}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Phường/xã */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.ward')}</label>
-                <select
+                <Select
                   value={wardId}
-                  onChange={(e) => setWardId(e.target.value)}
-                  className="search-field-select"
-                  disabled={!provinceId}
+                  onValueChange={(val) => setWardId(val === '__all__' ? '' : val)}
+                  disabled={!provinceId || (wardsLoading && wards.length === 0)}
                 >
-                  <option value="">{t('hero.allWards')}</option>
-                  {wards.map((w) => (
-                    <option key={w.code} value={w.code}>{w.fullName}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="search-field-select-trigger">
+                    <SelectValue placeholder={!provinceId ? t('hero.selectAreaFirst') : wardsLoading ? t('search.loading') : t('hero.allWards')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t('hero.allWards')}</SelectItem>
+                    {wards.map((w) => (
+                      <SelectItem key={w.code} value={w.code}>{w.fullName}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Loại hình */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.roomType')}</label>
-                <select
+                <Select
                   value={apartmentTypeUuid}
-                  onChange={(e) => setApartmentTypeUuid(e.target.value)}
-                  className="search-field-select"
+                  onValueChange={(val) => setApartmentTypeUuid(val === '__all__' ? '' : val)}
                 >
-                  <option value="">{t('hero.allTypes')}</option>
-                  {apartmentTypes.map((at) => (
-                    <option key={at.uuid} value={at.uuid}>{at.name}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="search-field-select-trigger">
+                    <SelectValue placeholder={t('hero.allTypes')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t('hero.allTypes')}</SelectItem>
+                    {apartmentTypes.map((at) => (
+                      <SelectItem key={at.uuid} value={at.uuid}>{at.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Khoảng giá */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.priceRange')}</label>
-                <select
+                <Select
                   value={priceUuid}
-                  onChange={(e) => setPriceUuid(e.target.value)}
-                  className="search-field-select"
+                  onValueChange={(val) => setPriceUuid(val === '__all__' ? '' : val)}
                 >
-                  <option value="">{t('hero.allPrices')}</option>
-                  {filterPrices.map((fp) => (
-                    <option key={fp.uuid} value={fp.uuid}>{fp.name}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="search-field-select-trigger">
+                    <SelectValue placeholder={t('hero.allPrices')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t('hero.allPrices')}</SelectItem>
+                    {filterPrices.map((fp) => (
+                      <SelectItem key={fp.uuid} value={fp.uuid}>{fp.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Diện tích */}
               <div className="search-field">
                 <label className="search-field-label">{t('hero.areaSize')}</label>
-                <select
+                <Select
                   value={sizeUuid}
-                  onChange={(e) => setSizeUuid(e.target.value)}
-                  className="search-field-select"
+                  onValueChange={(val) => setSizeUuid(val === '__all__' ? '' : val)}
                 >
-                  <option value="">{t('hero.allSizes')}</option>
-                  {filterApartmentSizes.map((fs) => (
-                    <option key={fs.uuid} value={fs.uuid}>{fs.name}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="search-field-select-trigger">
+                    <SelectValue placeholder={t('hero.allSizes')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t('hero.allSizes')}</SelectItem>
+                    {filterApartmentSizes.map((fs) => (
+                      <SelectItem key={fs.uuid} value={fs.uuid}>{fs.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <button

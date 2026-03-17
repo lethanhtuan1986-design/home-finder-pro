@@ -1,5 +1,5 @@
 import { HeroSearch } from '@/components/HeroSearch';
-import { PropertyGrid } from '@/components/PropertyGrid';
+import { AdvertisementCard } from '@/components/AdvertisementCard';
 import { AppDownload } from '@/components/AppDownload';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
@@ -7,12 +7,13 @@ import { SEO } from '@/components/SEO';
 import { useQuery } from '@tanstack/react-query';
 import { httpRequest } from '@/services/index';
 import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentType.service';
-import { filterPrices, filterApartmentSizes, FilterOption } from '@/lib/filter-options';
-import { mockProperties } from '@/lib/mock-data';
+import advertisementService, { AdvertisementData } from '@/services/advertisement.service';
+import { filterPrices } from '@/lib/filter-options';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Zap, Eye } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Index = () => {
   const { t } = useTranslation();
@@ -32,6 +33,20 @@ const Index = () => {
         }),
       }),
   });
+
+  const { data: featuredData, isLoading: featuredLoading } = useQuery<{ items: AdvertisementData[] }>({
+    queryKey: ['featured-advertisements'],
+    queryFn: () =>
+      httpRequest({
+        http: advertisementService.getListPaged({
+          isPaging: 1,
+          page: 1,
+          pageSize: 6,
+        }),
+      }),
+  });
+
+  const featuredAds = featuredData?.items ?? [];
 
   const features = [
     { icon: Zap, title: t('features.fast'), desc: t('features.fastDesc') },
@@ -115,7 +130,27 @@ const Index = () => {
         </div>
 
         <div className="mt-6">
-          <PropertyGrid properties={mockProperties.slice(0, 6)} />
+          {featuredLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
+                  <Skeleton className="aspect-[4/3] w-full" />
+                  <div className="p-4 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-5 w-1/2" />
+                    <Skeleton className="h-3 w-2/3" />
+                    <Skeleton className="h-3 w-full mt-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredAds.map((ad, i) => (
+                <AdvertisementCard key={ad.uuid} data={ad} index={i} />
+              ))}
+            </div>
+          )}
         </div>
         <div className="mt-8 text-center md:hidden">
           <Link to="/search" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
