@@ -11,7 +11,8 @@ import advertisementService, { AdvertisementData } from '@/services/advertisemen
 import { filterPrices } from '@/lib/filter-options';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Zap, Eye, Clock } from 'lucide-react';
+import { ArrowRight, Shield, Zap, Eye } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
