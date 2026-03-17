@@ -158,8 +158,13 @@ const SearchPage = () => {
   const totalPages = (listData as any)?.pagination?.totalPage ?? 1;
   const error = queryError ? t("search.serverError") : null;
 
-  // Reset page when filters change
+  // Reset page when filters change (skip initial mount)
+  const isInitialMount = useRef(true);
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     setPage(1);
   }, [keyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
 
