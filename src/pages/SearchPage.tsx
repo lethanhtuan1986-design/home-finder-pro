@@ -266,13 +266,13 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {!hasApiData && !loading && PAGE_SIZE * page < mockFiltered.length && (
+              {!hasApiData && !loading && PAGE_SIZE * mockPage < mockFiltered.length && (
                 <div className="text-center mt-8">
                   <button
-                    onClick={() => setPage(p => p + 1)}
+                    onClick={() => setMockPage(p => p + 1)}
                     className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground"
                   >
-                    {t('search.loadMore')} ({mockFiltered.length - PAGE_SIZE * page} {t('search.found')})
+                    {t('search.loadMore')} ({mockFiltered.length - PAGE_SIZE * mockPage} {t('search.found')})
                   </button>
                 </div>
               )}
