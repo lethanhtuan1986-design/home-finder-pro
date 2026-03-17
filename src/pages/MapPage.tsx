@@ -264,24 +264,7 @@ const MapPage = () => {
             ))}
           </div>
 
-          {hasNextPage && (
-            <div className="text-center py-4">
-              <button
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-                className="px-6 py-2.5 rounded-xl border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors text-foreground disabled:opacity-50"
-              >
-                {isFetchingNextPage ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 size={16} className="animate-spin" /> {t('search.loading')}
-                  </span>
-                ) : (
-                  t('search.loadMore')
-                )}
-              </button>
-            </div>
-          )}
-        </div>
+          </div>
 
         {/* Map panel */}
         <div className="lg:w-[55%] h-[50vh] lg:h-auto lg:sticky lg:top-16">
