@@ -138,7 +138,7 @@ export function formatVNPrice(price: number): string {
 
 // ==================== Server-side fetch for SEO ====================
 
-export async function fetchForSEO<T>(endpoint: string, body: Record<string, unknown>): Promise<ResponseBase<T>> {
+export async function fetchForSEO<T>(endpoint: string, body: unknown): Promise<ResponseBase<T>> {
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
