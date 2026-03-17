@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 const Index = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { recentIds } = useRecentRooms();
+  
 
   const { data: apartmentTypes = [] } = useQuery<ApartmentTypeItem[]>({
     queryKey: ['dropdown-apartment-type'],
