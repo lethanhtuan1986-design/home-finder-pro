@@ -46,7 +46,7 @@ const Index = () => {
       }),
   });
 
-  const featuredAds = featuredData?.items ?? [];
+  const featuredAds = (featuredData?.items ?? []).filter(Boolean);
 
   const features = [
     { icon: Zap, title: t('features.fast'), desc: t('features.fastDesc') },

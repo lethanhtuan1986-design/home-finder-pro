@@ -355,6 +355,7 @@ const SearchPage = () => {
               <div className="hidden lg:block w-2/5">
                 <div className="sticky top-20 h-[calc(100vh-8rem)]">
                   <MapView
+                    advertisements={advertisements}
                     hoveredId={hoveredId}
                     onMarkerClick={(id) => navigate(`/property/${id}`)}
                   />
