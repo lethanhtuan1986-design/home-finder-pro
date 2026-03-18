@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 interface PropertyGalleryProps {
   images: string[];
