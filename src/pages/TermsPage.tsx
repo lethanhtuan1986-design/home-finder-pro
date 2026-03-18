@@ -443,7 +443,7 @@ export default function TermsPage() {
                   return (
                     <button
                       key={s.id}
-                      onClick={() => { setActiveSection(s.id); setMobileMenuOpen(false); }}
+                      onClick={() => { handleSetSection(s.id); setMobileMenuOpen(false); }}
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors",
                         activeSection === s.id
