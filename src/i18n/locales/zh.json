@@ -86,11 +86,18 @@
   },
   "schedule": {
     "title": "预约看房",
+    "date": "选择日期",
     "name": "姓名",
     "phone": "电话号码",
     "submit": "预约",
     "success": "预约成功！",
-    "successDesc": "您已预约\"{{title}}\"，时间：{{date}} {{time}}。"
+    "successDesc": "您已预约\"{{title}}\"，时间：{{date}} {{time}}。",
+    "error": "预约失败，请重试。",
+    "errorDate": "请选择看房日期",
+    "errorName": "请输入姓名",
+    "errorPhoneRequired": "请输入电话号码",
+    "errorPhoneInvalid": "电话号码无效（例：0912345678）",
+    "errorEmail": "邮箱格式无效"
   },
   "saved": {
     "title": "已收藏房间",

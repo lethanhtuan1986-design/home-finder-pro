@@ -86,11 +86,18 @@
   },
   "schedule": {
     "title": "内見予約",
+    "date": "日付を選択",
     "name": "氏名",
     "phone": "電話番号",
     "submit": "予約する",
     "success": "予約完了！",
-    "successDesc": "「{{title}}」を{{date}} {{time}}に予約しました。"
+    "successDesc": "「{{title}}」を{{date}} {{time}}に予約しました。",
+    "error": "予約に失敗しました。もう一度お試しください。",
+    "errorDate": "見学日を選択してください",
+    "errorName": "氏名を入力してください",
+    "errorPhoneRequired": "電話番号を入力してください",
+    "errorPhoneInvalid": "無効な電話番号です（例：0912345678）",
+    "errorEmail": "無効なメールアドレスです"
   },
   "saved": {
     "title": "保存済みの部屋",
