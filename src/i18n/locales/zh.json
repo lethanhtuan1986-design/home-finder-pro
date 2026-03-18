@@ -24,7 +24,8 @@
     "under": "低于",
     "above": "高于",
     "million": "百万",
-    "searchBtn": "搜索"
+    "searchBtn": "搜索",
+    "advancedFilters": "高级筛选"
   },
   "features": {
     "fast": "超快搜索",
