@@ -17,7 +17,6 @@ export const Navbar = () => {
     { to: '/', label: t('nav.home'), icon: Home },
     { to: '/search', label: t('nav.search'), icon: Search },
     { to: '/saved', label: t('nav.saved'), icon: Heart },
-    { to: '/terms?tab=about', label: 'Giới thiệu XanhStay', icon: Building2 },
   ];
 
   // Close on click outside
@@ -73,8 +72,15 @@ export const Navbar = () => {
             <LanguageSwitcher />
             <ThemeToggle />
             <Link
+              to="/terms?tab=about"
+              className="ml-2 border border-primary text-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors flex items-center gap-2"
+            >
+              <Building2 size={16} />
+              Về chúng tôi
+            </Link>
+            <Link
               to="/search"
-              className="ml-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
             >
               <Search size={16} />
               {t('nav.searchNow')}
@@ -134,6 +140,14 @@ export const Navbar = () => {
                 <LanguageSwitcher />
                 <ThemeToggle />
               </div>
+              <Link
+                to="/terms?tab=about"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              >
+                <Building2 size={18} />
+                Về chúng tôi
+              </Link>
               <Link
                 to="/search"
                 onClick={() => setOpen(false)}
