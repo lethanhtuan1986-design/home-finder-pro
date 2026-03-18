@@ -54,7 +54,7 @@ export const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
       {/* Lightbox Modal */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-[100vw] max-h-[100vh] w-screen h-screen p-0 border-none bg-black/95 backdrop-blur-sm [&>button]:hidden">
-          <VisuallyHidden><DialogTitle>Gallery</DialogTitle></VisuallyHidden>
+          <DialogTitle className="sr-only">Gallery</DialogTitle>
           {/* Close */}
           <button
             onClick={() => setLightboxOpen(false)}
