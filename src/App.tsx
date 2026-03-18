@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import PropertyDetail from "./pages/PropertyDetail.tsx";
 import SavedRooms from "./pages/SavedRooms.tsx";
+import TermsPage from "./pages/TermsPage.tsx";
 
 import NotFound from "./pages/NotFound.tsx";
 import { ScrollToTop } from "./components/ScrollToTop.tsx";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/search" element={<SearchPage />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
           <Route path="/saved" element={<SavedRooms />} />
+          <Route path="/terms" element={<TermsPage />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>
