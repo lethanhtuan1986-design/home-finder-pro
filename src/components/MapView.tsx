@@ -166,7 +166,8 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
 
       marker.bindPopup(buildPopupHtml(loc), {
         closeButton: false,
-        maxWidth: 260,
+        maxWidth: 320,
+        className: "leaflet-popup-premium",
       });
 
       marker.on("click", () => {
