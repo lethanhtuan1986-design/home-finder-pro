@@ -24,7 +24,8 @@
     "under": "이하",
     "above": "이상",
     "million": "백만",
-    "searchBtn": "검색"
+    "searchBtn": "검색",
+    "advancedFilters": "고급 필터"
   },
   "features": {
     "fast": "초고속 검색",

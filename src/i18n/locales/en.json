@@ -24,7 +24,8 @@
     "under": "Under",
     "above": "Above",
     "million": "million",
-    "searchBtn": "Search"
+    "searchBtn": "Search",
+    "advancedFilters": "Advanced filters"
   },
   "features": {
     "fast": "Super fast search",

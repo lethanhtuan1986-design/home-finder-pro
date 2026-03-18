@@ -24,7 +24,8 @@
     "under": "以下",
     "above": "以上",
     "million": "百万",
-    "searchBtn": "検索"
+    "searchBtn": "検索",
+    "advancedFilters": "詳細フィルター"
   },
   "features": {
     "fast": "超高速検索",

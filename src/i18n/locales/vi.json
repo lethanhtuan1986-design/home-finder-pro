@@ -24,7 +24,8 @@
     "under": "Dưới",
     "above": "Trên",
     "million": "triệu",
-    "searchBtn": "Tìm phòng"
+    "searchBtn": "Tìm phòng",
+    "advancedFilters": "Lọc nâng cao"
   },
   "features": {
     "fast": "Tìm phòng siêu nhanh",
