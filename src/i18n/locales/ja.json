@@ -115,7 +115,10 @@
     "support": "サポート",
     "contact": "お問い合わせ",
     "terms": "利用規約",
-    "follow": "フォロー"
+    "follow": "フォロー",
+    "companyName": "GSLデジタルソリューションズ株式会社",
+    "taxId": "税番号",
+    "address": "ベトナム ハノイ市ドンダー区ランハ105番地3階"
   },
   "notFound": {
     "title": "404",

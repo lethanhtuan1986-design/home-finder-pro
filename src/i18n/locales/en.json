@@ -115,7 +115,10 @@
     "support": "Support",
     "contact": "Contact",
     "terms": "Terms",
-    "follow": "Follow us"
+    "follow": "Follow us",
+    "companyName": "GSL DIGITAL SOLUTIONS JOINT STOCK COMPANY",
+    "taxId": "Tax ID",
+    "address": "Floor 3, No.105 Lang Ha, Dong Da District, Ha Noi, Vietnam"
   },
   "notFound": {
     "title": "404",
