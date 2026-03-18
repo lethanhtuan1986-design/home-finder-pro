@@ -31,7 +31,7 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination";
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 20;
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
