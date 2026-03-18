@@ -142,12 +142,15 @@ const PropertyDetail = () => {
                     <MapPin size={16} /> {address}
                   </p>
                 </div>
-                <button
+                <motion.button
                   onClick={() => toggleSave(detail.uuid)}
-                  className="shrink-0 w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+                  whileTap={{ scale: 0.7 }}
+                  animate={isSaved(detail.uuid) ? { scale: [1, 1.3, 0.9, 1.1, 1] } : { scale: 1 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="shrink-0 w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary hover:shadow-md transition-all"
                 >
-                  <Heart size={20} className={isSaved(detail.uuid) ? 'fill-destructive text-destructive' : 'text-muted-foreground'} />
-                </button>
+                  <Heart size={20} className={`transition-colors duration-200 ${isSaved(detail.uuid) ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+                </motion.button>
               </div>
 
               <div className="flex items-baseline gap-2 mt-4">
