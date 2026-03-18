@@ -143,12 +143,11 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
       const coords = parsePoint(loc.point)!;
       points.push(coords);
 
-      const minPrice = Math.min(...loc.ads.map((a) => a.price));
       const isHovered = loc.ads.some((a) => hoveredId === a.uuid);
       const key = loc.point;
 
       const marker = L.marker(coords, {
-        icon: createClusterIcon(loc.totalAds, minPrice, isHovered),
+        icon: createClusterIcon(loc.totalAds, loc.address, isHovered),
         zIndexOffset: isHovered ? 1000 : 0,
       });
 
