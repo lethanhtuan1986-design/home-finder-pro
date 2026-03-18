@@ -10,10 +10,7 @@ export const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">X</span>
-              </div>
-              <span className="font-bold text-lg">XanhStay</span>
+              <img src="/images/logo.svg" alt="XanhStay" className="h-8 brightness-0 invert" />
             </div>
             <p className="text-sm opacity-60 leading-relaxed">
               {t('footer.description')}
@@ -44,7 +41,16 @@ export const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="border-t border-background/10 mt-8 pt-8 text-center text-sm opacity-40 space-y-1">
+
+        {/* Company info */}
+        <div className="border-t border-background/10 mt-8 pt-8 space-y-2 text-sm opacity-50">
+          <p className="font-semibold opacity-80">{t('footer.companyName')}</p>
+          <p>{t('footer.taxId')}: 0111382005</p>
+          <p>Email: <a href="mailto:xanhstay@gslgroup.vn" className="hover:opacity-100 transition-opacity underline">xanhstay@gslgroup.vn</a></p>
+          <p>{t('footer.address')}</p>
+        </div>
+
+        <div className="border-t border-background/10 mt-6 pt-6 text-center text-sm opacity-40 space-y-1">
           <p>© 2026 XanhStay. All rights reserved.</p>
         </div>
       </div>
