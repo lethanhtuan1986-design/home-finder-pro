@@ -13,7 +13,7 @@ export const SEO = ({
   title,
   description,
   canonical,
-  ogImage = 'https://lovable.dev/opengraph-image-p98pqg.png',
+  ogImage = '/images/banner.png',
   ogType = 'website',
   jsonLd,
 }: SEOProps) => {
