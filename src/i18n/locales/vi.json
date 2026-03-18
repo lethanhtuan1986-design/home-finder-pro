@@ -69,7 +69,7 @@
     "desc": "Tìm kiếm phòng trọ và căn hộ cho thuê phù hợp với nhu cầu. Lọc theo giá, diện tích, khu vực.",
     "keyword": "Từ khóa",
     "keywordPlaceholder": "Tìm theo tên, địa chỉ...",
-    "area": "Khu vực",
+    "area": "Tỉnh/Thành phố",
     "roomType": "Loại phòng",
     "maxPrice": "Giá tối đa",
     "areaSize": "Diện tích",

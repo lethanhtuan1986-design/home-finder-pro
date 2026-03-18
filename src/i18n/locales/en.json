@@ -69,7 +69,7 @@
     "desc": "Find rooms and apartments that match your needs. Filter by price, size, area.",
     "keyword": "Keyword",
     "keywordPlaceholder": "Search by name, address...",
-    "area": "Area",
+    "area": "Province/City",
     "roomType": "Room type",
     "maxPrice": "Max price",
     "areaSize": "Size",
