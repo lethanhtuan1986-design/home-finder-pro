@@ -292,6 +292,33 @@ const PropertyDetail = () => {
         </div>
       </div>
 
+      {/* Sticky Bottom Bar on Mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t border-border px-4 py-3 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+        <div className="flex-1 min-w-0">
+          <p className="price-display text-lg leading-tight">{formatVNPrice(detail.price)}<span className="text-muted-foreground text-xs font-normal">{t('listing.perMonth')}</span></p>
+        </div>
+        {detail.phoneNumber && (
+          <a
+            href={`tel:${detail.phoneNumber}`}
+            className="flex items-center gap-1.5 bg-secondary text-foreground px-3 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            <Phone size={16} />
+            Gọi
+          </a>
+        )}
+        <button
+          onClick={() => {
+            const formEl = document.getElementById('schedule-form');
+            if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+        >
+          {t('schedule.title')}
+        </button>
+      </div>
+      {/* Bottom padding for sticky bar on mobile */}
+      <div className="h-20 lg:hidden" />
+
       <Footer />
     </div>
   );

@@ -69,21 +69,30 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
     const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
     return `
       <a href="/property/${ad.uuid}" style="display:flex;gap:8px;padding:8px;text-decoration:none;color:inherit;border-bottom:1px solid #eee;">
-        <div style="width:60px;height:45px;border-radius:6px;overflow:hidden;flex-shrink:0;">
-          <img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/placeholder.svg'" />
+        <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#f0f0f0;">
+          <img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
         </div>
         <div style="min-width:0;flex:1;">
           <p style="font-size:12px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-            ${ad.apartmentUu?.name || "Phòng"}
+            ${ad.apartmentUu?.name || ad.title || "Phòng"}
           </p>
-          <p style="font-size:13px;font-weight:700;color:hsl(var(--primary));margin:2px 0 0;">
+          <p style="font-size:13px;font-weight:700;color:#16a34a;margin:2px 0 0;">
             ${formatVNPrice(ad.price)}/tháng
           </p>
         </div>
       </a>`;
   }).join("");
 
-  const more = ads.length > 3 ? `<p style="text-align:center;font-size:11px;color:#888;padding:6px;margin:0;">+${ads.length - 3} phòng khác</p>` : "";
+  const moreCount = ads.length - 3;
+  const more = moreCount > 0 ? `<a href="/search?address=${encodeURIComponent(loc.address || '')}" style="
+    display:block;text-align:center;font-size:12px;font-weight:600;
+    color:white;background:#16a34a;
+    padding:8px;margin:6px 8px 8px;
+    border-radius:8px;text-decoration:none;
+    transition:opacity 0.2s;
+  " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+    +${moreCount} phòng khác
+  </a>` : "";
 
   return `
     <div style="width:240px;">
