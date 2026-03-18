@@ -32,13 +32,15 @@ const parsePoint = (point: string): LatLngTuple | null => {
 const createClusterIcon = (totalAds: number, minPrice: number, isHovered: boolean) => {
   const priceText = (minPrice / 1000000).toFixed(1).replace(".0", "") + "tr";
   const badge = totalAds > 1 ? `<span style="
-    position:absolute;top:-6px;right:-8px;
+    position:absolute;top:-10px;right:-10px;
     background:hsl(var(--destructive, 0 84% 60%));color:white;
-    font-size:10px;font-weight:700;
-    min-width:18px;height:18px;
+    font-size:10px;font-weight:700;line-height:1;
+    min-width:20px;height:20px;
     display:flex;align-items:center;justify-content:center;
-    border-radius:9px;border:2px solid white;
-    padding:0 4px;
+    border-radius:10px;border:2.5px solid white;
+    padding:0 5px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    z-index:10;
   ">${totalAds}</span>` : "";
 
   return L.divIcon({
@@ -48,18 +50,18 @@ const createClusterIcon = (totalAds: number, minPrice: number, isHovered: boolea
       background: ${isHovered ? "hsl(var(--xanh-700))" : "hsl(var(--primary))"};
       color: white;
       border-radius: 8px;
-      padding: 4px 10px;
-      font-size: 12px;
+      padding: 5px 12px;
+      font-size: 13px;
       font-weight: 700;
       white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.15);
       transform: ${isHovered ? "scale(1.18)" : "scale(1)"};
       transition: transform 0.2s ease, background 0.2s ease;
-      border: 2px solid white;
+      border: 2.5px solid white;
       cursor: pointer;
     ">${priceText}${badge}</div>`,
     iconSize: [0, 0],
-    iconAnchor: [20, 15],
+    iconAnchor: [24, 18],
   });
 };
 
