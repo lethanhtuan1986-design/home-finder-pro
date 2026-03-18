@@ -72,7 +72,7 @@ export const Navbar = () => {
             <LanguageSwitcher />
             <ThemeToggle />
             <Link
-              to="/terms?tab=about"
+              to="/policy?tab=about"
               className="ml-2 border border-primary text-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors flex items-center gap-2"
             >
               <Building2 size={16} />
@@ -141,7 +141,7 @@ export const Navbar = () => {
                 <ThemeToggle />
               </div>
               <Link
-                to="/terms?tab=about"
+                to="/policy?tab=about"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
               >

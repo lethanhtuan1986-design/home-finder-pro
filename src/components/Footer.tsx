@@ -22,15 +22,15 @@ export const Footer = () => {
               <li><Link to="/search" className="hover:opacity-100 transition-opacity">{t('footer.searchRooms')}</Link></li>
               <li><Link to="/search" className="hover:opacity-100 transition-opacity">{t('footer.mapView')}</Link></li>
               <li><Link to="/saved" className="hover:opacity-100 transition-opacity">{t('footer.savedRooms')}</Link></li>
-              <li><Link to="/terms?tab=about" className="hover:opacity-100 transition-opacity">Giới thiệu XanhStay</Link></li>
+              <li><Link to="/policy?tab=about" className="hover:opacity-100 transition-opacity">Giới thiệu XanhStay</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-semibold mb-3 text-sm">{t('footer.support')}</h4>
             <ul className="space-y-2 text-sm opacity-60">
-              <li><Link to="/terms?tab=about" className="hover:opacity-100 transition-opacity">{t('footer.contact')}</Link></li>
+              <li><Link to="/policy?tab=about" className="hover:opacity-100 transition-opacity">{t('footer.contact')}</Link></li>
               <li><a href="#" className="hover:opacity-100 transition-opacity">FAQ</a></li>
-              <li><Link to="/terms?tab=terms-xanhid" className="hover:opacity-100 transition-opacity">{t('footer.terms')}</Link></li>
+              <li><Link to="/policy?tab=terms-xanhid" className="hover:opacity-100 transition-opacity">{t('footer.terms')}</Link></li>
             </ul>
           </div>
           <div>
