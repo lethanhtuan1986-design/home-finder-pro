@@ -29,39 +29,30 @@ const parsePoint = (point: string): LatLngTuple | null => {
   return null;
 };
 
-const createClusterIcon = (totalAds: number, minPrice: number, isHovered: boolean) => {
-  const priceText = (minPrice / 1000000).toFixed(1).replace(".0", "") + "tr";
-  const badge = totalAds > 1 ? `<span style="
-    position:absolute;top:-10px;right:-10px;
-    background:hsl(var(--destructive, 0 84% 60%));color:white;
-    font-size:10px;font-weight:700;line-height:1;
-    min-width:20px;height:20px;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:10px;border:2.5px solid white;
-    padding:0 5px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.2);
-    z-index:10;
-  ">${totalAds}</span>` : "";
+const buildingSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>`;
+
+const shortenAddress = (address: string): string => {
+  if (!address) return "Không rõ";
+  // Try to extract street/alley name, e.g. "Ngõ 209 Đội Cấn" or "31A Đội Cấn"
+  const parts = address.split(",").map(s => s.trim());
+  const short = parts[0] || address;
+  return short.length > 22 ? short.slice(0, 20) + "…" : short;
+};
+
+const createClusterIcon = (totalAds: number, address: string, isHovered: boolean) => {
+  const label = shortenAddress(address);
+  const badge = totalAds > 1 ? `<span class="marker-badge">${totalAds}</span>` : "";
 
   return L.divIcon({
     className: "custom-map-marker",
-    html: `<div style="
-      position:relative;
-      background: ${isHovered ? "hsl(var(--xanh-700))" : "hsl(var(--primary))"};
-      color: white;
-      border-radius: 8px;
-      padding: 5px 12px;
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.15);
-      transform: ${isHovered ? "scale(1.18)" : "scale(1)"};
-      transition: transform 0.2s ease, background 0.2s ease;
-      border: 2.5px solid white;
-      cursor: pointer;
-    ">${priceText}${badge}</div>`,
+    html: `<div class="marker-pin ${isHovered ? "marker-pin--active" : ""}">
+      <span class="marker-pin__icon">${buildingSvg}</span>
+      <span class="marker-pin__label">${label}</span>
+      ${badge}
+      <span class="marker-pin__arrow"></span>
+    </div>`,
     iconSize: [0, 0],
-    iconAnchor: [24, 18],
+    iconAnchor: [50, 48],
   });
 };
 
