@@ -11,3 +11,5 @@ services:
     ports:
       - "8500:8500"
     restart: unless-stopped
+    environment:
+      - NODE_ENV=production
