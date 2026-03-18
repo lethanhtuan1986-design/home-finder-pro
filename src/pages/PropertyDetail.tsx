@@ -1,23 +1,36 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
-import { PropertyGallery } from '@/components/PropertyGallery';
-import { ScheduleForm } from '@/components/ScheduleForm';
-import { SEO } from '@/components/SEO';
-import { useSavedRooms } from '@/hooks/useSavedRooms';
-import { useRecentRooms } from '@/hooks/useRecentRooms';
-import { useTranslation } from 'react-i18next';
-import advertisementService, { AdvertisementDetailData } from '@/services/advertisement.service';
-import { formatVNPrice, getImageUrl, httpRequest } from '@/services/index';
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { PropertyGallery } from "@/components/PropertyGallery";
+import { ScheduleForm } from "@/components/ScheduleForm";
+import { SEO } from "@/components/SEO";
+import { useSavedRooms } from "@/hooks/useSavedRooms";
+import { useRecentRooms } from "@/hooks/useRecentRooms";
+import { useTranslation } from "react-i18next";
+import advertisementService, {
+  AdvertisementDetailData,
+} from "@/services/advertisement.service";
+import { formatVNPrice, getImageUrl, httpRequest } from "@/services/index";
 import {
-  MapPin, Maximize, Heart, ChevronLeft, Check, Phone,
-  Building, Star, Eye, Zap, Droplets, Bed, Sofa,
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+  MapPin,
+  Maximize,
+  Heart,
+  ChevronLeft,
+  Check,
+  Phone,
+  Building,
+  Star,
+  Eye,
+  Zap,
+  Droplets,
+  Bed,
+  Sofa,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,13 +44,17 @@ const PropertyDetail = () => {
     if (id) addRecent(id);
   }, [id, addRecent]);
 
-  const { data: detail, isLoading: loading, error: queryError } = useQuery<AdvertisementDetailData>({
-    queryKey: ['advertisement-detail', id],
+  const {
+    data: detail,
+    isLoading: loading,
+    error: queryError,
+  } = useQuery<AdvertisementDetailData>({
+    queryKey: ["advertisement-detail", id],
     queryFn: () => httpRequest({ http: advertisementService.getByUuid(id!) }),
     enabled: !!id,
   });
 
-  const error = queryError ? t('detail.loadError') : null;
+  const error = queryError ? t("detail.loadError") : null;
 
   if (loading) {
     return (
@@ -64,11 +81,19 @@ const PropertyDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <SEO title={t('detail.notFound')} description={t('detail.notFoundDesc')} />
+        <SEO
+          title={t("detail.notFound")}
+          description={t("detail.notFoundDesc")}
+        />
         <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-          <p className="text-muted-foreground text-lg">{error || t('detail.notFoundMsg')}</p>
-          <Link to="/search" className="text-primary font-medium mt-4 inline-block hover:underline">
-            {t('detail.backToSearch')}
+          <p className="text-muted-foreground text-lg">
+            {error || t("detail.notFoundMsg")}
+          </p>
+          <Link
+            to="/search"
+            className="text-primary font-medium mt-4 inline-block hover:underline"
+          >
+            {t("detail.backToSearch")}
           </Link>
         </div>
       </div>
@@ -80,30 +105,32 @@ const PropertyDetail = () => {
   const address = `${apt.address}, ${apt.ward?.fullName}, ${apt.province?.fullName}`;
   const descriptionText = apt.description || detail.description || detail.title;
   const manager = apt.managerUu || apt.ownerUu;
-  const managerAvatar = manager?.profileImage ? getImageUrl(manager.profileImage) : null;
+  const managerAvatar = manager?.profileImage
+    ? getImageUrl(manager.profileImage)
+    : null;
 
   const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateListing',
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
     name: detail.title,
     description: descriptionText,
     image: images[0],
     address: {
-      '@type': 'PostalAddress',
+      "@type": "PostalAddress",
       streetAddress: apt.address,
       addressLocality: apt.ward?.fullName,
       addressRegion: apt.province?.fullName,
-      addressCountry: 'VN',
+      addressCountry: "VN",
     },
     offers: {
-      '@type': 'Offer',
+      "@type": "Offer",
       price: detail.price,
-      priceCurrency: 'VND',
-      availability: 'https://schema.org/InStock',
+      priceCurrency: "VND",
+      availability: "https://schema.org/InStock",
     },
     ...(apt.avgStars > 0 && {
       aggregateRating: {
-        '@type': 'AggregateRating',
+        "@type": "AggregateRating",
         ratingValue: apt.avgStars,
         reviewCount: apt.numFeedback || 1,
       },
@@ -113,8 +140,8 @@ const PropertyDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title={`${detail.title} - ${formatVNPrice(detail.price)}${t('listing.perMonth')}`}
-        description={`${descriptionText.slice(0, 150)}. ${apt.apartmentSize}m², ${apt.roomCount} ${t('listing.rooms')}. ${address}`}
+        title={`${detail.title} - ${formatVNPrice(detail.price)}${t("listing.perMonth")}`}
+        description={`${descriptionText.slice(0, 150)}. ${apt.apartmentSize}m², ${apt.roomCount} ${t("listing.rooms")}. ${address}`}
         ogImage={images[0]}
         ogType="article"
         jsonLd={jsonLd}
@@ -127,27 +154,37 @@ const PropertyDetail = () => {
             if (window.history.length > 1) {
               navigate(-1);
             } else {
-              navigate('/search');
+              navigate("/search");
             }
           }}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
         >
-          <ChevronLeft size={16} /> {t('detail.back')}
+          <ChevronLeft size={16} /> {t("detail.back")}
         </button>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <PropertyGallery images={images} title={detail.title} />
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8 mt-8">
           <div className="lg:col-span-2 space-y-6">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
-                    {apt.apartmentTypeUu?.name || t('listing.room')}
+                    {apt.apartmentTypeUu?.name || t("listing.room")}
                   </span>
-                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground">{detail.title}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground">
+                    {detail.title}
+                  </h1>
                   <p className="text-muted-foreground flex items-center gap-1 mt-2">
                     <MapPin size={16} /> {address}
                   </p>
@@ -155,46 +192,87 @@ const PropertyDetail = () => {
                 <motion.button
                   onClick={() => toggleSave(detail.uuid)}
                   whileTap={{ scale: 0.7 }}
-                  animate={isSaved(detail.uuid) ? { scale: [1, 1.3, 0.9, 1.1, 1] } : { scale: 1 }}
+                  animate={
+                    isSaved(detail.uuid)
+                      ? { scale: [1, 1.3, 0.9, 1.1, 1] }
+                      : { scale: 1 }
+                  }
                   transition={{ duration: 0.4, ease: "easeInOut" }}
                   className="shrink-0 w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary hover:shadow-md transition-all"
                 >
-                  <Heart size={20} className={`transition-colors duration-200 ${isSaved(detail.uuid) ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+                  <Heart
+                    size={20}
+                    className={`transition-colors duration-200 ${isSaved(detail.uuid) ? "fill-destructive text-destructive" : "text-muted-foreground"}`}
+                  />
                 </motion.button>
               </div>
 
               <div className="flex items-baseline gap-2 mt-4">
-                <span className="price-display text-3xl">{formatVNPrice(detail.price)}</span>
-                <span className="text-muted-foreground text-sm">{t('listing.perMonth')}</span>
+                <span className="price-display text-3xl">
+                  {formatVNPrice(detail.price)}
+                </span>
+                <span className="text-muted-foreground text-sm">
+                  {t("listing.perMonth")}
+                </span>
               </div>
 
               <div className="flex flex-wrap gap-6 mt-6 py-4 border-y border-border text-sm text-muted-foreground">
-                <span className="flex items-center gap-2"><Maximize size={16} /> {apt.apartmentSize}m²</span>
-                <span className="flex items-center gap-2"><Building size={16} /> {apt.numFloor} {t('listing.floors')}</span>
-                <span className="flex items-center gap-2"><Eye size={16} /> {detail.viewCount} {t('listing.views')}</span>
+                <span className="flex items-center gap-2">
+                  <Maximize size={16} /> {apt.apartmentSize}m²
+                </span>
+                <span className="flex items-center gap-2">
+                  <Building size={16} /> {apt.numFloor} {t("listing.floors")}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Eye size={16} /> {detail.viewCount} {t("listing.views")}
+                </span>
                 {apt.avgStars > 0 && (
                   <span className="flex items-center gap-2">
-                    <Star size={16} className="fill-yellow-400 text-yellow-400" /> {apt.avgStars}
+                    <Star
+                      size={16}
+                      className="fill-yellow-400 text-yellow-400"
+                    />{" "}
+                    {apt.avgStars}
                   </span>
                 )}
               </div>
             </motion.div>
 
             {descriptionText && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.description')}</h2>
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{descriptionText}</p>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <h2 className="font-semibold text-lg mb-3 text-foreground">
+                  {t("detail.description")}
+                </h2>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                  {descriptionText}
+                </p>
               </motion.div>
             )}
 
             {apt.roomTypeGroups && apt.roomTypeGroups.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.roomTypes')}</h2>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+              >
+                <h2 className="font-semibold text-lg mb-3 text-foreground">
+                  {t("detail.roomTypes")}
+                </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {apt.roomTypeGroups.map(g => (
-                    <div key={g.roomUu.uuid} className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 rounded-lg px-3 py-2">
+                  {apt.roomTypeGroups.map((g) => (
+                    <div
+                      key={g.roomUu.uuid}
+                      className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 rounded-lg px-3 py-2"
+                    >
                       <Bed size={16} className="text-primary shrink-0" />
-                      {g.roomUu.name} <span className="font-semibold text-foreground">×{g.count}</span>
+                      {g.roomUu.name}{" "}
+                      <span className="font-semibold text-foreground">
+                        ×{g.count}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -202,13 +280,25 @@ const PropertyDetail = () => {
             )}
 
             {apt.furnitureTypeGroups && apt.furnitureTypeGroups.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.furniture')}</h2>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <h2 className="font-semibold text-lg mb-3 text-foreground">
+                  {t("detail.furniture")}
+                </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {apt.furnitureTypeGroups.map(g => (
-                    <div key={g.furnitureUu.uuid} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {apt.furnitureTypeGroups.map((g) => (
+                    <div
+                      key={g.furnitureUu.uuid}
+                      className="flex items-center gap-2 text-sm text-muted-foreground"
+                    >
                       <Check size={16} className="text-primary shrink-0" />
-                      {g.furnitureUu.name} <span className="text-foreground font-medium">×{g.count}</span>
+                      {g.furnitureUu.name}{" "}
+                      <span className="text-foreground font-medium">
+                        ×{g.count}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -216,30 +306,50 @@ const PropertyDetail = () => {
             )}
 
             {detail.adPrices && detail.adPrices.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.serviceCost')}</h2>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+              >
+                <h2 className="font-semibold text-lg mb-3 text-foreground">
+                  {t("detail.serviceCost")}
+                </h2>
                 <div className="border border-border rounded-xl overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-secondary/50">
-                        <th className="text-left px-4 py-2.5 font-medium text-foreground">{t('detail.service')}</th>
-                        <th className="text-right px-4 py-2.5 font-medium text-foreground">{t('detail.price')}</th>
-                        <th className="text-right px-4 py-2.5 font-medium text-foreground">{t('detail.unit')}</th>
+                        <th className="text-left px-4 py-2.5 font-medium text-foreground">
+                          {t("detail.service")}
+                        </th>
+                        <th className="text-right px-4 py-2.5 font-medium text-foreground">
+                          {t("detail.price")}
+                        </th>
+                        <th className="text-right px-4 py-2.5 font-medium text-foreground">
+                          {t("detail.unit")}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {detail.adPrices.map(sp => (
+                      {detail.adPrices.map((sp) => (
                         <tr key={sp.uuid} className="border-t border-border">
                           <td className="px-4 py-2.5 text-muted-foreground">
                             <div className="flex items-center gap-2">
-                              {sp.serviceUu.type === 0 ? <Zap size={14} className="text-yellow-500" /> :
-                               sp.serviceUu.type === 1 ? <Droplets size={14} className="text-blue-500" /> :
-                               <Sofa size={14} className="text-primary" />}
+                              {sp.serviceUu.type === 0 ? (
+                                <Zap size={14} className="text-yellow-500" />
+                              ) : sp.serviceUu.type === 1 ? (
+                                <Droplets size={14} className="text-blue-500" />
+                              ) : (
+                                <Sofa size={14} className="text-primary" />
+                              )}
                               {sp.serviceUu.name}
                             </div>
                           </td>
-                          <td className="px-4 py-2.5 text-right font-medium text-foreground">{formatVNPrice(sp.price)}</td>
-                          <td className="px-4 py-2.5 text-right text-muted-foreground">/{sp.unit}</td>
+                          <td className="px-4 py-2.5 text-right font-medium text-foreground">
+                            {formatVNPrice(sp.price)}
+                          </td>
+                          <td className="px-4 py-2.5 text-right text-muted-foreground">
+                            /{sp.serviceUu.unit}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -248,35 +358,60 @@ const PropertyDetail = () => {
               </motion.div>
             )}
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
               <div className="bg-accent/50 rounded-xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('listing.deposit')}</span>
-                  <span className="font-semibold text-foreground">{formatVNPrice(detail.deposit)}</span>
+                  <span className="text-muted-foreground">
+                    {t("listing.deposit")}
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {formatVNPrice(detail.deposit)}
+                  </span>
                 </div>
                 {detail.preDeposit > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('listing.preDeposit')}</span>
-                    <span className="font-semibold text-foreground">{formatVNPrice(detail.preDeposit)}</span>
+                    <span className="text-muted-foreground">
+                      {t("listing.preDeposit")}
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {formatVNPrice(detail.preDeposit)}
+                    </span>
                   </div>
                 )}
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <h2 className="font-semibold text-lg mb-3 text-foreground">{t('detail.contact')}</h2>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
+              <h2 className="font-semibold text-lg mb-3 text-foreground">
+                {t("detail.contact")}
+              </h2>
               <div className="flex items-center gap-4 bg-card border border-border rounded-xl p-4">
                 <Avatar className="h-12 w-12">
                   {managerAvatar && (
-                    <AvatarImage src={managerAvatar} alt={manager?.name || ''} />
+                    <AvatarImage
+                      src={managerAvatar}
+                      alt={manager?.name || ""}
+                    />
                   )}
                   <AvatarFallback className="bg-accent text-primary font-bold text-lg">
-                    {(manager?.name || 'X').charAt(0).toUpperCase()}
+                    {(manager?.name || "X").charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="font-semibold text-foreground">{manager?.name}</p>
-                  <p className="text-sm text-muted-foreground">{t('detail.manager')}</p>
+                  <p className="font-semibold text-foreground">
+                    {manager?.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("detail.manager")}
+                  </p>
                 </div>
                 {detail.phoneNumber && (
                   <a
@@ -305,7 +440,12 @@ const PropertyDetail = () => {
       {/* Sticky Bottom Bar on Mobile */}
       <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t border-border px-4 py-3 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
         <div className="flex-1 min-w-0">
-          <p className="price-display text-lg leading-tight">{formatVNPrice(detail.price)}<span className="text-muted-foreground text-xs font-normal">{t('listing.perMonth')}</span></p>
+          <p className="price-display text-lg leading-tight">
+            {formatVNPrice(detail.price)}
+            <span className="text-muted-foreground text-xs font-normal">
+              {t("listing.perMonth")}
+            </span>
+          </p>
         </div>
         {detail.phoneNumber && (
           <a
@@ -318,12 +458,12 @@ const PropertyDetail = () => {
         )}
         <button
           onClick={() => {
-            const formEl = document.getElementById('schedule-form');
-            if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+            const formEl = document.getElementById("schedule-form");
+            if (formEl) formEl.scrollIntoView({ behavior: "smooth" });
           }}
           className="bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
         >
-          {t('schedule.title')}
+          {t("schedule.title")}
         </button>
       </div>
       {/* Bottom padding for sticky bar on mobile */}
