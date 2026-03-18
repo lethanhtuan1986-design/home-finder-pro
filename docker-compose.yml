@@ -2,9 +2,12 @@ version: "3.8"
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        - VITE_SITE_URL=${VITE_SITE_URL:-https://xanhstay.vn}
+        - VITE_BASE_URL=${VITE_BASE_URL:-https://api.xanhstay.vn/api/v1}
+        - VITE_IMAGE_URL=${VITE_IMAGE_URL:-https://api.xanhstay.vn}
     ports:
       - "8500:8500"
-    env_file:
-      - .env
     restart: unless-stopped
