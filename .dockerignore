@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+.env
+.env.*
+bun.lock
+bun.lockb
+package-lock.json
+.vscode
+.idea
+*.log
