@@ -57,7 +57,7 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-4">
+    <form id="schedule-form" onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-4">
       <h3 className="font-semibold text-lg text-foreground">{t('schedule.title')}</h3>
 
       {/* Date picker - full width */}
