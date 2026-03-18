@@ -115,7 +115,10 @@
     "support": "支持",
     "contact": "联系我们",
     "terms": "条款",
-    "follow": "关注我们"
+    "follow": "关注我们",
+    "companyName": "GSL数字解决方案股份公司",
+    "taxId": "税号",
+    "address": "越南河内市栋多区郎下105号3楼"
   },
   "notFound": {
     "title": "404",

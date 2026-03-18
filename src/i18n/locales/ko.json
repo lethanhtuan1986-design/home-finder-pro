@@ -115,7 +115,10 @@
     "support": "지원",
     "contact": "문의",
     "terms": "이용약관",
-    "follow": "팔로우"
+    "follow": "팔로우",
+    "companyName": "GSL 디지털 솔루션 주식회사",
+    "taxId": "사업자등록번호",
+    "address": "베트남 하노이시 동다구 랑하 105번지 3층"
   },
   "notFound": {
     "title": "404",
