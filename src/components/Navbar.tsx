@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Menu, X, Heart, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,12 +10,39 @@ export const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const { t } = useTranslation();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const navLinks = [
     { to: '/', label: t('nav.home'), icon: Home },
     { to: '/search', label: t('nav.search'), icon: Search },
     { to: '/saved', label: t('nav.saved'), icon: Heart },
   ];
+
+  // Close on click outside
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node;
+      if (
+        menuRef.current && !menuRef.current.contains(target) &&
+        buttonRef.current && !buttonRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [open]);
+
+  // Close on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   return (
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border">
@@ -54,6 +81,7 @@ export const Navbar = () => {
           </div>
 
           <button
+            ref={buttonRef}
             onClick={() => setOpen(!open)}
             className="md:hidden p-2 rounded-lg hover:bg-secondary text-foreground"
           >
@@ -62,13 +90,28 @@ export const Navbar = () => {
         </div>
       </div>
 
+      {/* Overlay */}
       <AnimatePresence>
         {open && (
           <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden fixed inset-0 top-16 z-40 bg-black/40 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            ref={menuRef}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden border-t border-border overflow-hidden bg-card"
+            className="md:hidden border-t border-border overflow-hidden bg-card relative z-50"
           >
             <div className="px-4 py-3 space-y-1">
               {navLinks.map(link => (

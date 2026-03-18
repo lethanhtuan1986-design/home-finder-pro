@@ -21,6 +21,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { isSaved, toggleSave } = useSavedRooms();
   const { addRecent } = useRecentRooms();
   const { t } = useTranslation();
