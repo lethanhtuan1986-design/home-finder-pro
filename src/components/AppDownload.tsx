@@ -1,6 +1,8 @@
 import { Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import appleLogo from '@/assets/apple.svg';
+import ggPlayLogo from '@/assets/gg_play.svg';
 
 export const AppDownload = () => {
   const { t } = useTranslation();
