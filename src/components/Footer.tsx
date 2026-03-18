@@ -29,7 +29,7 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm opacity-60">
               <li><a href="#" className="hover:opacity-100 transition-opacity">{t('footer.contact')}</a></li>
               <li><a href="#" className="hover:opacity-100 transition-opacity">FAQ</a></li>
-              <li><a href="#" className="hover:opacity-100 transition-opacity">{t('footer.terms')}</a></li>
+              <li><Link to="/terms" className="hover:opacity-100 transition-opacity">{t('footer.terms')}</Link></li>
             </ul>
           </div>
           <div>
