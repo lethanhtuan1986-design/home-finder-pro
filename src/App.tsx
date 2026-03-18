@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import PropertyDetail from "./pages/PropertyDetail.tsx";
 import SavedRooms from "./pages/SavedRooms.tsx";
+import TermsPage from "./pages/TermsPage.tsx";
 
 import NotFound from "./pages/NotFound.tsx";
 import { ScrollToTop } from "./components/ScrollToTop.tsx";
