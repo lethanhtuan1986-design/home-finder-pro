@@ -72,8 +72,15 @@ export const Navbar = () => {
             <LanguageSwitcher />
             <ThemeToggle />
             <Link
+              to="/terms?tab=about"
+              className="ml-2 border border-primary text-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors flex items-center gap-2"
+            >
+              <Building2 size={16} />
+              Về chúng tôi
+            </Link>
+            <Link
               to="/search"
-              className="ml-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
             >
               <Search size={16} />
               {t('nav.searchNow')}
