@@ -377,8 +377,24 @@ const contentMap: Record<string, React.FC> = {
 };
 
 export default function TermsPage() {
-  const [activeSection, setActiveSection] = useState('about');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeSection, setActiveSection] = useState(() => {
+    return tabParam && contentMap[tabParam] ? tabParam : 'about';
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (tabParam && contentMap[tabParam]) {
+      setActiveSection(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleSetSection = (id: string) => {
+    setActiveSection(id);
+    setSearchParams({ tab: id }, { replace: true });
+  };
+
   const ActiveContent = contentMap[activeSection];
   const activeLabel = sections.find(s => s.id === activeSection)?.label;
 
