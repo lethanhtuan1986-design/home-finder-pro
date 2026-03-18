@@ -63,20 +63,24 @@ const createClusterIcon = (totalAds: number, minPrice: number, isHovered: boolea
   });
 };
 
+const mapPinSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>`;
+
+const arrowSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`;
+
 const buildPopupHtml = (loc: MapLocationGroup) => {
   const ads = loc.ads;
   const items = ads.slice(0, 3).map((ad) => {
     const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
     return `
-      <a href="/property/${ad.uuid}" style="display:flex;gap:8px;padding:8px;text-decoration:none;color:inherit;border-bottom:1px solid #eee;">
-        <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#f0f0f0;">
+      <a href="/property/${ad.uuid}" class="popup-room-item" style="display:flex;gap:10px;padding:8px;text-decoration:none;color:inherit;border-radius:8px;transition:background 0.15s ease;">
+        <div style="width:72px;height:54px;border-radius:10px;overflow:hidden;flex-shrink:0;background:hsl(var(--muted));">
           <img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
         </div>
-        <div style="min-width:0;flex:1;">
-          <p style="font-size:12px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        <div style="min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px;">
+          <p style="font-size:13px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:hsl(var(--foreground));">
             ${ad.apartmentUu?.name || ad.title || "Phòng"}
           </p>
-          <p style="font-size:13px;font-weight:700;color:#16a34a;margin:2px 0 0;">
+          <p style="font-size:14px;font-weight:700;color:hsl(var(--primary));margin:0;">
             ${formatVNPrice(ad.price)}/tháng
           </p>
         </div>
@@ -84,23 +88,30 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   }).join("");
 
   const moreCount = ads.length - 3;
-  const more = moreCount > 0 ? `<a href="/search?address=${encodeURIComponent(loc.address || '')}" style="
-    display:block;text-align:center;font-size:12px;font-weight:600;
-    color:white;background:#16a34a;
-    padding:8px;margin:6px 8px 8px;
-    border-radius:8px;text-decoration:none;
-    transition:opacity 0.2s;
-  " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-    +${moreCount} phòng khác
-  </a>` : "";
+  const more = moreCount > 0 ? `
+    <div style="padding:4px 8px 8px;">
+      <a href="/search?address=${encodeURIComponent(loc.address || '')}" class="popup-cta-btn" style="
+        display:flex;align-items:center;justify-content:center;gap:6px;
+        font-size:13px;font-weight:700;color:white;
+        background:linear-gradient(135deg, hsl(var(--primary)), hsl(160 72% 38%));
+        padding:10px;border-radius:10px;text-decoration:none;
+        transition:transform 0.2s ease, opacity 0.2s ease;
+        box-shadow:0 2px 8px hsl(var(--primary) / 0.3);
+      ">
+        +${moreCount} phòng khác ${arrowSvg}
+      </a>
+    </div>` : "";
 
   return `
-    <div style="width:240px;">
-      <div style="padding:8px 10px;border-bottom:1px solid #eee;">
-        <p style="font-size:12px;font-weight:600;margin:0;">📍 ${loc.address || "Không rõ vị trí"}</p>
-        <p style="font-size:11px;color:#888;margin:2px 0 0;">${loc.totalAds} phòng</p>
+    <div style="width:280px;">
+      <div style="padding:10px 12px;background:hsl(var(--xanh-50));border-bottom:1px solid hsl(var(--border));display:flex;align-items:center;gap:6px;">
+        <span style="color:hsl(var(--primary));flex-shrink:0;">${mapPinSvg}</span>
+        <div style="min-width:0;">
+          <p style="font-size:13px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:hsl(var(--foreground));">${loc.address || "Không rõ vị trí"}</p>
+          <p style="font-size:11px;color:hsl(var(--muted-foreground));margin:2px 0 0;">${loc.totalAds} phòng tại đây</p>
+        </div>
       </div>
-      ${items}
+      <div style="padding:4px;">${items}</div>
       ${more}
     </div>
   `;
@@ -172,7 +183,8 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
 
       marker.bindPopup(buildPopupHtml(loc), {
         closeButton: false,
-        maxWidth: 260,
+        maxWidth: 300,
+        className: "leaflet-popup-premium",
       });
 
       marker.on("click", () => {
