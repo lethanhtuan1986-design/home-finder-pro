@@ -469,7 +469,7 @@ export default function TermsPage() {
                   return (
                     <button
                       key={s.id}
-                      onClick={() => setActiveSection(s.id)}
+                      onClick={() => handleSetSection(s.id)}
                       className={cn(
                         "w-full flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors text-left",
                         activeSection === s.id
