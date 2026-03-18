@@ -68,33 +68,39 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   const items = ads.slice(0, 3).map((ad) => {
     const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
     return `
-      <a href="/property/${ad.uuid}" class="popup-room-item">
-        <div class="popup-room-thumb">
-          <img src="${imageUrl}" alt="" onerror="this.src='/placeholder.svg'" />
+      <a href="/property/${ad.uuid}" style="display:flex;gap:8px;padding:8px;text-decoration:none;color:inherit;border-bottom:1px solid #eee;">
+        <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#f0f0f0;">
+          <img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
         </div>
-        <div class="popup-room-info">
-          <p class="popup-room-name">${ad.apartmentUu?.name || ad.title || "Phòng"}</p>
-          <p class="popup-room-price">${formatVNPrice(ad.price)}/tháng</p>
+        <div style="min-width:0;flex:1;">
+          <p style="font-size:12px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${ad.apartmentUu?.name || ad.title || "Phòng"}
+          </p>
+          <p style="font-size:13px;font-weight:700;color:#16a34a;margin:2px 0 0;">
+            ${formatVNPrice(ad.price)}/tháng
+          </p>
         </div>
       </a>`;
   }).join("");
 
   const moreCount = ads.length - 3;
-  const more = moreCount > 0 ? `<a href="/search?address=${encodeURIComponent(loc.address || '')}" class="popup-cta-btn">
-    <span>+${moreCount} phòng khác</span>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+  const more = moreCount > 0 ? `<a href="/search?address=${encodeURIComponent(loc.address || '')}" style="
+    display:block;text-align:center;font-size:12px;font-weight:600;
+    color:white;background:#16a34a;
+    padding:8px;margin:6px 8px 8px;
+    border-radius:8px;text-decoration:none;
+    transition:opacity 0.2s;
+  " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+    +${moreCount} phòng khác
   </a>` : "";
 
   return `
-    <div class="popup-premium-container">
-      <div class="popup-premium-header">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-        <div>
-          <p class="popup-premium-address">${loc.address || "Không rõ vị trí"}</p>
-          <p class="popup-premium-count">${loc.totalAds} phòng có sẵn</p>
-        </div>
+    <div style="width:240px;">
+      <div style="padding:8px 10px;border-bottom:1px solid #eee;">
+        <p style="font-size:12px;font-weight:600;margin:0;">📍 ${loc.address || "Không rõ vị trí"}</p>
+        <p style="font-size:11px;color:#888;margin:2px 0 0;">${loc.totalAds} phòng</p>
       </div>
-      <div class="popup-premium-list">${items}</div>
+      ${items}
       ${more}
     </div>
   `;
@@ -166,8 +172,7 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
 
       marker.bindPopup(buildPopupHtml(loc), {
         closeButton: false,
-        maxWidth: 320,
-        className: "leaflet-popup-premium",
+        maxWidth: 260,
       });
 
       marker.on("click", () => {
