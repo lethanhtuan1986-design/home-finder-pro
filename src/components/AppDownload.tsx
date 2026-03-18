@@ -22,14 +22,14 @@ export const AppDownload = () => {
               {t('appDownload.subtitle')}
             </p>
             <div className="flex flex-wrap gap-3">
-              {['App Store', 'Google Play', 'AppGallery'].map(store => (
-                <button
-                  key={store}
-                  className="px-5 py-3 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
-                >
-                  {store}
-                </button>
-              ))}
+              <button className="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity">
+                <img src={appleLogo} alt="Apple" className="h-5 w-5 invert dark:invert-0" />
+                App Store
+              </button>
+              <button className="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity">
+                <img src={ggPlayLogo} alt="Google Play" className="h-5 w-5" />
+                Google Play
+              </button>
             </div>
           </motion.div>
           <motion.div
