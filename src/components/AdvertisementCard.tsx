@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Maximize, Star, Heart, Building } from 'lucide-react';
+import { MapPin, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { AdvertisementData } from '@/services/advertisement.service';
@@ -19,14 +19,18 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
   const firstImage = data?.images?.[0];
   const imageUrl = firstImage ? getImageUrl(firstImage) : '/placeholder.svg';
 
-  const locationText =
-    apt?.ward?.fullName || apt?.province?.fullName
-      ? [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean).join(', ')
-      : 'Đang cập nhật';
+  // Compact location: Ward - Province
+  const locationParts = [apt?.ward?.fullName, apt?.province?.fullName].filter(Boolean);
+  const locationText = locationParts.length > 0 ? locationParts.join(', ') : 'Đang cập nhật';
 
   const typeName = apt?.apartmentTypeUu?.name || t('listing.room');
   const apartmentSize = apt?.apartmentSize;
   const roomCount = apt?.roomCount;
+
+  // Build compact stats line: "25m² • 2 phòng"
+  const statsParts: string[] = [];
+  if (apartmentSize != null && apartmentSize > 0) statsParts.push(`${apartmentSize}m²`);
+  if (roomCount != null && roomCount > 0) statsParts.push(`${roomCount} ${t('listing.rooms')}`);
 
   return (
     <motion.div
@@ -37,6 +41,7 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
     >
       <Link to={`/property/${data?.uuid}`} className="block">
         <div className="bg-card rounded-2xl overflow-hidden border border-border card-hover">
+          {/* Image with floating price badge */}
           <div className="relative aspect-[4/3] overflow-hidden">
             <img
               src={imageUrl}
@@ -47,15 +52,14 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
                 (e.target as HTMLImageElement).src = '/placeholder.svg';
               }}
             />
+            {/* Save button */}
             <button
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
                 const wasSaved = isSaved(data?.uuid);
                 toggleSave(data?.uuid);
-                toast(wasSaved ? 'Đã bỏ lưu phòng' : 'Đã lưu phòng thành công!', {
-                  duration: 2000,
-                });
+                toast(wasSaved ? 'Đã bỏ lưu phòng' : 'Đã lưu phòng thành công!', { duration: 2000 });
               }}
               className="absolute top-3 right-3 w-9 h-9 rounded-full bg-card/90 backdrop-blur flex items-center justify-center transition-colors hover:bg-card"
             >
@@ -64,42 +68,42 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
                 className={isSaved(data?.uuid) ? 'fill-destructive text-destructive' : 'text-muted-foreground'}
               />
             </button>
-            <div className="absolute bottom-3 left-3 bg-card/90 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-foreground">
+            {/* Type badge */}
+            <div className="absolute top-3 left-3 bg-card/90 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-foreground">
               {typeName}
             </div>
+            {/* Floating price badge */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent pt-8 pb-3 px-4">
+              <span className="text-white font-bold text-lg drop-shadow-sm">
+                {formatVNPrice(data?.price ?? 0)}<span className="text-white/80 text-sm font-normal">{t('listing.perMonth')}</span>
+              </span>
+            </div>
           </div>
-          <div className="p-4">
-            <h3 className="font-semibold text-foreground text-sm truncate mb-1" title={data?.title || ''}>
+
+          {/* Content */}
+          <div className="p-4 space-y-2">
+            <h3 className="font-semibold text-foreground text-sm truncate" title={data?.title || ''}>
               {data?.title || 'Đang cập nhật'}
             </h3>
-            <p className="price-display text-lg mb-1">{formatVNPrice(data?.price ?? 0)}{t('listing.perMonth')}</p>
-            <p className="text-muted-foreground text-sm flex items-center gap-1 mb-1">
-              <MapPin size={14} />
+
+            {/* Location - single line */}
+            <p className="text-muted-foreground text-sm flex items-center gap-1.5">
+              <MapPin size={14} className="shrink-0 text-primary" />
               <span className="truncate">{locationText}</span>
             </p>
-            {apt?.address && (
-              <p className="text-muted-foreground text-xs truncate mb-3">{apt.address}</p>
+
+            {/* Stats footer with separator dots */}
+            {statsParts.length > 0 && (
+              <div className="bg-secondary rounded-lg px-3 py-2 text-xs text-muted-foreground font-medium">
+                {statsParts.join(' • ')}
+                {apt?.avgStars != null && apt.avgStars > 0 && (
+                  <span className="float-right text-yellow-500">★ {apt.avgStars}</span>
+                )}
+              </div>
             )}
-            <div className="flex gap-4 border-t border-border pt-3 text-muted-foreground text-xs">
-              {apartmentSize != null && apartmentSize > 0 && (
-                <span className="flex items-center gap-1">
-                  <Maximize size={14} /> {apartmentSize}m²
-                </span>
-              )}
-              {roomCount != null && roomCount > 0 && (
-                <span className="flex items-center gap-1">
-                  <Building size={14} /> {roomCount} {t('listing.rooms')}
-                </span>
-              )}
-              {apt?.avgStars != null && apt.avgStars > 0 && (
-                <span className="flex items-center gap-1 ml-auto">
-                  <Star size={14} className="fill-yellow-400 text-yellow-400" />
-                  {apt.avgStars}
-                </span>
-              )}
-            </div>
+
             {data?.deposit != null && data.deposit > 0 && (
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-muted-foreground">
                 {t('listing.deposit')}: {formatVNPrice(data.deposit)}
               </p>
             )}

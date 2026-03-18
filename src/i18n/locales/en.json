@@ -86,11 +86,18 @@
   },
   "schedule": {
     "title": "Schedule a visit",
+    "date": "Select a date",
     "name": "Full name",
     "phone": "Phone number",
     "submit": "Book visit",
     "success": "Booking successful!",
-    "successDesc": "You booked a visit for \"{{title}}\" on {{date}} at {{time}}."
+    "successDesc": "You booked a visit for \"{{title}}\" on {{date}} at {{time}}.",
+    "error": "Booking failed, please try again.",
+    "errorDate": "Please select a visit date",
+    "errorName": "Please enter your name",
+    "errorPhoneRequired": "Please enter your phone number",
+    "errorPhoneInvalid": "Invalid phone number (e.g. 0912345678)",
+    "errorEmail": "Invalid email address"
   },
   "saved": {
     "title": "Saved rooms",

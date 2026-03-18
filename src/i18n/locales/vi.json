@@ -86,11 +86,18 @@
   },
   "schedule": {
     "title": "Đặt lịch xem phòng",
+    "date": "Chọn ngày xem",
     "name": "Họ tên",
     "phone": "Số điện thoại",
     "submit": "Đặt lịch",
     "success": "Đặt lịch thành công!",
-    "successDesc": "Bạn đã đặt lịch xem \"{{title}}\" vào {{date}} lúc {{time}}."
+    "successDesc": "Bạn đã đặt lịch xem \"{{title}}\" vào {{date}} lúc {{time}}.",
+    "error": "Đặt lịch thất bại, vui lòng thử lại.",
+    "errorDate": "Vui lòng chọn ngày xem phòng",
+    "errorName": "Vui lòng nhập họ tên",
+    "errorPhoneRequired": "Vui lòng nhập số điện thoại",
+    "errorPhoneInvalid": "Số điện thoại không hợp lệ (VD: 0912345678)",
+    "errorEmail": "Email không hợp lệ"
   },
   "saved": {
     "title": "Phòng đã lưu",

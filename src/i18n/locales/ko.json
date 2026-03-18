@@ -86,11 +86,18 @@
   },
   "schedule": {
     "title": "방문 예약",
+    "date": "날짜 선택",
     "name": "이름",
     "phone": "전화번호",
     "submit": "예약하기",
     "success": "예약 완료!",
-    "successDesc": "\"{{title}}\"을 {{date}} {{time}}에 예약했습니다."
+    "successDesc": "\"{{title}}\"을 {{date}} {{time}}에 예약했습니다.",
+    "error": "예약 실패, 다시 시도해주세요.",
+    "errorDate": "방문 날짜를 선택해주세요",
+    "errorName": "이름을 입력해주세요",
+    "errorPhoneRequired": "전화번호를 입력해주세요",
+    "errorPhoneInvalid": "유효하지 않은 전화번호 (예: 0912345678)",
+    "errorEmail": "유효하지 않은 이메일"
   },
   "saved": {
     "title": "저장된 방",
