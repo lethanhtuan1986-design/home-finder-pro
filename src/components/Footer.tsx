@@ -20,7 +20,7 @@ export const Footer = () => {
             <h4 className="font-semibold mb-3 text-sm">{t('footer.explore')}</h4>
             <ul className="space-y-2 text-sm opacity-60">
               <li><Link to="/search" className="hover:opacity-100 transition-opacity">{t('footer.searchRooms')}</Link></li>
-              <li><Link to="/map" className="hover:opacity-100 transition-opacity">{t('footer.mapView')}</Link></li>
+              <li><Link to="/search" className="hover:opacity-100 transition-opacity">{t('footer.mapView')}</Link></li>
               <li><Link to="/saved" className="hover:opacity-100 transition-opacity">{t('footer.savedRooms')}</Link></li>
             </ul>
           </div>
