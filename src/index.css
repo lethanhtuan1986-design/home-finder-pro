@@ -250,9 +250,22 @@
   background: hsl(var(--accent)) !important;
 }
 
-.leaflet-popup-premium .popup-cta-btn:hover {
-  transform: scale(1.02);
-  opacity: 0.9;
+/* Responsive popup container */
+.popup-premium-container {
+  width: clamp(240px, 80vw, 300px);
+}
+
+/* Scrollable room list with hidden scrollbar */
+.popup-room-list {
+  max-height: 280px;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.popup-room-list::-webkit-scrollbar {
+  display: none;
 }
 
 .custom-map-marker {

@@ -32,13 +32,15 @@ const parsePoint = (point: string): LatLngTuple | null => {
 const createClusterIcon = (totalAds: number, minPrice: number, isHovered: boolean) => {
   const priceText = (minPrice / 1000000).toFixed(1).replace(".0", "") + "tr";
   const badge = totalAds > 1 ? `<span style="
-    position:absolute;top:-6px;right:-8px;
+    position:absolute;top:-10px;right:-10px;
     background:hsl(var(--destructive, 0 84% 60%));color:white;
-    font-size:10px;font-weight:700;
-    min-width:18px;height:18px;
+    font-size:10px;font-weight:700;line-height:1;
+    min-width:20px;height:20px;
     display:flex;align-items:center;justify-content:center;
-    border-radius:9px;border:2px solid white;
-    padding:0 4px;
+    border-radius:10px;border:2.5px solid white;
+    padding:0 5px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    z-index:10;
   ">${totalAds}</span>` : "";
 
   return L.divIcon({
@@ -48,28 +50,28 @@ const createClusterIcon = (totalAds: number, minPrice: number, isHovered: boolea
       background: ${isHovered ? "hsl(var(--xanh-700))" : "hsl(var(--primary))"};
       color: white;
       border-radius: 8px;
-      padding: 4px 10px;
-      font-size: 12px;
+      padding: 5px 12px;
+      font-size: 13px;
       font-weight: 700;
       white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.15);
       transform: ${isHovered ? "scale(1.18)" : "scale(1)"};
       transition: transform 0.2s ease, background 0.2s ease;
-      border: 2px solid white;
+      border: 2.5px solid white;
       cursor: pointer;
     ">${priceText}${badge}</div>`,
     iconSize: [0, 0],
-    iconAnchor: [20, 15],
+    iconAnchor: [24, 18],
   });
 };
 
 const mapPinSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>`;
 
-const arrowSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`;
+
 
 const buildPopupHtml = (loc: MapLocationGroup) => {
   const ads = loc.ads;
-  const items = ads.slice(0, 3).map((ad) => {
+  const items = ads.map((ad) => {
     const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
     return `
       <a href="/property/${ad.uuid}" class="popup-room-item" style="display:flex;gap:10px;padding:8px;text-decoration:none;color:inherit;border-radius:8px;transition:background 0.15s ease;">
@@ -87,23 +89,8 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
       </a>`;
   }).join("");
 
-  const moreCount = ads.length - 3;
-  const more = moreCount > 0 ? `
-    <div style="padding:4px 8px 8px;">
-      <a href="/search?address=${encodeURIComponent(loc.address || '')}" class="popup-cta-btn" style="
-        display:flex;align-items:center;justify-content:center;gap:6px;
-        font-size:13px;font-weight:700;color:white;
-        background:linear-gradient(135deg, hsl(var(--primary)), hsl(160 72% 38%));
-        padding:10px;border-radius:10px;text-decoration:none;
-        transition:transform 0.2s ease, opacity 0.2s ease;
-        box-shadow:0 2px 8px hsl(var(--primary) / 0.3);
-      ">
-        +${moreCount} phòng khác ${arrowSvg}
-      </a>
-    </div>` : "";
-
   return `
-    <div style="width:280px;">
+    <div class="popup-premium-container">
       <div style="padding:10px 12px;background:hsl(var(--xanh-50));border-bottom:1px solid hsl(var(--border));display:flex;align-items:center;gap:6px;">
         <span style="color:hsl(var(--primary));flex-shrink:0;">${mapPinSvg}</span>
         <div style="min-width:0;">
@@ -111,8 +98,7 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
           <p style="font-size:11px;color:hsl(var(--muted-foreground));margin:2px 0 0;">${loc.totalAds} phòng tại đây</p>
         </div>
       </div>
-      <div style="padding:4px;">${items}</div>
-      ${more}
+      <div class="popup-room-list" style="padding:4px;">${items}</div>
     </div>
   `;
 };
