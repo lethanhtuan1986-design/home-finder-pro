@@ -142,12 +142,15 @@ const PropertyDetail = () => {
                     <MapPin size={16} /> {address}
                   </p>
                 </div>
-                <button
+                <motion.button
                   onClick={() => toggleSave(detail.uuid)}
-                  className="shrink-0 w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+                  whileTap={{ scale: 0.7 }}
+                  animate={isSaved(detail.uuid) ? { scale: [1, 1.3, 0.9, 1.1, 1] } : { scale: 1 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="shrink-0 w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary hover:shadow-md transition-all"
                 >
-                  <Heart size={20} className={isSaved(detail.uuid) ? 'fill-destructive text-destructive' : 'text-muted-foreground'} />
-                </button>
+                  <Heart size={20} className={`transition-colors duration-200 ${isSaved(detail.uuid) ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+                </motion.button>
               </div>
 
               <div className="flex items-baseline gap-2 mt-4">
@@ -288,6 +291,33 @@ const PropertyDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Sticky Bottom Bar on Mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t border-border px-4 py-3 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+        <div className="flex-1 min-w-0">
+          <p className="price-display text-lg leading-tight">{formatVNPrice(detail.price)}<span className="text-muted-foreground text-xs font-normal">{t('listing.perMonth')}</span></p>
+        </div>
+        {detail.phoneNumber && (
+          <a
+            href={`tel:${detail.phoneNumber}`}
+            className="flex items-center gap-1.5 bg-secondary text-foreground px-3 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            <Phone size={16} />
+            Gọi
+          </a>
+        )}
+        <button
+          onClick={() => {
+            const formEl = document.getElementById('schedule-form');
+            if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+        >
+          {t('schedule.title')}
+        </button>
+      </div>
+      {/* Bottom padding for sticky bar on mobile */}
+      <div className="h-20 lg:hidden" />
 
       <Footer />
     </div>
