@@ -67,13 +67,14 @@ export const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
         <DialogContent className="max-w-[100vw] max-h-[100dvh] w-screen h-[100dvh] p-0 border-none bg-black/95 backdrop-blur-sm [&>button]:hidden">
           <DialogTitle className="sr-only">Gallery</DialogTitle>
 
-          {/* Close button - always visible */}
+          {/* Close button - always visible, prominent */}
           <button
             onClick={() => setLightboxOpen(false)}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center hover:bg-white/25 active:bg-white/30 transition-colors text-white"
-            aria-label="Close"
+            className="absolute top-4 right-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 active:bg-white/40 transition-colors text-white font-medium text-sm"
+            aria-label="Đóng"
           >
-            <X size={22} />
+            <X size={18} />
+            <span>Đóng</span>
           </button>
 
           {/* Counter */}
