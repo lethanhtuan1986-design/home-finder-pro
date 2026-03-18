@@ -68,15 +68,15 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   const items = ads.slice(0, 3).map((ad) => {
     const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
     return `
-      <a href="/property/${ad.uuid}" class="popup-room-item" style="display:flex;gap:10px;padding:10px 12px;text-decoration:none;color:inherit;border-radius:8px;transition:background 0.2s ease;">
-        <div style="width:72px;height:54px;border-radius:10px;overflow:hidden;flex-shrink:0;background:hsl(var(--muted));">
+      <a href="/property/${ad.uuid}" style="display:flex;gap:8px;padding:8px;text-decoration:none;color:inherit;border-bottom:1px solid #eee;">
+        <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#f0f0f0;">
           <img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
         </div>
-        <div style="min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;">
-          <p style="font-size:13px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:hsl(var(--foreground));">
+        <div style="min-width:0;flex:1;">
+          <p style="font-size:12px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
             ${ad.apartmentUu?.name || ad.title || "Phòng"}
           </p>
-          <p style="font-size:14px;font-weight:700;color:hsl(var(--primary));margin:3px 0 0;">
+          <p style="font-size:13px;font-weight:700;color:#16a34a;margin:2px 0 0;">
             ${formatVNPrice(ad.price)}/tháng
           </p>
         </div>
@@ -84,31 +84,23 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   }).join("");
 
   const moreCount = ads.length - 3;
-  const more = moreCount > 0 ? `<a href="/search?address=${encodeURIComponent(loc.address || '')}" class="popup-cta-btn" style="
-    display:flex;align-items:center;justify-content:center;gap:6px;
-    font-size:13px;font-weight:600;
-    color:white;
-    background:linear-gradient(135deg, hsl(var(--primary)), hsl(var(--xanh-700)));
-    padding:10px 16px;margin:4px 10px 10px;
-    border-radius:10px;text-decoration:none;
-    transition:transform 0.2s ease, opacity 0.2s ease;
-  ">
+  const more = moreCount > 0 ? `<a href="/search?address=${encodeURIComponent(loc.address || '')}" style="
+    display:block;text-align:center;font-size:12px;font-weight:600;
+    color:white;background:#16a34a;
+    padding:8px;margin:6px 8px 8px;
+    border-radius:8px;text-decoration:none;
+    transition:opacity 0.2s;
+  " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
     +${moreCount} phòng khác
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
   </a>` : "";
 
   return `
-    <div style="width:280px;">
-      <div style="padding:10px 12px;background:hsl(var(--xanh-50));border-radius:16px 16px 0 0;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary))" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <p style="font-size:13px;font-weight:700;margin:0;color:hsl(var(--foreground));">${loc.address || "Không rõ vị trí"}</p>
-        </div>
-        <p style="font-size:11px;color:hsl(var(--muted-foreground));margin:3px 0 0 21px;">${loc.totalAds} phòng</p>
+    <div style="width:240px;">
+      <div style="padding:8px 10px;border-bottom:1px solid #eee;">
+        <p style="font-size:12px;font-weight:600;margin:0;">📍 ${loc.address || "Không rõ vị trí"}</p>
+        <p style="font-size:11px;color:#888;margin:2px 0 0;">${loc.totalAds} phòng</p>
       </div>
-      <div style="padding:4px 0;">
-        ${items}
-      </div>
+      ${items}
       ${more}
     </div>
   `;
@@ -180,8 +172,7 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
 
       marker.bindPopup(buildPopupHtml(loc), {
         closeButton: false,
-        maxWidth: 300,
-        className: "leaflet-popup-premium",
+        maxWidth: 260,
       });
 
       marker.on("click", () => {
