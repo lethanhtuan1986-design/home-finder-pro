@@ -20,6 +20,6 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react-router-dom", "leaflet"],
+    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "react-router-dom", "leaflet", "@radix-ui/react-dialog", "@radix-ui/react-tooltip", "@radix-ui/react-popover"],
   },
 }));
