@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
@@ -376,8 +377,24 @@ const contentMap: Record<string, React.FC> = {
 };
 
 export default function TermsPage() {
-  const [activeSection, setActiveSection] = useState('about');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeSection, setActiveSection] = useState(() => {
+    return tabParam && contentMap[tabParam] ? tabParam : 'about';
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (tabParam && contentMap[tabParam]) {
+      setActiveSection(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleSetSection = (id: string) => {
+    setActiveSection(id);
+    setSearchParams({ tab: id }, { replace: true });
+  };
+
   const ActiveContent = contentMap[activeSection];
   const activeLabel = sections.find(s => s.id === activeSection)?.label;
 
@@ -426,7 +443,7 @@ export default function TermsPage() {
                   return (
                     <button
                       key={s.id}
-                      onClick={() => { setActiveSection(s.id); setMobileMenuOpen(false); }}
+                      onClick={() => { handleSetSection(s.id); setMobileMenuOpen(false); }}
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors",
                         activeSection === s.id
@@ -452,7 +469,7 @@ export default function TermsPage() {
                   return (
                     <button
                       key={s.id}
-                      onClick={() => setActiveSection(s.id)}
+                      onClick={() => handleSetSection(s.id)}
                       className={cn(
                         "w-full flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors text-left",
                         activeSection === s.id
