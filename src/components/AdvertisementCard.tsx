@@ -46,7 +46,7 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
             <img
               src={imageUrl}
               alt={data?.title || ""}
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 border border-t"
+              className="block object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 will-change-transform"
               loading="lazy"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = "/placeholder.svg";
