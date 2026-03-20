@@ -342,17 +342,16 @@ const PropertyDetail = () => {
                   Bản đồ
                 </h2>
                 <div className="rounded-xl overflow-hidden border border-border">
-                <div style={{ width: "100%" }}>
+                  <div style={{ width: "100%" }}>
                     <iframe
-                      title="Google Maps"
-                      width="100%"
-                      height="600"
-                      frameBorder={0}
-                      scrolling="no"
-                      style={{ border: 0 }}
-                      src={`https://maps.google.com/maps?width=100%25&height=600&hl=vi&q=${mapCoords.lat},${mapCoords.lng}+(${encodeURIComponent(detail.title)})&t=&z=16&ie=UTF8&iwloc=B&output=embed`}
-                      allowFullScreen
-                    />
+                      width="600"
+                      height="450"
+                      style="border:0;"
+                      loading="lazy"
+                      allowfullscreen
+                      referrerpolicy="no-referrer-when-downgrade"
+                      src="https://www.google.com/maps?q=21.038524532253884,105.83839416154663&hl=vi&z=16&output=embed"
+                    ></iframe>
                   </div>
                 </div>
               </motion.div>
