@@ -104,6 +104,20 @@ const PropertyDetail = () => {
   const images = detail.images.map(getImageUrl);
   const address = `${apt.address}, ${apt.ward?.fullName}, ${apt.province?.fullName}`;
   const descriptionText = apt.description || detail.description || detail.title;
+
+  // Parse point "[lat,lng]" from apartmentUu
+  const mapCoords = (() => {
+    try {
+      const parsed = JSON.parse(String(apt.point));
+      if (Array.isArray(parsed) && parsed.length >= 2) {
+        const [lat, lng] = parsed.map(Number);
+        if (isFinite(lat) && isFinite(lng) && !(lat === 0 && lng === 0)) {
+          return { lat, lng };
+        }
+      }
+    } catch {}
+    return null;
+  })();
   const manager = apt.managerUu || apt.ownerUu;
   const managerAvatar = manager?.profileImage
     ? getImageUrl(manager.profileImage)
