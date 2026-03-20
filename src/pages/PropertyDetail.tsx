@@ -342,18 +342,17 @@ const PropertyDetail = () => {
                   Bản đồ
                 </h2>
                 <div className="rounded-xl overflow-hidden border border-border">
-                  <div style="width: 100%">
+                <div style={{ width: "100%" }}>
                     <iframe
+                      title="Google Maps"
                       width="100%"
                       height="600"
-                      frameborder="0"
+                      frameBorder={0}
                       scrolling="no"
-                      marginheight="0"
-                      marginwidth="0"
-                      src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=S%E1%BB%91%20nh%C3%A0%2016,%20d%C3%A3y%20C,ng%C3%B5%2018%20Ng%C3%B4%20Quy%E1%BB%81n%20Ph%C6%B0%E1%BB%9Dng%20H%C3%A0%20%C4%90%C3%B4ng,%20H%C3%A0%20N%E1%BB%99i+(31ADC202)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-                    >
-                      <a href="https://www.mapsdirections.info/pl/mapa-populacji/">mapa populacji świata online</a>
-                    </iframe>
+                      style={{ border: 0 }}
+                      src={`https://maps.google.com/maps?width=100%25&height=600&hl=vi&q=${mapCoords.lat},${mapCoords.lng}+(${encodeURIComponent(detail.title)})&t=&z=16&ie=UTF8&iwloc=B&output=embed`}
+                      allowFullScreen
+                    />
                   </div>
                 </div>
               </motion.div>
