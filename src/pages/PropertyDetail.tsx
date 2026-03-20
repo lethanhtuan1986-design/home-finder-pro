@@ -423,6 +423,32 @@ const PropertyDetail = () => {
                 )}
               </div>
             </motion.div>
+
+            {/* Google Maps Embed */}
+            {apt.latitude && apt.longitude && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <h2 className="font-semibold text-lg mb-3 text-foreground flex items-center gap-2">
+                  <MapPin size={18} className="text-primary" />
+                  Bản đồ
+                </h2>
+                <div className="rounded-xl overflow-hidden border border-border">
+                  <iframe
+                    title="Google Maps"
+                    width="100%"
+                    height="300"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://www.google.com/maps?q=${apt.latitude},${apt.longitude}&z=16&output=embed`}
+                    allowFullScreen
+                  />
+                </div>
+              </motion.div>
+            )}
           </div>
 
           <div className="lg:col-span-1">
