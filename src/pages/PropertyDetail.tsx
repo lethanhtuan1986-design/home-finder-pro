@@ -337,24 +337,34 @@ const PropertyDetail = () => {
             {/* Google Maps Embed */}
             {mapCoords && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-                <h2 className="font-semibold text-lg mb-3 text-foreground flex items-center gap-2">
-                  <MapPin size={18} className="text-primary" />
-                  Bản đồ
-                </h2>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="font-semibold text-lg text-foreground flex items-center gap-2">
+                    <MapPin size={18} className="text-primary" />
+                    Bản đồ & Vị trí
+                  </h2>
+
+                  {/* Nút chỉ đường mở ra Google Maps */}
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${mapCoords.lat},${mapCoords.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                  >
+                    <MapPin size={16} /> {/* Bạn có thể import icon Navigation từ lucide-react để đẹp hơn */}
+                    Chỉ đường
+                  </a>
+                </div>
+
                 <div className="rounded-xl overflow-hidden border border-border">
-                  <div style={{ width: "100%" }}>
+                  <div style={{ width: "100%", position: "relative", paddingTop: "56.25%" /* Tỷ lệ 16:9 */ }}>
                     <iframe
-                      title="Google Maps"
-                      width="100%"
-                      height="400"
-                      frameBorder={0}
-                      scrolling="no"
-                      style={{ border: 0 }}
+                      style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
                       loading="lazy"
                       allowFullScreen
                       referrerPolicy="no-referrer-when-downgrade"
-                      src={`https://maps.google.com/maps?width=100%25&height=400&hl=vi&q=${mapCoords.lat},${mapCoords.lng}+(${encodeURIComponent(detail.title)})&t=&z=16&ie=UTF8&iwloc=B&output=embed`}
-                    />
+                      // Sửa lại src để nhận toạ độ động
+                      src={`https://maps.google.com/maps?q=${mapCoords.lat},${mapCoords.lng}&hl=vi&z=16&output=embed`}
+                    ></iframe>
                   </div>
                 </div>
               </motion.div>
