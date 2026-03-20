@@ -453,12 +453,13 @@ const PropertyDetail = () => {
                   <iframe
                     title="Google Maps"
                     width="100%"
-                    height="300"
-                    style={{ border: 0 }}
+                    height="400"
+                    frameBorder="0"
+                    scrolling="no"
+                    marginHeight={0}
+                    marginWidth={0}
                     loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.google.com/maps?q=${mapCoords.lat},${mapCoords.lng}&z=16&output=embed`}
-                    allowFullScreen
+                    src={`https://maps.google.com/maps?width=100%25&height=400&hl=vi&q=${mapCoords.lat},${mapCoords.lng}+(${encodeURIComponent(detail.title)})&t=&z=16&ie=UTF8&iwloc=B&output=embed`}
                   />
                 </div>
               </motion.div>
