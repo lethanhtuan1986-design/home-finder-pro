@@ -125,7 +125,7 @@
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1;
+    @apply transition-[box-shadow,transform] duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1;
   }
 
   .filter-chip {
