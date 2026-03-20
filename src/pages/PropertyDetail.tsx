@@ -438,7 +438,7 @@ const PropertyDetail = () => {
               </div>
             </motion.div>
 
-            {/* Google Maps Embed */}
+            {/* Map Embed */}
             {mapCoords && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -451,16 +451,23 @@ const PropertyDetail = () => {
                 </h2>
                 <div className="rounded-xl overflow-hidden border border-border">
                   <iframe
-                    title="Google Maps"
+                    title="OpenStreetMap"
                     width="100%"
                     height="300"
                     style={{ border: 0 }}
                     loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.google.com/maps?q=${mapCoords.lat},${mapCoords.lng}&z=16&output=embed`}
-                    allowFullScreen
+                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${mapCoords.lng - 0.005},${mapCoords.lat - 0.003},${mapCoords.lng + 0.005},${mapCoords.lat + 0.003}&layer=mapnik&marker=${mapCoords.lat},${mapCoords.lng}`}
                   />
                 </div>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${mapCoords.lat},${mapCoords.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-primary hover:underline"
+                >
+                  <MapPin size={14} />
+                  Mở trong Google Maps
+                </a>
               </motion.div>
             )}
           </div>
