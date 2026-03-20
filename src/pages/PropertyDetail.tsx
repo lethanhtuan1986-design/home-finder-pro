@@ -439,7 +439,7 @@ const PropertyDetail = () => {
             </motion.div>
 
             {/* Google Maps Embed */}
-            {apt.latitude && apt.longitude && (
+            {mapCoords && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -457,7 +457,7 @@ const PropertyDetail = () => {
                     style={{ border: 0 }}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.google.com/maps?q=${apt.latitude},${apt.longitude}&z=16&output=embed`}
+                    src={`https://www.google.com/maps?q=${mapCoords.lat},${mapCoords.lng}&z=16&output=embed`}
                     allowFullScreen
                   />
                 </div>
