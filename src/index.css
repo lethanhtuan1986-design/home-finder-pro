@@ -177,7 +177,7 @@
   }
 
   .section-subtitle {
-    @apply text-muted-foreground text-base md:text-lg max-w-2xl;
+    @apply text-muted-foreground text-base md:text-lg max-w-2xl mx-auto;
   }
 
   .price-display {
