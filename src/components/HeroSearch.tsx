@@ -315,24 +315,25 @@ export const HeroSearch = () => {
   return (
     <>
       <section ref={heroSectionRef} className="relative overflow-hidden">
-        {/* Banner slideshow background */}
-        <div className="absolute inset-0">
-          {bannerImages.map((img, idx) => (
-            <div
-              key={idx}
-              className="absolute inset-0 transition-opacity duration-[1500ms] ease-in-out"
-              style={{ opacity: currentBanner === idx ? 1 : 0 }}
-            >
-              <img
-                src={img}
-                alt=""
-                className="w-full h-full object-cover"
-                loading={idx === 0 ? "eager" : "lazy"}
-              />
-            </div>
-          ))}
-          {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/50" />
+        {/* Banner slideshow background - contained to hero section */}
+        <div className="absolute inset-0 max-w-7xl mx-auto left-0 right-0 px-4 sm:px-6 lg:px-8">
+          <div className="relative w-full h-full rounded-b-2xl overflow-hidden">
+            {bannerImages.map((img, idx) => (
+              <div
+                key={idx}
+                className="absolute inset-0 transition-opacity duration-[1500ms] ease-in-out"
+                style={{ opacity: currentBanner === idx ? 1 : 0 }}
+              >
+                <img
+                  src={img}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                />
+              </div>
+            ))}
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 md:pt-24 md:pb-20">

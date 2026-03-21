@@ -72,13 +72,15 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Link
-              to="/policy?tab=about"
+            <a
+              href="https://apps.apple.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="ml-2 border border-primary text-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors flex items-center gap-2"
             >
               <Download size={16} />
               Tải ứng dụng
-            </Link>
+            </a>
           </div>
 
           {/* Mobile header right: language + theme + hamburger */}
