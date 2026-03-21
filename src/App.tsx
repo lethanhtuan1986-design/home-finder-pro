@@ -11,6 +11,7 @@ import TermsPage from "./pages/TermsPage.tsx";
 
 import NotFound from "./pages/NotFound.tsx";
 import { ScrollToTop } from "./components/ScrollToTop.tsx";
+import { MobileBottomNav } from "./components/MobileBottomNav.tsx";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <MobileBottomNav />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
