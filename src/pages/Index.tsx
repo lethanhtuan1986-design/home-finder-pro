@@ -3,7 +3,7 @@ import { AdvertisementCard } from '@/components/AdvertisementCard';
 import { CoreValues } from '@/components/CoreValues';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
-import { MobileBottomNav } from '@/components/MobileBottomNav';
+
 import { SEO } from '@/components/SEO';
 import { useQuery } from '@tanstack/react-query';
 import { httpRequest } from '@/services/index';
@@ -131,7 +131,6 @@ const Index = () => {
 
       <CoreValues />
       <Footer />
-      <MobileBottomNav />
     </div>
   );
 };
