@@ -1,8 +1,9 @@
 import { HeroSearch } from '@/components/HeroSearch';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
-import { AppDownload } from '@/components/AppDownload';
+import { CoreValues } from '@/components/CoreValues';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
+import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { SEO } from '@/components/SEO';
 import { useQuery } from '@tanstack/react-query';
 import { httpRequest } from '@/services/index';
@@ -10,17 +11,14 @@ import apartmentTypeService, { ApartmentTypeItem } from '@/services/apartmentTyp
 import advertisementService, { AdvertisementData } from '@/services/advertisement.service';
 import { filterPrices } from '@/lib/filter-options';
 
-import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Zap, Eye } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-
 const Index = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  
 
   const { data: apartmentTypes = [] } = useQuery<ApartmentTypeItem[]>({
     queryKey: ['dropdown-apartment-type'],
@@ -51,12 +49,6 @@ const Index = () => {
 
   const featuredAds = (featuredData?.items ?? []).filter(Boolean);
 
-  const features = [
-    { icon: Zap, title: t('features.fast'), desc: t('features.fastDesc') },
-    { icon: Eye, title: t('features.visual'), desc: t('features.visualDesc') },
-    { icon: Shield, title: t('features.trusted'), desc: t('features.trustedDesc') },
-  ];
-
   const handleFilterClick = (params: Record<string, string>) => {
     const searchParams = new URLSearchParams(params);
     navigate(`/search?${searchParams.toString()}`);
@@ -77,37 +69,13 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-14 md:pb-0">
       <SEO title="XanhStay - Tìm phòng trọ, căn hộ cho thuê" description="Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam." />
       <Navbar />
       <HeroSearch />
 
-      {/* Features */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((f, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
-              className="flex gap-4"
-            >
-              <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center shrink-0">
-                <f.icon size={20} className="text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1 text-foreground">{f.title}</h3>
-                <p className="text-sm text-muted-foreground">{f.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       {/* Listings */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-end justify-between mb-6">
           <div>
             <h2 className="section-title">{t('listing.featured')}</h2>
@@ -161,8 +129,9 @@ const Index = () => {
         </div>
       </section>
 
-      <AppDownload />
+      <CoreValues />
       <Footer />
+      <MobileBottomNav />
     </div>
   );
 };

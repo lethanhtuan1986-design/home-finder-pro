@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Menu, X, Heart, Home, Building2 } from 'lucide-react';
+import { Search, Menu, X, Heart, Home, Building2, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -17,9 +17,9 @@ export const Navbar = () => {
     { to: '/', label: t('nav.home'), icon: Home },
     { to: '/search', label: t('nav.search'), icon: Search },
     { to: '/saved', label: t('nav.saved'), icon: Heart },
+    { to: '/policy?tab=about', label: t('nav.about'), icon: Building2 },
   ];
 
-  // Close on click outside
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent | TouchEvent) => {
@@ -39,7 +39,6 @@ export const Navbar = () => {
     };
   }, [open]);
 
-  // Close on route change
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
@@ -52,13 +51,14 @@ export const Navbar = () => {
             <img src="/images/logo.svg" alt="XanhStay" className="h-8" />
           </Link>
 
+          {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map(link => (
               <Link
                 key={link.to}
                 to={link.to}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  location.pathname === link.to
+                  location.pathname === link.to || (link.to.includes('?') && location.pathname === link.to.split('?')[0])
                     ? 'bg-accent text-accent-foreground'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                 }`}
@@ -68,6 +68,7 @@ export const Navbar = () => {
             ))}
           </div>
 
+          {/* Desktop right actions */}
           <div className="hidden md:flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
@@ -75,29 +76,27 @@ export const Navbar = () => {
               to="/policy?tab=about"
               className="ml-2 border border-primary text-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors flex items-center gap-2"
             >
-              <Building2 size={16} />
-              Về chúng tôi
-            </Link>
-            <Link
-              to="/search"
-              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
-            >
-              <Search size={16} />
-              {t('nav.searchNow')}
+              <Download size={16} />
+              Tải ứng dụng
             </Link>
           </div>
 
-          <button
-            ref={buttonRef}
-            onClick={() => setOpen(!open)}
-            className="md:hidden p-2 rounded-lg hover:bg-secondary text-foreground"
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Mobile header right: language + theme + hamburger */}
+          <div className="md:hidden flex items-center gap-1">
+            <LanguageSwitcher />
+            <ThemeToggle />
+            <button
+              ref={buttonRef}
+              onClick={() => setOpen(!open)}
+              className="p-2 rounded-lg hover:bg-secondary text-foreground"
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Overlay */}
+      {/* Mobile overlay */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -127,7 +126,7 @@ export const Navbar = () => {
                   to={link.to}
                   onClick={() => setOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === link.to
+                    location.pathname === link.to || (link.to.includes('?') && location.pathname === link.to.split('?')[0])
                       ? 'bg-accent text-accent-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                   }`}
@@ -136,25 +135,6 @@ export const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex items-center gap-2 pt-2 border-t border-border mt-2">
-                <LanguageSwitcher />
-                <ThemeToggle />
-              </div>
-              <Link
-                to="/policy?tab=about"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-              >
-                <Building2 size={18} />
-                Về chúng tôi
-              </Link>
-              <Link
-                to="/search"
-                onClick={() => setOpen(false)}
-                className="block w-full text-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-medium mt-2"
-              >
-                {t('nav.searchNow')}
-              </Link>
             </div>
           </motion.div>
         )}
