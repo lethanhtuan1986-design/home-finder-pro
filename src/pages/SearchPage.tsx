@@ -515,7 +515,7 @@ const SearchPage = () => {
                 locations={mapLocations}
                 hoveredId={hoveredId}
                 loading={mapLoading && mapLocations.length === 0}
-                onMarkerClick={(id) => navigate(`/property/${id}`)}
+                onMarkerClick={(id) => navigate(`/advertisement/${id}`)}
               />
             </div>
           </div>
