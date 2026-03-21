@@ -44,8 +44,8 @@ export const CoreValues = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="section-title">Giá trị cốt lõi</h2>
-          <p className="section-subtitle mt-2">
+          <h2 className="section-title text-center">Giá trị cốt lõi</h2>
+          <p className="section-subtitle mt-2 text-center">
             Những giá trị nền tảng định hình XanhStay
           </p>
         </motion.div>
