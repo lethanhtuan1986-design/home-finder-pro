@@ -124,13 +124,13 @@ export const HeroSearch = () => {
     navigate(`/search?${params.toString()}`);
   };
 
-  const advancedFilterCount = [wardId, sizeUuid].filter(Boolean).length;
+  const advancedFilterCount = [wardId, sizeUuid, apartmentTypeUuid].filter(Boolean).length;
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
       {/* Main filters row */}
       <div className="flex flex-col md:flex-row items-stretch gap-2">
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="search-field">
             <label className="search-field-label">{t("hero.area")}</label>
             <Select
@@ -249,7 +249,7 @@ export const HeroSearch = () => {
                   <X size={16} />
                 </button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="search-field">
                   <label className="search-field-label">{t("hero.ward")}</label>
                   <Select
