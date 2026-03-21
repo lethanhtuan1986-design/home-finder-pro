@@ -83,17 +83,10 @@ export const Navbar = () => {
             </a>
           </div>
 
-          {/* Mobile header right: language + theme + hamburger */}
+          {/* Mobile header right: language + theme only */}
           <div className="md:hidden flex items-center gap-1">
             <LanguageSwitcher />
             <ThemeToggle />
-            <button
-              ref={buttonRef}
-              onClick={() => setOpen(!open)}
-              className="p-2 rounded-lg hover:bg-secondary text-foreground"
-            >
-              {open ? <X size={20} /> : <Menu size={20} />}
-            </button>
           </div>
         </div>
       </div>

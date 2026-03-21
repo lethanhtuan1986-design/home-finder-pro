@@ -336,15 +336,15 @@ export const HeroSearch = () => {
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 md:pt-24 md:pb-20">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[340px] md:min-h-[420px] pb-6 md:pb-8">
           {/* Brand text */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-            className="text-center mb-10 md:mb-14"
+            className="text-center mb-4 md:mb-6"
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-3">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-2">
               XanhStay
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-light">
@@ -352,7 +352,7 @@ export const HeroSearch = () => {
             </p>
           </motion.div>
 
-          {/* Search panel - inline version (will be hidden when sticky takes over) */}
+          {/* Search panel */}
           <motion.div
             ref={searchPanelRef}
             initial={{ opacity: 0, y: 20 }}
