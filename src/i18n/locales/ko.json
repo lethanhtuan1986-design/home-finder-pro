@@ -115,6 +115,23 @@
     "title": "XanhStay 앱 다운로드",
     "subtitle": "더 빠르게 방을 찾고, 새 매물 알림을 받고, 저장한 방을 휴대폰에서 관리하세요."
   },
+  "slogan": "안주의 길을 밝히고, 평안히 귀가하다",
+  "coreValues": {
+    "sectionTitle": "핵심 가치",
+    "sectionSubtitle": "XanhStay를 만들어가는 핵심 가치",
+    "trust": "신뢰 & 투명성",
+    "trustDesc": "모든 매물 정보를 검증하여 정확하고 신뢰할 수 있도록 보장합니다.",
+    "green": "녹색 & 지속 가능한 생활",
+    "greenDesc": "커뮤니티를 위한 친환경적이고 지속 가능한 주거 공간을 지향합니다.",
+    "community": "연결된 커뮤니티",
+    "communityDesc": "안전하고 상호 지원하는 생태계에서 집주인과 세입자를 연결합니다.",
+    "innovation": "창의적 혁신",
+    "innovationDesc": "최신 기술을 활용하여 빠르고 편리한 방 찾기 경험을 제공합니다.",
+    "service": "헌신적인 서비스",
+    "serviceDesc": "항상 고객의 목소리에 귀 기울이며 전문적이고 진심 어린 태도로 동행합니다.",
+    "intuitive": "직관적 & 사용 편의",
+    "intuitiveDesc": "직관적인 인터페이스와 인터랙티브 지도로 몇 단계만에 방을 찾을 수 있습니다."
+  },
   "footer": {
     "description": "베트남의 스마트 임대 플랫폼.",
     "explore": "탐색",

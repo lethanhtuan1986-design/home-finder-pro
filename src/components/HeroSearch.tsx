@@ -124,13 +124,13 @@ export const HeroSearch = () => {
     navigate(`/search?${params.toString()}`);
   };
 
-  const advancedFilterCount = [wardId, sizeUuid].filter(Boolean).length;
+  const advancedFilterCount = [wardId, sizeUuid, apartmentTypeUuid].filter(Boolean).length;
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
       {/* Main filters row */}
       <div className="flex flex-col md:flex-row items-stretch gap-2">
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="search-field">
             <label className="search-field-label">{t("hero.area")}</label>
             <Select
@@ -154,27 +154,6 @@ export const HeroSearch = () => {
             </Select>
           </div>
 
-          <div className="search-field">
-            <label className="search-field-label">{t("hero.roomType")}</label>
-            <Select
-              value={apartmentTypeUuid}
-              onValueChange={(val) =>
-                setApartmentTypeUuid(val === "__all__" ? "" : val)
-              }
-            >
-              <SelectTrigger className="search-field-select-trigger">
-                <SelectValue placeholder={t("hero.allTypes")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
-                {apartmentTypes.map((at) => (
-                  <SelectItem key={at.uuid} value={at.uuid}>
-                    {at.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
           <div className="search-field">
             <label className="search-field-label">{t("hero.priceRange")}</label>
@@ -249,7 +228,7 @@ export const HeroSearch = () => {
                   <X size={16} />
                 </button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="search-field">
                   <label className="search-field-label">{t("hero.ward")}</label>
                   <Select
@@ -277,6 +256,28 @@ export const HeroSearch = () => {
                       {wards.map((w) => (
                         <SelectItem key={w.code} value={w.code}>
                           {w.fullName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="search-field">
+                  <label className="search-field-label">{t("hero.roomType")}</label>
+                  <Select
+                    value={apartmentTypeUuid}
+                    onValueChange={(val) =>
+                      setApartmentTypeUuid(val === "__all__" ? "" : val)
+                    }
+                  >
+                    <SelectTrigger className="search-field-select-trigger">
+                      <SelectValue placeholder={t("hero.allTypes")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                      {apartmentTypes.map((at) => (
+                        <SelectItem key={at.uuid} value={at.uuid}>
+                          {at.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -348,7 +349,7 @@ export const HeroSearch = () => {
               XanhStay
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-light">
-              Dẫn lối an cư, an nhiên về nhà
+              {t('slogan')}
             </p>
           </motion.div>
 
@@ -358,7 +359,7 @@ export const HeroSearch = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-            className={`relative z-20 ${!isMobile && isSticky ? "invisible" : ""}`}
+            className={`relative z-20 max-w-3xl mx-auto ${!isMobile && isSticky ? "invisible" : ""}`}
           >
             {searchPanel}
           </motion.div>

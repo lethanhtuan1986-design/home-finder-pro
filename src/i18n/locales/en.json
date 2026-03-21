@@ -115,6 +115,23 @@
     "title": "Download XanhStay app",
     "subtitle": "Find rooms faster, get notifications for new listings and manage saved rooms on your phone."
   },
+  "slogan": "Leading the way home, peacefully",
+  "coreValues": {
+    "sectionTitle": "Core Values",
+    "sectionSubtitle": "The foundational values that shape XanhStay",
+    "trust": "Trust & Transparency",
+    "trustDesc": "All room information is verified, ensuring accuracy and reliability.",
+    "green": "Green & Sustainable Living",
+    "greenDesc": "Towards eco-friendly and sustainable living spaces for the community.",
+    "community": "Connected Community",
+    "communityDesc": "Connecting landlords and tenants in a safe, mutually supportive ecosystem.",
+    "innovation": "Creative Innovation",
+    "innovationDesc": "Applying modern technology for a fast and convenient room-finding experience.",
+    "service": "Dedicated Service",
+    "serviceDesc": "Always listening and accompanying customers with a professional, dedicated attitude.",
+    "intuitive": "Intuitive & Easy to Use",
+    "intuitiveDesc": "Intuitive interface and interactive maps make finding rooms easy in just a few steps."
+  },
   "footer": {
     "description": "Smart room and apartment rental platform in Vietnam.",
     "explore": "Explore",
