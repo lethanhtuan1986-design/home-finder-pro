@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { SEO } from '@/components/SEO';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
 import { useSavedRooms } from '@/hooks/useSavedRooms';
@@ -15,7 +16,7 @@ const SavedRooms = () => {
   const { savedIds } = useSavedRooms();
   const { t } = useTranslation();
 
-  const { data: savedProperties = [], isLoading } = useQuery<AdvertisementData[]>({
+  const { data: savedData, isLoading } = useQuery<AdvertisementData[] | { items: AdvertisementData[] }>({
     queryKey: ['saved-advertisements', savedIds],
     queryFn: () =>
       httpRequest({
@@ -27,8 +28,13 @@ const SavedRooms = () => {
     enabled: savedIds.length > 0,
   });
 
+  // Handle both array and { items: [] } response formats
+  const savedProperties: AdvertisementData[] = Array.isArray(savedData)
+    ? savedData
+    : (savedData as any)?.items ?? [];
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col pb-14 md:pb-0">
       <SEO title={t('saved.title')} description={t('saved.title')} />
       <Navbar />
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -53,7 +59,7 @@ const SavedRooms = () => {
         {!isLoading && savedProperties.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {savedProperties.map((ad, i) => (
-              <AdvertisementCard key={ad.uuid} data={ad} index={i} />
+              <AdvertisementCard key={ad.uuid} data={ad} index={i} showScheduleButton />
             ))}
           </div>
         )}
@@ -77,6 +83,7 @@ const SavedRooms = () => {
         )}
       </div>
       <Footer />
+      <MobileBottomNav />
     </div>
   );
 };
