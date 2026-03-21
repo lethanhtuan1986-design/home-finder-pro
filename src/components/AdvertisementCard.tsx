@@ -39,7 +39,7 @@ export const AdvertisementCard = ({ data, index = 0 }: AdvertisementCardProps) =
       transition={{ duration: 0.4, delay: index * 0.05, ease: [0.2, 0.8, 0.2, 1] }}
       className="group"
     >
-      <Link to={`/property/${data?.uuid}`} className="block overflow-hidden">
+      <Link to={`/advertisement/${data?.uuid}`} className="block overflow-hidden">
         <div className="bg-card rounded-2xl overflow-hidden border border-border card-hover">
           {/* Image with floating price badge */}
           <div className="relative aspect-[4/3] overflow-hidden">

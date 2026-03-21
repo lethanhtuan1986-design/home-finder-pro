@@ -65,7 +65,7 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   const items = ads.map((ad) => {
     const imageUrl = ad.images?.[0] ? getImageUrl(ad.images[0]) : "/placeholder.svg";
     return `
-      <a href="/property/${ad.uuid}" class="popup-room-item" style="display:flex;gap:10px;padding:8px;text-decoration:none;color:inherit;border-radius:8px;transition:background 0.15s ease;">
+      <a href="/advertisement/${ad.uuid}" class="popup-room-item" style="display:flex;gap:10px;padding:8px;text-decoration:none;color:inherit;border-radius:8px;transition:background 0.15s ease;">
         <div style="width:72px;height:54px;border-radius:10px;overflow:hidden;flex-shrink:0;background:hsl(var(--muted));">
           <img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
         </div>
