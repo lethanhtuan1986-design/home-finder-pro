@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Menu, X, Heart, Home, Building2, Download } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Heart, Home, Building2, Download } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
