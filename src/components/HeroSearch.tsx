@@ -132,7 +132,6 @@ export const HeroSearch = () => {
       <div className="flex flex-col md:flex-row items-stretch gap-2">
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="search-field">
-            <label className="search-field-label">{t("hero.area")}</label>
             <Select
               value={provinceId}
               onValueChange={(val) => {
@@ -141,10 +140,10 @@ export const HeroSearch = () => {
               }}
             >
               <SelectTrigger className="search-field-select-trigger">
-                <SelectValue placeholder={t("hero.allDistricts")} />
+                <SelectValue placeholder={t("hero.area")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">{t("hero.allDistricts")}</SelectItem>
+                <SelectItem value="__all__">{t("hero.area")}</SelectItem>
                 {provinces.map((p) => (
                   <SelectItem key={p.code} value={p.code}>
                     {p.fullName}
@@ -156,7 +155,6 @@ export const HeroSearch = () => {
 
 
           <div className="search-field">
-            <label className="search-field-label">{t("hero.priceRange")}</label>
             <Select
               value={priceUuid}
               onValueChange={(val) =>
@@ -164,10 +162,10 @@ export const HeroSearch = () => {
               }
             >
               <SelectTrigger className="search-field-select-trigger">
-                <SelectValue placeholder={t("hero.allPrices")} />
+                <SelectValue placeholder={t("hero.priceRange")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
+                <SelectItem value="__all__">{t("hero.priceRange")}</SelectItem>
                 {filterPrices.map((fp) => (
                   <SelectItem key={fp.uuid} value={fp.uuid}>
                     {fp.name}
@@ -230,7 +228,6 @@ export const HeroSearch = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="search-field">
-                  <label className="search-field-label">{t("hero.ward")}</label>
                   <Select
                     value={wardId}
                     onValueChange={(val) =>
@@ -247,12 +244,12 @@ export const HeroSearch = () => {
                             ? t("hero.selectAreaFirst")
                             : wardsLoading
                               ? t("search.loading")
-                              : t("hero.allWards")
+                              : t("hero.ward")
                         }
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">{t("hero.allWards")}</SelectItem>
+                      <SelectItem value="__all__">{t("hero.ward")}</SelectItem>
                       {wards.map((w) => (
                         <SelectItem key={w.code} value={w.code}>
                           {w.fullName}
@@ -263,7 +260,6 @@ export const HeroSearch = () => {
                 </div>
 
                 <div className="search-field">
-                  <label className="search-field-label">{t("hero.roomType")}</label>
                   <Select
                     value={apartmentTypeUuid}
                     onValueChange={(val) =>
@@ -271,10 +267,10 @@ export const HeroSearch = () => {
                     }
                   >
                     <SelectTrigger className="search-field-select-trigger">
-                      <SelectValue placeholder={t("hero.allTypes")} />
+                      <SelectValue placeholder={t("hero.roomType")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                      <SelectItem value="__all__">{t("hero.roomType")}</SelectItem>
                       {apartmentTypes.map((at) => (
                         <SelectItem key={at.uuid} value={at.uuid}>
                           {at.name}
@@ -285,7 +281,6 @@ export const HeroSearch = () => {
                 </div>
 
                 <div className="search-field">
-                  <label className="search-field-label">{t("hero.areaSize")}</label>
                   <Select
                     value={sizeUuid}
                     onValueChange={(val) =>
@@ -293,10 +288,10 @@ export const HeroSearch = () => {
                     }
                   >
                     <SelectTrigger className="search-field-select-trigger">
-                      <SelectValue placeholder={t("hero.allSizes")} />
+                      <SelectValue placeholder={t("hero.areaSize")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
+                      <SelectItem value="__all__">{t("hero.areaSize")}</SelectItem>
                       {filterApartmentSizes.map((fs) => (
                         <SelectItem key={fs.uuid} value={fs.uuid}>
                           {fs.name}
