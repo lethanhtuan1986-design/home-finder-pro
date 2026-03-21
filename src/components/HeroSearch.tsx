@@ -348,7 +348,8 @@ export const HeroSearch = () => {
               XanhStay
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-light">
-              Dẫn lối an cư, an nhiên về nhà
+              {t('slogan')}
+            </p>
             </p>
           </motion.div>
 
