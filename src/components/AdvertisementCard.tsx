@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Heart, CalendarCheck } from "lucide-react";
 import { motion } from "framer-motion";
@@ -6,6 +7,14 @@ import { AdvertisementData } from "@/services/advertisement.service";
 import { formatVNPrice, getImageUrl } from "@/services/index";
 import { useSavedRooms } from "@/hooks/useSavedRooms";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScheduleForm } from "@/components/ScheduleForm";
 
 interface AdvertisementCardProps {
   data: AdvertisementData;
@@ -16,6 +25,7 @@ interface AdvertisementCardProps {
 export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false }: AdvertisementCardProps) => {
   const { isSaved, toggleSave } = useSavedRooms();
   const { t } = useTranslation();
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const apt = data?.apartmentUu;
   const firstImage = data?.images?.[0];
   const imageUrl = firstImage ? getImageUrl(firstImage) : "/placeholder.svg";
@@ -106,14 +116,34 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
                   <div />
                 )}
                 {showScheduleButton && (
-                  <Link
-                    to={`/advertisement/${data?.uuid}#schedule`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                  >
-                    <CalendarCheck size={14} />
-                    {t("schedule.title")}
-                  </Link>
+                  <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
+                    <DialogTrigger asChild>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setScheduleOpen(true);
+                        }}
+                        className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                      >
+                        <CalendarCheck size={14} />
+                        {t("schedule.title")}
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent
+                      className="sm:max-w-md"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DialogHeader>
+                        <DialogTitle>{t("schedule.title")}</DialogTitle>
+                      </DialogHeader>
+                      <ScheduleForm
+                        propertyTitle={data?.title || ""}
+                        apartmentUuid={apt?.uuid}
+                        advertisementUuid={data?.uuid}
+                      />
+                    </DialogContent>
+                  </Dialog>
                 )}
               </div>
             ) : null}
