@@ -115,6 +115,23 @@
     "title": "下载XanhStay应用",
     "subtitle": "更快找房，接收新房源通知，在手机上管理收藏。"
   },
+  "slogan": "引领安居，安然回家",
+  "coreValues": {
+    "sectionTitle": "核心价值",
+    "sectionSubtitle": "塑造XanhStay的基础价值观",
+    "trust": "诚信 & 透明",
+    "trustDesc": "所有房源信息均经过验证，确保准确可靠。",
+    "green": "绿色 & 可持续生活",
+    "greenDesc": "致力于为社区打造环保、可持续的生活空间。",
+    "community": "紧密社区",
+    "communityDesc": "在安全、互助的生态系统中连接房东与租客。",
+    "innovation": "创新驱动",
+    "innovationDesc": "运用现代技术，带来快速便捷的找房体验。",
+    "service": "用心服务",
+    "serviceDesc": "始终倾听并以专业、热忱的态度陪伴客户。",
+    "intuitive": "直观 & 易用",
+    "intuitiveDesc": "直观界面和互动地图，让找房只需几步。"
+  },
   "footer": {
     "description": "越南智能租房平台。",
     "explore": "探索",

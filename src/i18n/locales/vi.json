@@ -115,6 +115,23 @@
     "title": "Tải ứng dụng XanhStay",
     "subtitle": "Tìm phòng nhanh hơn, nhận thông báo phòng mới và quản lý phòng đã lưu ngay trên điện thoại."
   },
+  "slogan": "Dẫn lối an cư, an nhiên về nhà",
+  "coreValues": {
+    "sectionTitle": "Giá trị cốt lõi",
+    "sectionSubtitle": "Những giá trị nền tảng định hình XanhStay",
+    "trust": "Uy tín & Minh bạch",
+    "trustDesc": "Mọi thông tin phòng trọ đều được xác minh, đảm bảo chính xác và đáng tin cậy.",
+    "green": "Sống xanh, sống bền",
+    "greenDesc": "Hướng tới không gian sống thân thiện với môi trường và bền vững cho cộng đồng.",
+    "community": "Cộng đồng gắn kết",
+    "communityDesc": "Kết nối chủ nhà và người thuê trong một hệ sinh thái an toàn, hỗ trợ lẫn nhau.",
+    "innovation": "Đổi mới sáng tạo",
+    "innovationDesc": "Ứng dụng công nghệ hiện đại để mang đến trải nghiệm tìm phòng nhanh chóng, tiện lợi.",
+    "service": "Tận tâm phục vụ",
+    "serviceDesc": "Luôn lắng nghe và đồng hành cùng khách hàng với thái độ chuyên nghiệp, tận tình.",
+    "intuitive": "Trực quan & Dễ dùng",
+    "intuitiveDesc": "Giao diện trực quan, bản đồ tương tác giúp tìm phòng dễ dàng chỉ trong vài bước."
+  },
   "footer": {
     "description": "Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam.",
     "explore": "Khám phá",
