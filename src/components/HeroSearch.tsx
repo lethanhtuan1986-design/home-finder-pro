@@ -263,6 +263,28 @@ export const HeroSearch = () => {
                 </div>
 
                 <div className="search-field">
+                  <label className="search-field-label">{t("hero.roomType")}</label>
+                  <Select
+                    value={apartmentTypeUuid}
+                    onValueChange={(val) =>
+                      setApartmentTypeUuid(val === "__all__" ? "" : val)
+                    }
+                  >
+                    <SelectTrigger className="search-field-select-trigger">
+                      <SelectValue placeholder={t("hero.allTypes")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                      {apartmentTypes.map((at) => (
+                        <SelectItem key={at.uuid} value={at.uuid}>
+                          {at.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="search-field">
                   <label className="search-field-label">{t("hero.areaSize")}</label>
                   <Select
                     value={sizeUuid}
