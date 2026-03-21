@@ -350,7 +350,6 @@ export const HeroSearch = () => {
             <p className="text-white/80 text-lg md:text-xl font-light">
               {t('slogan')}
             </p>
-            </p>
           </motion.div>
 
           {/* Search panel */}
