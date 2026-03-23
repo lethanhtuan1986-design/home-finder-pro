@@ -87,7 +87,7 @@ const Index = () => {
         </div>
 
         {/* Quick filter chips */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="flex gap-2 overflow-x-auto pb-2 thin-scrollbar">
           {quickFilters.map((qf, i) => (
             <button
               key={i}

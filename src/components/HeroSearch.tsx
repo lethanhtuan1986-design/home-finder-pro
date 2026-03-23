@@ -312,8 +312,8 @@ export const HeroSearch = () => {
     <>
       <section ref={heroSectionRef} className="relative overflow-hidden">
         {/* Banner slideshow background - contained to hero section */}
-        <div className="absolute inset-0 max-w-7xl mx-auto left-0 right-0 px-4 sm:px-6 lg:px-8">
-          <div className="relative w-full h-full rounded-b-2xl overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="relative w-full h-full overflow-hidden">
             {bannerImages.map((img, idx) => (
               <div
                 key={idx}
@@ -329,6 +329,7 @@ export const HeroSearch = () => {
               </div>
             ))}
             <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
           </div>
         </div>
 

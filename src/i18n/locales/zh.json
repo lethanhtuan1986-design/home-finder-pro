@@ -5,7 +5,8 @@
     "map": "地图",
     "saved": "已收藏",
     "about": "关于我们",
-    "searchNow": "立即搜索"
+    "searchNow": "立即搜索",
+    "download": "下载应用"
   },
   "hero": {
     "title": "找到合适的房间",
@@ -46,6 +47,8 @@
     "floors": "层",
     "views": "次浏览",
     "deposit": "押金",
+    "depositNotice": "通过应用支付押金",
+    "depositDownloadApp": "要支付押金，请在手机上下载XanhStay应用。",
     "preDeposit": "预订金",
     "room": "房间"
   },
@@ -113,7 +116,9 @@
   },
   "appDownload": {
     "title": "下载XanhStay应用",
-    "subtitle": "更快找房，接收新房源通知，在手机上管理收藏。"
+    "subtitle": "更快找房，接收新房源通知，在手机上管理收藏。",
+    "downloadOn": "下载于",
+    "getItOn": "获取于"
   },
   "slogan": "引领安居，安然回家",
   "coreValues": {

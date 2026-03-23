@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Heart, CalendarCheck } from "lucide-react";
+import { MapPin, Heart, CalendarCheck, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { AdvertisementData } from "@/services/advertisement.service";
@@ -15,6 +15,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScheduleForm } from "@/components/ScheduleForm";
+import appleLogo from "@/assets/apple.svg";
+import ggPlayLogo from "@/assets/gg_play.svg";
 
 interface AdvertisementCardProps {
   data: AdvertisementData;
@@ -26,6 +28,7 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
   const { isSaved, toggleSave } = useSavedRooms();
   const { t } = useTranslation();
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [depositOpen, setDepositOpen] = useState(false);
   const apt = data?.apartmentUu;
   const firstImage = data?.images?.[0];
   const imageUrl = firstImage ? getImageUrl(firstImage) : "/placeholder.svg";
@@ -105,48 +108,101 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
               </div>
             )}
 
-            {/* Deposit row with schedule button */}
-            {(data?.deposit != null && data.deposit > 0) || showScheduleButton ? (
-              <div className="flex items-center justify-between">
-                {data?.deposit != null && data.deposit > 0 ? (
-                  <p className="text-xs text-muted-foreground">
-                    {t("listing.deposit")}: {formatVNPrice(data.deposit)}
+            {/* Deposit info */}
+            {data?.deposit != null && data.deposit > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {t("listing.deposit")}: {formatVNPrice(data.deposit)}
+              </p>
+            )}
+
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              {/* Schedule button */}
+              <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
+                <DialogTrigger asChild>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setScheduleOpen(true);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-primary/30 text-primary text-xs font-medium hover:bg-primary/5 transition-colors"
+                  >
+                    <CalendarCheck size={14} />
+                    {t("schedule.title")}
+                  </button>
+                </DialogTrigger>
+                <DialogContent
+                  className="sm:max-w-md max-h-[90vh] overflow-y-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <DialogHeader>
+                    <DialogTitle>{t("schedule.title")}</DialogTitle>
+                  </DialogHeader>
+                  <ScheduleForm
+                    propertyTitle={data?.title || ""}
+                    apartmentUuid={apt?.uuid}
+                    advertisementUuid={data?.uuid}
+                  />
+                </DialogContent>
+              </Dialog>
+
+              {/* Deposit button */}
+              <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
+                <DialogTrigger asChild>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDepositOpen(true);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors"
+                  >
+                    <Smartphone size={14} />
+                    {t("listing.deposit")}
+                  </button>
+                </DialogTrigger>
+                <DialogContent
+                  className="sm:max-w-sm"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <DialogHeader>
+                    <DialogTitle>{t("listing.depositNotice")}</DialogTitle>
+                  </DialogHeader>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {t("listing.depositDownloadApp")}
                   </p>
-                ) : (
-                  <div />
-                )}
-                {showScheduleButton && (
-                  <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
-                    <DialogTrigger asChild>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setScheduleOpen(true);
-                        }}
-                        className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                      >
-                        <CalendarCheck size={14} />
-                        {t("schedule.title")}
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent
-                      className="sm:max-w-md"
+                  <div className="flex flex-col gap-3">
+                    <a
+                      href="https://apps.apple.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity"
                     >
-                      <DialogHeader>
-                        <DialogTitle>{t("schedule.title")}</DialogTitle>
-                      </DialogHeader>
-                      <ScheduleForm
-                        propertyTitle={data?.title || ""}
-                        apartmentUuid={apt?.uuid}
-                        advertisementUuid={data?.uuid}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </div>
-            ) : null}
+                      <img src={appleLogo} alt="Apple" className="h-6 w-6 invert dark:invert-0" />
+                      <div>
+                        <div className="text-[10px] opacity-70">{t("appDownload.downloadOn")}</div>
+                        <div className="text-sm font-semibold">App Store</div>
+                      </div>
+                    </a>
+                    <a
+                      href="https://play.google.com/store"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity"
+                    >
+                      <img src={ggPlayLogo} alt="Google Play" className="h-6 w-6" />
+                      <div>
+                        <div className="text-[10px] opacity-70">{t("appDownload.getItOn")}</div>
+                        <div className="text-sm font-semibold">Google Play</div>
+                      </div>
+                    </a>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </div>
       </Link>
