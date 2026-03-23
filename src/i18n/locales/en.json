@@ -46,6 +46,8 @@
     "floors": "floors",
     "views": "views",
     "deposit": "Deposit",
+    "depositNotice": "Deposit via App",
+    "depositDownloadApp": "To make a deposit, please download the XanhStay app on your phone.",
     "preDeposit": "Booking deposit",
     "room": "Room"
   },
@@ -113,7 +115,9 @@
   },
   "appDownload": {
     "title": "Download XanhStay app",
-    "subtitle": "Find rooms faster, get notifications for new listings and manage saved rooms on your phone."
+    "subtitle": "Find rooms faster, get notifications for new listings and manage saved rooms on your phone.",
+    "downloadOn": "Download on",
+    "getItOn": "Get it on"
   },
   "slogan": "Leading the way home, peacefully",
   "coreValues": {
