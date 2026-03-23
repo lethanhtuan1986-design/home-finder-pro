@@ -87,7 +87,12 @@
     "noResultHint": "Hãy thử thay đổi bộ lọc",
     "loadMore": "Xem thêm",
     "loading": "Đang tải...",
-    "serverError": "Không thể kết nối đến máy chủ. Đang hiển thị dữ liệu mẫu."
+    "serverError": "Không thể kết nối đến máy chủ. Đang hiển thị dữ liệu mẫu.",
+    "openMapView": "Xem trên bản đồ",
+    "filter": "Bộ lọc",
+    "noResultMapHint": "Hãy di chuyển bản đồ hoặc thay đổi bộ lọc",
+    "showList": "Xem danh sách",
+    "showMap": "Xem bản đồ"
   },
   "schedule": {
     "title": "Đặt lịch xem phòng",
