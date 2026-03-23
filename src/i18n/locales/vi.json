@@ -46,6 +46,8 @@
     "floors": "tầng",
     "views": "lượt xem",
     "deposit": "Đặt cọc",
+    "depositNotice": "Đặt cọc qua ứng dụng",
+    "depositDownloadApp": "Để thực hiện đặt cọc, vui lòng tải ứng dụng XanhStay trên điện thoại.",
     "preDeposit": "Đặt cọc giữ chỗ",
     "room": "Phòng"
   },
@@ -113,7 +115,9 @@
   },
   "appDownload": {
     "title": "Tải ứng dụng XanhStay",
-    "subtitle": "Tìm phòng nhanh hơn, nhận thông báo phòng mới và quản lý phòng đã lưu ngay trên điện thoại."
+    "subtitle": "Tìm phòng nhanh hơn, nhận thông báo phòng mới và quản lý phòng đã lưu ngay trên điện thoại.",
+    "downloadOn": "Tải về trên",
+    "getItOn": "Tải trên"
   },
   "slogan": "Dẫn lối an cư, an nhiên về nhà",
   "coreValues": {
