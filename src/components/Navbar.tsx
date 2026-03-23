@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Heart, Home, Building2, Download } from 'lucide-react';
+import { Search, Heart, Home, Building2, Download, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
@@ -23,6 +23,7 @@ export const Navbar = () => {
   const navLinks = [
     { to: '/', label: t('nav.home'), icon: Home },
     { to: '/search', label: t('nav.search'), icon: Search },
+    { to: '/search/map', label: t('nav.map'), icon: MapPin },
     { to: '/saved', label: t('nav.saved'), icon: Heart },
     { to: '/policy?tab=about', label: t('nav.about'), icon: Building2 },
   ];

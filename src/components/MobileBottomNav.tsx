@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Heart, Building2 } from 'lucide-react';
+import { Home, Search, Heart, Building2, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const navItems = [
   { to: '/', icon: Home, labelKey: 'nav.home' },
   { to: '/search', icon: Search, labelKey: 'nav.search' },
+  { to: '/search/map', icon: MapPin, labelKey: 'nav.map' },
   { to: '/saved', icon: Heart, labelKey: 'nav.saved' },
   { to: '/policy?tab=about', icon: Building2, labelKey: 'nav.about' },
 ];

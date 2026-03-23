@@ -282,8 +282,8 @@ const SearchPage = () => {
                 >
                   <div className="h-[180px] relative">
                     <MiniMapPreview locations={mapLocations} loading={mapLoading} />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors flex items-center justify-center">
+                      <span className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-lg group-hover:scale-105 transition-transform">
                         <MapIcon size={14} />
                         {t("search.openMapView")}
                       </span>
