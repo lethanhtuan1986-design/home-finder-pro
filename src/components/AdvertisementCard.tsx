@@ -164,8 +164,9 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
                   </button>
                 </DialogTrigger>
                 <DialogContent
-                  className="sm:max-w-sm"
+                  className="sm:max-w-sm rounded-2xl"
                   onClick={(e) => e.stopPropagation()}
+                  onPointerDownOutside={(e) => e.stopPropagation()}
                 >
                   <DialogHeader>
                     <DialogTitle>{t("listing.depositNotice")}</DialogTitle>
