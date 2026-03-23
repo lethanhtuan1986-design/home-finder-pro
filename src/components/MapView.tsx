@@ -100,6 +100,7 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const initialFitDoneRef = useRef(false);
 
   const validLocations = useMemo(() =>
     locations.filter((loc) => parsePoint(loc.point) !== null),
