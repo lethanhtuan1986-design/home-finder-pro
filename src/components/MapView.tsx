@@ -100,6 +100,7 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const initialFitDoneRef = useRef(false);
 
   const validLocations = useMemo(() =>
     locations.filter((loc) => parsePoint(loc.point) !== null),
@@ -203,11 +204,11 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
       markersRef.current.set(key, marker);
     });
 
-    if (points.length > 0) {
+    // Only fitBounds on the very first data load, then let user control freely
+    if (!initialFitDoneRef.current && points.length > 0) {
+      initialFitDoneRef.current = true;
       const bounds = L.latLngBounds(points);
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
-    } else {
-      map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
     }
   }, [validLocations, hoveredId, onMarkerClick]);
 
