@@ -133,8 +133,9 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
                   </button>
                 </DialogTrigger>
                 <DialogContent
-                  className="sm:max-w-md max-h-[90vh] overflow-y-auto"
+                  className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl"
                   onClick={(e) => e.stopPropagation()}
+                  onPointerDownOutside={(e) => e.stopPropagation()}
                 >
                   <DialogHeader>
                     <DialogTitle>{t("schedule.title")}</DialogTitle>
@@ -163,8 +164,9 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
                   </button>
                 </DialogTrigger>
                 <DialogContent
-                  className="sm:max-w-sm"
+                  className="sm:max-w-sm rounded-2xl"
                   onClick={(e) => e.stopPropagation()}
+                  onPointerDownOutside={(e) => e.stopPropagation()}
                 >
                   <DialogHeader>
                     <DialogTitle>{t("listing.depositNotice")}</DialogTitle>

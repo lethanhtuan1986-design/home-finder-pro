@@ -89,7 +89,6 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
-      // Shake the first error field
       const firstError = Object.keys(validationErrors)[0];
       triggerShake(firstError);
       return;
@@ -103,10 +102,10 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
     }
   };
 
-  return (
-    <form id="schedule-form" onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-4">
-      <h3 className="font-semibold text-lg text-foreground">{t('schedule.title')}</h3>
+  const inputClass = "w-full pl-11 pr-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-muted-foreground/60";
 
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Date picker */}
       <div className={cn(shakeField === 'date' && 'animate-shake')}>
         <Popover>
@@ -114,12 +113,12 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal h-11",
-                !form.date && "text-muted-foreground",
+                "w-full justify-start text-left font-normal h-12 rounded-xl border-input hover:border-primary focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all",
+                !form.date && "text-muted-foreground/60",
                 errors.date && "border-destructive ring-1 ring-destructive"
               )}
             >
-              <Calendar className="mr-2 h-4 w-4" />
+              <Calendar className="mr-3 h-4 w-4 text-muted-foreground" />
               {form.date ? format(form.date, 'dd/MM/yyyy') : t('schedule.date', 'Chọn ngày xem')}
             </Button>
           </PopoverTrigger>
@@ -130,69 +129,70 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
               onSelect={(d) => { setForm(f => ({ ...f, date: d })); clearError('date'); }}
               disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
               initialFocus
-              className={cn("p-3 pointer-events-auto")}
+              className="p-3 pointer-events-auto"
             />
           </PopoverContent>
         </Popover>
-        {errors.date && <p className="text-destructive text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} />{errors.date}</p>}
+        {errors.date && <p className="text-destructive text-xs mt-1.5 flex items-center gap-1"><AlertCircle size={12} />{errors.date}</p>}
       </div>
 
-      {/* Name, Phone, Email */}
-      <div className="space-y-3">
-        <div className={cn(shakeField === 'name' && 'animate-shake')}>
-          <div className="relative">
-            <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder={t('schedule.name')}
-              maxLength={100}
-              value={form.name}
-              onChange={e => { setForm(f => ({ ...f, name: e.target.value })); clearError('name'); }}
-              className={cn("custom-input pl-10 w-full", errors.name && "border-destructive ring-1 ring-destructive")}
-            />
-          </div>
-          {errors.name && <p className="text-destructive text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} />{errors.name}</p>}
+      {/* Name */}
+      <div className={cn(shakeField === 'name' && 'animate-shake')}>
+        <div className="relative">
+          <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder={t('schedule.name')}
+            maxLength={100}
+            value={form.name}
+            onChange={e => { setForm(f => ({ ...f, name: e.target.value })); clearError('name'); }}
+            className={cn(inputClass, errors.name && "border-destructive ring-1 ring-destructive")}
+          />
         </div>
-
-        <div className={cn(shakeField === 'phone' && 'animate-shake')}>
-          <div className="relative">
-            <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="tel"
-              placeholder={t('schedule.phone')}
-              maxLength={15}
-              value={form.phone}
-              onChange={e => {
-                const val = e.target.value.replace(/[^0-9+]/g, '');
-                setForm(f => ({ ...f, phone: val }));
-                clearError('phone');
-              }}
-              className={cn("custom-input pl-10 w-full", errors.phone && "border-destructive ring-1 ring-destructive")}
-            />
-          </div>
-          {errors.phone && <p className="text-destructive text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} />{errors.phone}</p>}
-        </div>
-
-        <div className={cn(shakeField === 'email' && 'animate-shake')}>
-          <div className="relative">
-            <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="email"
-              placeholder="Email"
-              maxLength={255}
-              value={form.email}
-              onChange={e => { setForm(f => ({ ...f, email: e.target.value })); clearError('email'); }}
-              className={cn("custom-input pl-10 w-full", errors.email && "border-destructive ring-1 ring-destructive")}
-            />
-          </div>
-          {errors.email && <p className="text-destructive text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} />{errors.email}</p>}
-        </div>
+        {errors.name && <p className="text-destructive text-xs mt-1.5 flex items-center gap-1"><AlertCircle size={12} />{errors.name}</p>}
       </div>
 
+      {/* Phone */}
+      <div className={cn(shakeField === 'phone' && 'animate-shake')}>
+        <div className="relative">
+          <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="tel"
+            placeholder={t('schedule.phone')}
+            maxLength={15}
+            value={form.phone}
+            onChange={e => {
+              const val = e.target.value.replace(/[^0-9+]/g, '');
+              setForm(f => ({ ...f, phone: val }));
+              clearError('phone');
+            }}
+            className={cn(inputClass, errors.phone && "border-destructive ring-1 ring-destructive")}
+          />
+        </div>
+        {errors.phone && <p className="text-destructive text-xs mt-1.5 flex items-center gap-1"><AlertCircle size={12} />{errors.phone}</p>}
+      </div>
+
+      {/* Email */}
+      <div className={cn(shakeField === 'email' && 'animate-shake')}>
+        <div className="relative">
+          <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="email"
+            placeholder="Email"
+            maxLength={255}
+            value={form.email}
+            onChange={e => { setForm(f => ({ ...f, email: e.target.value })); clearError('email'); }}
+            className={cn(inputClass, errors.email && "border-destructive ring-1 ring-destructive")}
+          />
+        </div>
+        {errors.email && <p className="text-destructive text-xs mt-1.5 flex items-center gap-1"><AlertCircle size={12} />{errors.email}</p>}
+      </div>
+
+      {/* Submit */}
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium hover:opacity-90 transition-opacity active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
       >
         {isPending && <Loader2 size={16} className="animate-spin" />}
         {t('schedule.submit')}
