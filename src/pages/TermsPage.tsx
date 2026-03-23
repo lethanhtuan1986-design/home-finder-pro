@@ -279,185 +279,70 @@ const TermsXanhStaySection = () => (
   <div className="space-y-6">
     <div>
       <h2 className="text-2xl font-bold text-foreground">
-        Điều khoản & Cam kết sử dụng dịch vụ XanhStay
+        ĐIỀU KHOẢN SỬ DỤNG DỊCH VỤ XANHID & XANHSTAY
       </h2>
-      <p className="text-sm text-muted-foreground mt-1">
-        Đơn vị vận hành:{" "}
-        <span className="font-medium">CÔNG TY CỔ PHẦN GIẢI PHÁP SỐ GSL.</span>
+      <p className="text-sm text-muted-foreground mt-2">
+        Đơn vị cung cấp: <span className="font-medium">CÔNG TY CỔ PHẦN GIẢI PHÁP SỐ GSL</span>
+      </p>
+      <p className="text-sm text-muted-foreground">
+        MST: <strong>0111320005</strong>
+      </p>
+      <p className="text-sm text-muted-foreground">
+        Áp dụng cho: Toàn bộ người dùng trên Google Play Console và Apple App Store.
       </p>
     </div>
 
-    <div className="space-y-2">
-      <h3 className="text-lg font-bold text-primary uppercase tracking-wide">
-        I. Điều khoản quy định chung
-      </h3>
-    </div>
-
-    <Article title="Điều 1. Trách nhiệm tài khoản">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Người đứng tên đăng ký tài khoản XanhStay chịu hoàn toàn trách nhiệm
-          đối với mọi hoạt động phát sinh từ tài khoản do mình sở hữu trên hệ
-          thống.
-        </li>
-        <li>
-          XanhStay không chấp nhận bất kỳ nội dung nào vi phạm thuần phong mỹ
-          tục, pháp luật Việt Nam và các quy định của Nhà nước CHXHCN Việt Nam.
-        </li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 2. Quy định nội dung">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Người dùng không được lưu trữ, chia sẻ, phát tán phần mềm hoặc nội
-          dung không rõ nguồn gốc, vi phạm quyền sở hữu trí tuệ.
-        </li>
-        <li>
-          XanhStay có quyền chỉnh sửa, ẩn hoặc xóa nội dung không phù hợp với
-          quy định.
-        </li>
-        <li>
-          Thông tin cá nhân của người dùng được bảo mật, trừ trường hợp cung cấp
-          theo yêu cầu của cơ quan nhà nước có thẩm quyền.
-        </li>
-      </ol>
-    </Article>
-
-    <div className="space-y-2 pt-4">
-      <h3 className="text-lg font-bold text-primary uppercase tracking-wide">
-        II. Điều khoản chi tiết khi sử dụng dịch vụ XanhStay
-      </h3>
-    </div>
-
-    <Article title="Điều 3. Nguyên tắc sử dụng">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Người dùng chịu trách nhiệm về toàn bộ thông tin đăng ký và cập nhật
-          tài khoản XanhStay.
-        </li>
-        <li>
-          Không sử dụng tên tài khoản vi phạm đạo đức xã hội, giả mạo danh nhân,
-          lãnh đạo, tổ chức phản động, khủng bố.
-        </li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 4. Hành vi bị nghiêm cấm">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>Lợi dụng dịch vụ để xâm phạm an ninh quốc gia, trật tự xã hội.</li>
-        <li>
-          Đưa thông tin sai sự thật, xúc phạm uy tín, danh dự của tổ chức, cá
-          nhân.
-        </li>
-        <li>Phá hoại hệ thống, phát tán mã độc, truy cập trái phép.</li>
-        <li>Mua bán tài khoản XanhStay dưới mọi hình thức.</li>
-        <li>Tổ chức cá cược, cờ bạc hoặc hoạt động tài chính trái phép.</li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 5. Đăng ký và đăng nhập">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Người dùng xác nhận đã đọc, hiểu và đồng ý toàn bộ Điều khoản này
-          trước khi đăng ký.
-        </li>
-        <li>
-          XanhStay cho phép đăng nhập bằng tài khoản liên kết (Facebook, Google,
-          Apple); người dùng tự chịu rủi ro phát sinh.
-        </li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 6. Mật khẩu và bảo mật">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>Người dùng có trách nhiệm tự bảo mật thông tin đăng nhập.</li>
-        <li>
-          XanhStay không chịu trách nhiệm đối với thiệt hại phát sinh do lộ mật
-          khẩu.
-        </li>
-        <li>
-          Tài khoản không hoạt động trong thời gian dài có thể bị thu hồi theo
-          quy định.
-        </li>
-      </ol>
-    </Article>
-
-    <div className="space-y-2 pt-4">
-      <h3 className="text-lg font-bold text-primary uppercase tracking-wide">
-        III. Quyền, trách nhiệm và giới hạn
-      </h3>
-    </div>
-
-    <Article title="Điều 7. Quyền của người dùng">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Được cập nhật thông tin tài khoản và sử dụng dịch vụ hợp pháp của
-          XanhStay.
-        </li>
-        <li>Được hỗ trợ kỹ thuật theo quy định.</li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 8. Trách nhiệm của người dùng">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>Cung cấp thông tin trung thực, chính xác.</li>
-        <li>
-          Bảo mật thông tin cá nhân và thông báo ngay khi phát hiện truy cập
-          trái phép.
-        </li>
-        <li>Tuân thủ pháp luật và Điều khoản này.</li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 9. Quyền và trách nhiệm của XanhStay">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>Tạm khóa hoặc chấm dứt tài khoản vi phạm.</li>
-        <li>Bảo mật dữ liệu cá nhân theo quy định pháp luật.</li>
-        <li>Hỗ trợ, tiếp nhận và giải quyết khiếu nại hợp lệ.</li>
-      </ol>
-    </Article>
-
-    <div className="space-y-2 pt-4">
-      <h3 className="text-lg font-bold text-primary uppercase tracking-wide">
-        IV. Cam kết khách hàng
-      </h3>
-    </div>
-
-    <Article title="Điều 10. Cam kết bảo mật thông tin">
+    <Article title="Điều 1. Phạm vi áp dụng và Chấp thuận">
+      <p className="mb-2">
+        Điều khoản này điều chỉnh việc đăng ký, quản lý và sử dụng hệ thống định danh XanhID trên các ứng dụng thuộc hệ sinh thái của GSL, bao gồm nhưng không giới hạn ở ứng dụng XanhStay.
+      </p>
       <p>
-        XanhStay cam kết không tiết lộ, mua bán dữ liệu cá nhân của khách hàng
-        cho bên thứ ba, trừ trường hợp có sự đồng ý của khách hàng hoặc theo yêu
-        cầu pháp luật.
+        Bằng việc tải, cài đặt hoặc nhấn "Đồng ý" khi đăng ký tài khoản, người dùng mặc nhiên xác nhận đã đọc, hiểu và đồng ý tuân thủ toàn bộ các điều khoản này.
       </p>
     </Article>
 
-    <Article title="Điều 11. Cam kết chất lượng dịch vụ">
+    <Article title="Điều 2. Đăng ký và Bảo mật tài khoản">
+      <ul className="space-y-2 list-disc list-inside">
+        <li>Người dùng cam kết cung cấp thông tin chính xác (Họ tên, SĐT, Email). GSL có quyền tạm khóa tài khoản nếu phát hiện thông tin giả mạo.</li>
+        <li>Người dùng có trách nhiệm tự bảo mật mật khẩu và thiết bị đăng nhập. Mọi hoạt động phát sinh từ tài khoản của người dùng sẽ được tính là trách nhiệm pháp lý của chính người dùng đó.</li>
+        <li><strong>Quyền chấm dứt dịch vụ:</strong> Người dùng có quyền ngừng sử dụng dịch vụ và yêu cầu xóa tài khoản vĩnh viễn bất cứ lúc nào thông qua tính năng "Xóa tài khoản" trong ứng dụng hoặc gửi yêu cầu tới <strong>xanhstay@gslgroup.vn</strong>.</li>
+      </ul>
+    </Article>
+
+    <Article title="Điều 3. Hành vi bị nghiêm cấm">
+      <ul className="space-y-2 list-disc list-inside">
+        <li>Sử dụng dịch vụ để thực hiện các hành vi lừa đảo, vi phạm pháp luật Việt Nam.</li>
+        <li>Can thiệp trái phép vào hệ thống kỹ thuật, đảo ngược mã nguồn (reverse engineering) ứng dụng XanhStay/XanhID.</li>
+        <li>Sử dụng tài khoản để phát tán thông tin rác, nội dung vi phạm thuần phong mỹ tục hoặc xâm phạm quyền sở hữu trí tuệ của GSL.</li>
+      </ul>
+    </Article>
+
+    <Article title="Điều 4. Quyền và Trách nhiệm của GSL">
+      <ul className="space-y-2 list-disc list-inside">
+        <li><strong>Duy trì dịch vụ:</strong> GSL nỗ lực đảm bảo hệ thống vận hành 24/7 nhưng không chịu trách nhiệm cho các gián đoạn do sự cố hạ tầng viễn thông hoặc bất khả kháng.</li>
+        <li><strong>Xử lý vi phạm:</strong> GSL có quyền đơn phương chấm dứt quyền sử dụng của người dùng nếu phát hiện vi phạm Điều khoản này mà không cần báo trước.</li>
+        <li><strong>Sở hữu trí tuệ:</strong> Toàn bộ nội dung, logo, thiết kế trên XanhStay và XanhID thuộc bản quyền của Công ty Cổ Phần Giải Pháp Số GSL.</li>
+      </ul>
+    </Article>
+
+    <Article title="Điều 5. Liên kết bên thứ ba (Apple/Google/Facebook)">
+      <ul className="space-y-2 list-disc list-inside">
+        <li>XanhID cho phép đăng nhập qua các nền tảng bên thứ ba. Việc sử dụng các tài khoản này phải tuân thủ cả chính sách của bên thứ ba đó.</li>
+        <li>GSL không chịu trách nhiệm về các rủi ro bảo mật phát sinh từ phía nhà cung cấp dịch vụ liên kết (ví dụ: mất tài khoản Facebook dẫn đến mất quyền truy cập XanhID).</li>
+      </ul>
+    </Article>
+
+    <Article title="Điều 6. Giải quyết tranh chấp">
       <p>
-        XanhStay cung cấp dịch vụ đúng với mô tả, minh bạch và không gây nhầm
-        lẫn cho người dùng.
+        Mọi tranh chấp phát sinh sẽ được ưu tiên giải quyết thông qua thương lượng. Trường hợp không đạt được thỏa thuận, vụ việc sẽ được đưa ra tòa án có thẩm quyền tại Hà Nội để giải quyết theo pháp luật Việt Nam.
       </p>
     </Article>
 
-    <Article title="Điều 12. Cam kết thái độ phục vụ">
-      <p className="mb-2">XanhStay cam kết:</p>
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Phục vụ khách hàng với thái độ tôn trọng, trung thực và chuyên nghiệp.
-        </li>
-        <li>Tiếp nhận và phản hồi kịp thời các ý kiến, khiếu nại.</li>
-        <li>
-          Không ngừng cải thiện chất lượng dịch vụ dựa trên phản hồi của khách
-          hàng.
-        </li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 13. Hiệu lực">
-      <p>
-        Điều khoản & Cam kết này có hiệu lực kể từ thời điểm người dùng chấp
-        nhận khi đăng ký hoặc sử dụng dịch vụ XanhStay.
-      </p>
+    <Article title="Điều 7. Hiệu lực và Thay đổi">
+      <ul className="space-y-2 list-disc list-inside">
+        <li>Điều khoản có hiệu lực kể từ khi người dùng bắt đầu sử dụng dịch vụ.</li>
+        <li>GSL có quyền cập nhật Điều khoản này để phù hợp với quy định pháp luật hoặc tính năng mới. Phiên bản mới nhất sẽ luôn được cập nhật tại mục "Chính sách & Điều khoản" trên ứng dụng.</li>
+      </ul>
     </Article>
   </div>
 );
