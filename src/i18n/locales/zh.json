@@ -87,7 +87,12 @@
     "noResultHint": "请尝试更改筛选条件",
     "loadMore": "加载更多",
     "loading": "加载中...",
-    "serverError": "无法连接服务器。正在显示示例数据。"
+    "serverError": "无法连接服务器。正在显示示例数据。",
+    "openMapView": "在地图上查看",
+    "filter": "筛选",
+    "noResultMapHint": "请移动地图或更改筛选条件",
+    "showList": "显示列表",
+    "showMap": "显示地图"
   },
   "schedule": {
     "title": "预约看房",
