@@ -328,7 +328,9 @@ export const HeroSearch = () => {
                 />
               </div>
             ))}
-            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-0 bg-black/40" />
+            {/* Top gradient for header text readability */}
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/60 to-transparent" />
           </div>
         </div>
 
