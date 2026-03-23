@@ -15,7 +15,7 @@ import {
 
 const sections = [
   { id: "about", label: "Giới thiệu XanhStay", icon: Building2 },
-  { id: "terms-xanhid", label: "Điều khoản XanhID", icon: FileText },
+  { id: "terms-xanhid", label: "Chính sách quyền riêng tư XanhStay", icon: FileText },
   { id: "privacy-xanhid", label: "Bảo mật XanhID", icon: Lock },
   { id: "terms-xanhstay", label: "Điều khoản XanhStay", icon: Shield },
   { id: "complaint", label: "Giải quyết khiếu nại", icon: Scale },
