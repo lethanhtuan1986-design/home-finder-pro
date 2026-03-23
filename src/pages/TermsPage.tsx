@@ -74,141 +74,80 @@ const TermsXanhIDSection = () => (
   <div className="space-y-6">
     <div>
       <h2 className="text-2xl font-bold text-foreground">
-        Điều khoản sử dụng XanhID
+        CHÍNH SÁCH QUYỀN RIÊNG TƯ (PRIVACY POLICY) – XANHSTAY
       </h2>
-      <p className="text-sm text-muted-foreground mt-1">
-        Áp dụng cho Google Play Console và Apple App Store.
+      <p className="text-sm text-muted-foreground mt-2">
+        Ứng dụng: <span className="font-medium">XanhStay</span>
       </p>
       <p className="text-sm text-muted-foreground">
-        Đơn vị cung cấp dịch vụ:{" "}
-        <span className="font-medium">CÔNG TY CỔ PHẦN GIẢI PHÁP SỐ GSL.</span>
+        Đơn vị chủ quản: <span className="font-medium">CÔNG TY CỔ PHẦN GIẢI PHÁP SỐ GSL</span>
+      </p>
+      <p className="text-sm text-muted-foreground">
+        Cập nhật lần cuối: Ngày 23 tháng 03 năm 2026
+      </p>
+      <p className="text-muted-foreground mt-3">
+        Chào mừng bạn đến với XanhStay. Chúng tôi cam kết bảo vệ quyền riêng tư và dữ liệu cá nhân của bạn. Chính sách này giải thích cách chúng tôi thu thập, sử dụng và bảo vệ thông tin khi bạn sử dụng ứng dụng XanhStay và dịch vụ XanhID.
       </p>
     </div>
 
-    <Article title="Điều 1. Phạm vi áp dụng">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Điều khoản này điều chỉnh việc đăng ký, quản lý và sử dụng tài khoản
-          Xanh ID trên các nền tảng do Công ty Cổ Phần Giải Pháp Số GSL cung
-          cấp.
-        </li>
-        <li>
-          Khi người dùng tải, đăng ký hoặc sử dụng ứng dụng Xanh ID trên Google
-          Play hoặc Apple App Store, người dùng mặc nhiên đồng ý với toàn bộ nội
-          dung Điều khoản này.
-        </li>
-      </ol>
+    <Article title="1. Thông tin đơn vị thu thập dữ liệu">
+      <ul className="space-y-2">
+        <li>Tên công ty: <strong>CÔNG TY CỔ PHẦN GIẢI PHÁP SỐ GSL</strong></li>
+        <li>Mã số thuế: <strong>0111320005</strong></li>
+        <li>Địa chỉ: Tầng 3, 105 Láng Hạ, Phường Đống Đa, TP Hà Nội, Việt Nam.</li>
+        <li>Email liên hệ: <strong>xanhstay@gslgroup.vn</strong></li>
+      </ul>
     </Article>
 
-    <Article title="Điều 2. Định nghĩa">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          <strong>"Xanh ID"</strong>: là hệ thống định danh tài khoản do Công ty
-          Cổ Phần Giải Pháp Số GSL phát triển và vận hành.
-        </li>
-        <li>
-          <strong>"Người dùng"</strong>: là cá nhân hoặc tổ chức đăng ký và sử
-          dụng Xanh ID.
-        </li>
-      </ol>
+    <Article title="2. Dữ liệu chúng tôi thu thập">
+      <p className="mb-2">Để cung cấp dịch vụ đặt phòng và quản lý homestay tốt nhất, chúng tôi thu thập các nhóm dữ liệu sau:</p>
+      <ul className="space-y-2 list-disc list-inside">
+        <li><strong>Thông tin định danh:</strong> Họ và tên, số điện thoại, địa chỉ email, ID tài khoản XanhID.</li>
+        <li><strong>Thông tin vị trí:</strong> Chúng tôi thu thập vị trí của bạn (khi được cho phép) để hiển thị các homestay gần nhất và hỗ trợ dẫn đường.</li>
+        <li><strong>Thông tin hình ảnh:</strong> Truy cập thư viện ảnh hoặc camera khi bạn tải lên ảnh đại diện hoặc ảnh đánh giá dịch vụ.</li>
+        <li><strong>Thông tin thiết bị:</strong> Loại máy, hệ điều hành, địa chỉ IP và nhật ký (log) để đảm bảo an toàn hệ thống.</li>
+        <li><strong>Xác thực bên thứ ba:</strong> Nếu bạn đăng nhập qua Google, Facebook hoặc Apple, chúng tôi nhận thông tin định danh cơ bản từ các nền tảng này.</li>
+      </ul>
     </Article>
 
-    <Article title="Điều 3. Đăng ký và sử dụng tài khoản">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Người dùng phải cung cấp thông tin đầy đủ, chính xác và chịu trách
-          nhiệm về tính hợp pháp của thông tin đã đăng ký.
-        </li>
-        <li>
-          Mỗi người dùng chỉ được đăng ký và sở hữu một tài khoản Xanh ID, trừ
-          khi có thỏa thuận khác bằng văn bản.
-        </li>
-        <li>
-          Người dùng không được sử dụng Xanh ID cho các mục đích vi phạm pháp
-          luật Việt Nam.
-        </li>
-      </ol>
+    <Article title="3. Mục đích sử dụng dữ liệu">
+      <ul className="space-y-2 list-disc list-inside">
+        <li>Cung cấp dịch vụ đặt phòng, thanh toán và quản lý lưu trú tại XanhStay.</li>
+        <li>Xác thực danh tính người dùng thông qua hệ thống XanhID.</li>
+        <li>Gửi thông báo xác nhận đặt phòng, khuyến mại hoặc cảnh báo bảo mật.</li>
+        <li>Cải thiện trải nghiệm người dùng và khắc phục lỗi kỹ thuật.</li>
+        <li>Tuân thủ các nghĩa vụ pháp lý theo quy định của pháp luật Việt Nam.</li>
+      </ul>
     </Article>
 
-    <Article title="Điều 4. Hành vi bị nghiêm cấm">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Giả mạo thông tin, xâm phạm quyền và lợi ích hợp pháp của tổ chức, cá
-          nhân khác.
-        </li>
-        <li>
-          Phát tán nội dung vi phạm pháp luật, thuần phong mỹ tục, hoặc gây ảnh
-          hưởng đến an ninh quốc gia.
-        </li>
-        <li>
-          Can thiệp, phá hoại hệ thống kỹ thuật, phát tán mã độc, tấn công trái
-          phép hệ thống.
-        </li>
-        <li>
-          Mua bán, chuyển nhượng tài khoản Xanh ID vì mục đích thương mại.
-        </li>
-      </ol>
+    <Article title="4. Chia sẻ và Bảo mật dữ liệu">
+      <ul className="space-y-2 list-disc list-inside">
+        <li><strong>Không bán dữ liệu:</strong> Chúng tôi tuyệt đối không bán hoặc chia sẻ dữ liệu cá nhân của bạn cho bên thứ ba vì mục đích quảng cáo.</li>
+        <li><strong>Đối tác dịch vụ:</strong> Dữ liệu chỉ được chia sẻ với các đối tác thanh toán hoặc đơn vị lưu trú nhằm hoàn tất giao dịch đặt phòng.</li>
+        <li><strong>Bảo mật:</strong> Chúng tôi sử dụng các biện pháp mã hóa tiên tiến và hệ thống máy chủ bảo mật để ngăn chặn truy cập trái phép.</li>
+      </ul>
     </Article>
 
-    <Article title="Điều 5. Quyền và nghĩa vụ của người dùng">
-      <ol className="list-decimal list-inside space-y-2">
+    <Article title="5. Quyền của người dùng và Xóa dữ liệu (Quan trọng)">
+      <p className="mb-2">Bạn có đầy đủ các quyền đối với dữ liệu cá nhân của mình:</p>
+      <ul className="space-y-2 list-disc list-inside">
+        <li><strong>Truy cập và chỉnh sửa:</strong> Bạn có thể tự cập nhật thông tin trong phần "Hồ sơ" của ứng dụng.</li>
         <li>
-          Được sử dụng các chức năng hợp pháp của Xanh ID theo đúng Điều khoản
-          này.
+          <strong>Yêu cầu xóa dữ liệu:</strong> Bạn có quyền yêu cầu xóa vĩnh viễn tài khoản và toàn bộ dữ liệu liên quan.
+          <ul className="list-disc list-inside ml-4 mt-1 space-y-1">
+            <li><strong>Cách 1:</strong> Sử dụng tính năng "Xóa tài khoản" ngay trong mục Cài đặt ứng dụng XanhStay.</li>
+            <li><strong>Cách 2:</strong> Gửi yêu cầu qua email: <strong>xanhstay@gslgroup.vn</strong>. Chúng tôi sẽ xử lý và xóa toàn bộ dữ liệu định danh của bạn trong vòng 07 ngày làm việc.</li>
+          </ul>
         </li>
-        <li>
-          Có trách nhiệm bảo mật thông tin đăng nhập và thông báo kịp thời khi
-          phát hiện truy cập trái phép.
-        </li>
-        <li>
-          Chịu hoàn toàn trách nhiệm trước pháp luật về mọi hoạt động phát sinh
-          từ tài khoản của mình.
-        </li>
-      </ol>
+      </ul>
     </Article>
 
-    <Article title="Điều 6. Quyền và nghĩa vụ của doanh nghiệp">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Công ty Cổ Phần Giải Pháp Số GSL có quyền tạm khóa hoặc chấm dứt tài
-          khoản vi phạm Điều khoản sử dụng.
-        </li>
-        <li>
-          Cam kết bảo mật thông tin cá nhân người dùng theo quy định pháp luật
-          hiện hành.
-        </li>
-        <li>
-          Không chịu trách nhiệm đối với các rủi ro phát sinh do lỗi kỹ thuật,
-          sự cố bất khả kháng.
-        </li>
-      </ol>
+    <Article title="6. Dữ liệu trẻ em">
+      <p>XanhStay không chủ đích thu thập dữ liệu của trẻ em dưới 13 tuổi. Nếu phát hiện có sự thu thập ngoài ý muốn, chúng tôi sẽ tiến hành xóa bỏ ngay lập tức.</p>
     </Article>
 
-    <Article title="Điều 7. Liên kết bên thứ ba">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Xanh ID có thể cho phép người dùng đăng nhập thông qua tài khoản bên
-          thứ ba như Facebook, Google, Apple.
-        </li>
-        <li>
-          Người dùng chấp nhận các rủi ro phát sinh từ việc chia sẻ dữ liệu với
-          bên thứ ba và loại trừ trách nhiệm của doanh nghiệp trong phạm vi pháp
-          luật cho phép.
-        </li>
-      </ol>
-    </Article>
-
-    <Article title="Điều 8. Hiệu lực">
-      <ol className="list-decimal list-inside space-y-2">
-        <li>
-          Điều khoản này có hiệu lực kể từ thời điểm người dùng chấp nhận khi
-          đăng ký tài khoản.
-        </li>
-        <li>
-          Công ty Cổ Phần Giải Pháp Số GSL có quyền sửa đổi, bổ sung Điều khoản
-          và công bố công khai trên ứng dụng.
-        </li>
-      </ol>
+    <Article title="7. Thay đổi chính sách">
+      <p>Chúng tôi có thể cập nhật chính sách này để phù hợp với sự thay đổi của pháp luật hoặc tính năng ứng dụng. Mọi thay đổi sẽ được thông báo trực tiếp trên ứng dụng.</p>
     </Article>
   </div>
 );
