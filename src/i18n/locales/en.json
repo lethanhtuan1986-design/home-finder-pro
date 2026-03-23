@@ -150,10 +150,5 @@
     "title": "404",
     "message": "Page not found",
     "backHome": "Return to Home"
-  },
-  "depositModal": {
-    "title": "Deposit via app",
-    "description": "To place a deposit, please download the XanhStay app on your phone.",
-    "downloadOn": "Download on"
   }
 }

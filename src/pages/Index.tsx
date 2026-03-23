@@ -117,7 +117,7 @@ const Index = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredAds.map((ad, i) => (
-                <AdvertisementCard key={ad.uuid} data={ad} index={i} showScheduleButton showDepositButton />
+                <AdvertisementCard key={ad.uuid} data={ad} index={i} />
               ))}
             </div>
           )}
