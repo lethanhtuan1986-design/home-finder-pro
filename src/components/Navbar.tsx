@@ -27,12 +27,13 @@ export const Navbar = () => {
     { to: '/policy?tab=about', label: t('nav.about'), icon: Building2 },
   ];
 
-  // Transparent on home when not scrolled, solid otherwise
+  // On homepage: transparent when at top, solid when scrolled
+  // On other pages: always solid
   const isTransparent = isHome && !scrolled;
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isTransparent
           ? 'bg-transparent'
           : 'bg-card/95 backdrop-blur-xl border-b border-border shadow-sm'

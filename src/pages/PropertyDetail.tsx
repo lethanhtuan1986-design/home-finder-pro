@@ -56,7 +56,7 @@ const PropertyDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background pt-16">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
           <Skeleton className="h-6 w-24" />
@@ -77,7 +77,7 @@ const PropertyDetail = () => {
 
   if (error || !detail) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background pt-16">
         <Navbar />
         <SEO title={t("detail.notFound")} description={t("detail.notFoundDesc")} />
         <div className="max-w-7xl mx-auto px-4 py-20 text-center">
@@ -140,7 +140,7 @@ const PropertyDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-16">
       <SEO
         title={`${detail.title} - ${formatVNPrice(detail.price)}${t("listing.perMonth")}`}
         description={`${descriptionText.slice(0, 150)}. ${apt.apartmentSize}m², ${apt.roomCount} ${t("listing.rooms")}. ${address}`}

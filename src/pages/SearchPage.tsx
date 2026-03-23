@@ -258,7 +258,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col pt-16">
       <SEO title={t("search.title")} description={t("search.desc")} />
       <Navbar />
 

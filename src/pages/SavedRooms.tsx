@@ -34,7 +34,7 @@ const SavedRooms = () => {
     : (savedData as any)?.items ?? [];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-14 md:pb-0">
+    <div className="min-h-screen bg-background flex flex-col pb-14 md:pb-0 pt-16">
       <SEO title={t('saved.title')} description={t('saved.title')} />
       <Navbar />
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
