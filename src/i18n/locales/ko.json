@@ -46,6 +46,8 @@
     "floors": "층",
     "views": "조회",
     "deposit": "보증금",
+    "depositNotice": "앱으로 보증금 결제",
+    "depositDownloadApp": "보증금을 결제하려면 XanhStay 앱을 다운로드해 주세요.",
     "preDeposit": "예약금",
     "room": "방"
   },
@@ -113,7 +115,9 @@
   },
   "appDownload": {
     "title": "XanhStay 앱 다운로드",
-    "subtitle": "더 빠르게 방을 찾고, 새 매물 알림을 받고, 저장한 방을 휴대폰에서 관리하세요."
+    "subtitle": "더 빠르게 방을 찾고, 새 매물 알림을 받고, 저장한 방을 휴대폰에서 관리하세요.",
+    "downloadOn": "다운로드",
+    "getItOn": "다운로드"
   },
   "slogan": "안주의 길을 밝히고, 평안히 귀가하다",
   "coreValues": {
