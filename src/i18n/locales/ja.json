@@ -87,7 +87,12 @@
     "noResultHint": "フィルターを変更してみてください",
     "loadMore": "もっと見る",
     "loading": "読み込み中...",
-    "serverError": "サーバーに接続できません。サンプルデータを表示中。"
+    "serverError": "サーバーに接続できません。サンプルデータを表示中。",
+    "openMapView": "地図で見る",
+    "filter": "フィルター",
+    "noResultMapHint": "地図を移動するかフィルターを変更してください",
+    "showList": "リスト表示",
+    "showMap": "地図表示"
   },
   "schedule": {
     "title": "内見予約",

@@ -87,7 +87,12 @@
     "noResultHint": "Try changing filters",
     "loadMore": "Load more",
     "loading": "Loading...",
-    "serverError": "Cannot connect to server. Showing sample data."
+    "serverError": "Cannot connect to server. Showing sample data.",
+    "openMapView": "View on map",
+    "filter": "Filters",
+    "noResultMapHint": "Try moving the map or changing filters",
+    "showList": "Show list",
+    "showMap": "Show map"
   },
   "schedule": {
     "title": "Schedule a visit",

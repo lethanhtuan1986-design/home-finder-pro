@@ -87,7 +87,12 @@
     "noResultHint": "필터를 변경해 보세요",
     "loadMore": "더 보기",
     "loading": "로딩 중...",
-    "serverError": "서버에 연결할 수 없습니다. 샘플 데이터를 표시합니다."
+    "serverError": "서버에 연결할 수 없습니다. 샘플 데이터를 표시합니다.",
+    "openMapView": "지도에서 보기",
+    "filter": "필터",
+    "noResultMapHint": "지도를 이동하거나 필터를 변경해 보세요",
+    "showList": "목록 보기",
+    "showMap": "지도 보기"
   },
   "schedule": {
     "title": "방문 예약",

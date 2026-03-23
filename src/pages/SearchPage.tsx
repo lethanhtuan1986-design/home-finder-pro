@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
 import { AdvertisementCard } from "@/components/AdvertisementCard";
-import { MapView } from "@/components/MapView";
 import { Footer } from "@/components/Footer";
 import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
 import advertisementService, {
@@ -16,7 +15,7 @@ import provinceService, { ProvinceItem } from "@/services/province.service";
 import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
-import { Search, Map as MapIcon, List, Loader2 } from "lucide-react";
+import { Search, Map as MapIcon, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
@@ -30,6 +29,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { MiniMapPreview } from "@/components/MiniMapPreview";
 
 const PAGE_SIZE = 20;
 
@@ -37,10 +37,8 @@ const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const listRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
 
   // Filter states from URL
   const [provinceId, setProvinceId] = useState(searchParams.get("provinceId") || "");
@@ -68,7 +66,7 @@ const SearchPage = () => {
       (fs) => String(fs.value || "") === apartmentSizeFrom && String(fs.valueTo || "") === apartmentSizeTo,
     )?.uuid || "";
 
-  // API data: provinces, wards, apartment types
+  // API data
   const { data: provinces = [] } = useQuery<ProvinceItem[]>({
     queryKey: ["dropdown-province"],
     queryFn: () => httpRequest({ http: provinceService.listProvince({ keyword: "" }) }),
@@ -87,17 +85,11 @@ const SearchPage = () => {
     queryFn: () =>
       httpRequest({
         http: apartmentTypeService.listApartmentType({
-          isPaging: 0,
-          typeFinding: 0,
-          page: 1,
-          pageSize: 100,
-          keyword: "",
-          status: 1,
+          isPaging: 0, typeFinding: 0, page: 1, pageSize: 100, keyword: "", status: 1,
         }),
       }),
   });
 
-  // Build API request for list
   const buildRequest = (): GetListAdvertisementRequest => {
     const req: GetListAdvertisementRequest = { isPaging: 1, page, pageSize: PAGE_SIZE };
     if (debouncedKeyword) req.keyword = debouncedKeyword;
@@ -111,7 +103,6 @@ const SearchPage = () => {
     return req;
   };
 
-  // Build API request for map
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = { isPaging: 0 };
     if (debouncedKeyword) req.keyword = debouncedKeyword;
@@ -130,33 +121,12 @@ const SearchPage = () => {
     isLoading: loading,
     error: queryError,
   } = useQuery({
-    queryKey: [
-      "advertisements",
-      debouncedKeyword,
-      provinceId,
-      wardId,
-      apartmentTypeUuid,
-      priceFrom,
-      priceTo,
-      apartmentSizeFrom,
-      apartmentSizeTo,
-      page,
-    ],
+    queryKey: ["advertisements", debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo, page],
     queryFn: () => httpRequest({ http: advertisementService.getListPaged(buildRequest()) }),
   });
 
   const { data: mapLocations = [], isLoading: mapLoading } = useQuery<MapLocationGroup[]>({
-    queryKey: [
-      "map-advertisements",
-      debouncedKeyword,
-      provinceId,
-      wardId,
-      apartmentTypeUuid,
-      priceFrom,
-      priceTo,
-      apartmentSizeFrom,
-      apartmentSizeTo,
-    ],
+    queryKey: ["map-advertisements", debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo],
     queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
   });
 
@@ -165,13 +135,10 @@ const SearchPage = () => {
   const totalPages = (listData as any)?.pagination?.totalPage ?? 1;
   const error = queryError ? t("search.serverError") : null;
 
-  // Reset page when filters change (skip initial mount)
+  // Reset page when filters change
   const isInitialMount = useRef(true);
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
+    if (isInitialMount.current) { isInitialMount.current = false; return; }
     setPage(1);
   }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
 
@@ -188,42 +155,23 @@ const SearchPage = () => {
     if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
     if (page > 1) params.set("page", String(page));
     setSearchParams(params, { replace: true });
-  }, [
-    debouncedKeyword,
-    provinceId,
-    wardId,
-    apartmentTypeUuid,
-    priceFrom,
-    priceTo,
-    apartmentSizeFrom,
-    apartmentSizeTo,
-    page,
-    setSearchParams,
-  ]);
+  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo, page, setSearchParams]);
 
   const handlePriceSelect = (uuid: string) => {
     if (uuid === "__all__" || uuid === selectedPriceUuid) {
-      setPriceFrom("");
-      setPriceTo("");
+      setPriceFrom(""); setPriceTo("");
     } else {
       const fp = filterPrices.find((p) => p.uuid === uuid);
-      if (fp) {
-        setPriceFrom(fp.value ? String(fp.value) : "");
-        setPriceTo(fp.valueTo ? String(fp.valueTo) : "");
-      }
+      if (fp) { setPriceFrom(fp.value ? String(fp.value) : ""); setPriceTo(fp.valueTo ? String(fp.valueTo) : ""); }
     }
   };
 
   const handleSizeSelect = (uuid: string) => {
     if (uuid === "__all__" || uuid === selectedSizeUuid) {
-      setApartmentSizeFrom("");
-      setApartmentSizeTo("");
+      setApartmentSizeFrom(""); setApartmentSizeTo("");
     } else {
       const fs = filterApartmentSizes.find((s) => s.uuid === uuid);
-      if (fs) {
-        setApartmentSizeFrom(fs.value ? String(fs.value) : "");
-        setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : "");
-      }
+      if (fs) { setApartmentSizeFrom(fs.value ? String(fs.value) : ""); setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : ""); }
     }
   };
 
@@ -232,15 +180,20 @@ const SearchPage = () => {
     listRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const scrollToMap = () => {
-    mapRef.current?.scrollIntoView({ behavior: "smooth" });
+  // Navigate to map view preserving all filters
+  const goToMapView = () => {
+    const params = new URLSearchParams();
+    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (provinceId) params.set("provinceId", provinceId);
+    if (wardId) params.set("wardId", wardId);
+    if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
+    if (priceFrom) params.set("priceFrom", priceFrom);
+    if (priceTo) params.set("priceTo", priceTo);
+    if (apartmentSizeFrom) params.set("apartmentSizeFrom", apartmentSizeFrom);
+    if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
+    navigate(`/search/map?${params.toString()}`);
   };
 
-  const scrollToList = () => {
-    listRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
     if (totalPages <= 7) {
@@ -257,266 +210,258 @@ const SearchPage = () => {
     return pages;
   };
 
+  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid].filter(Boolean).length;
+
   return (
     <div className="min-h-screen bg-background flex flex-col pt-16">
       <SEO title={t("search.title")} description={t("search.desc")} />
       <Navbar />
 
-      {/* Filters panel */}
-      <div className="border-b border-border bg-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
-          {/* Top row: keyword + dropdowns */}
+      {/* Sticky top search bar */}
+      <div className="sticky top-16 z-40 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[140px]">
+            <div className="flex-1 min-w-[160px]">
               <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.keyword")}</label>
-              <input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder={t("search.keywordPlaceholder")}
-                className="custom-input w-full"
-              />
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  placeholder={t("search.keywordPlaceholder")}
+                  className="custom-input w-full pl-9"
+                />
+              </div>
             </div>
             <div className="flex-1 min-w-[140px]">
               <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.area")}</label>
-              <Select
-                value={provinceId || "__all__"}
-                onValueChange={(val) => {
-                  setProvinceId(val === "__all__" ? "" : val);
-                  setWardId("");
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("search.all")} />
-                </SelectTrigger>
+              <Select value={provinceId || "__all__"} onValueChange={(val) => { setProvinceId(val === "__all__" ? "" : val); setWardId(""); }}>
+                <SelectTrigger className="w-full"><SelectValue placeholder={t("search.all")} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__all__">{t("search.all")}</SelectItem>
-                  {provinces.map((p) => (
-                    <SelectItem key={p.code} value={p.code}>
-                      {p.fullName}
-                    </SelectItem>
-                  ))}
+                  {provinces.map((p) => (<SelectItem key={p.code} value={p.code}>{p.fullName}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
             <div className="flex-1 min-w-[140px]">
               <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("hero.ward")}</label>
-              <Select
-                value={wardId || "__all__"}
-                onValueChange={(val) => setWardId(val === "__all__" ? "" : val)}
-                disabled={!provinceId || (wardsLoading && wards.length === 0)}
-              >
+              <Select value={wardId || "__all__"} onValueChange={(val) => setWardId(val === "__all__" ? "" : val)} disabled={!provinceId || (wardsLoading && wards.length === 0)}>
                 <SelectTrigger className="w-full">
-                  <SelectValue
-                    placeholder={
-                      !provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("search.all")
-                    }
-                  />
+                  <SelectValue placeholder={!provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("search.all")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__all__">{t("search.all")}</SelectItem>
-                  {wards.map((w) => (
-                    <SelectItem key={w.code} value={w.code}>
-                      {w.fullName}
-                    </SelectItem>
-                  ))}
+                  {wards.map((w) => (<SelectItem key={w.code} value={w.code}>{w.fullName}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
-          </div>
 
-          {/* Apartment types */}
-          {apartmentTypes.length > 0 && (
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-2">{t("hero.roomType")}</p>
-              <div className="flex gap-2 flex-wrap">
-                {apartmentTypes.map((at) => (
-                  <button
-                    key={at.uuid}
-                    onClick={() => setApartmentTypeUuid((prev) => (prev === at.uuid ? "" : at.uuid))}
-                    className={cn(
-                      "px-3 py-1.5 rounded-lg border text-sm transition-colors",
-                      apartmentTypeUuid === at.uuid
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "border-border bg-background text-foreground hover:bg-secondary",
-                    )}
-                  >
-                    {at.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Price filters */}
-          <div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">{t("hero.priceRange")}</p>
-            <div className="flex gap-2 flex-wrap">
-              {filterPrices.map((fp) => (
-                <button
-                  key={fp.uuid}
-                  onClick={() => handlePriceSelect(fp.uuid)}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg border text-sm transition-colors",
-                    selectedPriceUuid === fp.uuid
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border bg-background text-foreground hover:bg-secondary",
-                  )}
-                >
-                  {fp.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Size filters */}
-          <div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">{t("hero.areaSize")}</p>
-            <div className="flex gap-2 flex-wrap">
-              {filterApartmentSizes.map((fs) => (
-                <button
-                  key={fs.uuid}
-                  onClick={() => handleSizeSelect(fs.uuid)}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg border text-sm transition-colors",
-                    selectedSizeUuid === fs.uuid
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border bg-background text-foreground hover:bg-secondary",
-                  )}
-                >
-                  {fs.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Pagination + view toggle */}
-          <div className="flex items-center justify-between pt-2 border-t border-border">
-            <div className="flex items-center gap-2">
-              <p className="text-sm text-muted-foreground">
+            {/* Result count */}
+            <div className="flex items-center gap-2 shrink-0">
+              <p className="text-sm text-muted-foreground whitespace-nowrap">
                 {totalCount} {t("search.found")}
               </p>
               {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
-            </div>
-
-            <div className="flex items-center gap-3">
-              {totalPages > 1 && (
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() => page > 1 && handlePageChange(page - 1)}
-                        className={cn(page <= 1 && "pointer-events-none opacity-50", "cursor-pointer")}
-                      />
-                    </PaginationItem>
-                    {getPageNumbers().map((p, i) =>
-                      p === "ellipsis" ? (
-                        <PaginationItem key={`ellipsis-${i}`}>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      ) : (
-                        <PaginationItem key={p}>
-                          <PaginationLink
-                            isActive={page === p}
-                            onClick={() => handlePageChange(p as number)}
-                            className="cursor-pointer"
-                          >
-                            {p}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ),
-                    )}
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() => page < totalPages && handlePageChange(page + 1)}
-                        className={cn(page >= totalPages && "pointer-events-none opacity-50", "cursor-pointer")}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              )}
-
-              <div className="flex gap-1">
-                <button
-                  onClick={scrollToList}
-                  className="px-3 py-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-secondary transition-colors flex items-center gap-2 text-foreground h-9"
-                >
-                  <List size={16} />
-                  {t("search.list")}
-                </button>
-                <button
-                  onClick={scrollToMap}
-                  className="px-3 py-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-secondary transition-colors flex items-center gap-2 text-foreground h-9"
-                >
-                  <MapIcon size={16} />
-                  {t("search.map")}
-                </button>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Results */}
+      {/* Main content: sidebar + list */}
       <div className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {error && (
-            <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
-              {error}
-            </div>
-          )}
-
-          {/* List section */}
-          <div ref={listRef}>
-            {loading && advertisements.length === 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Array.from({ length: PAGE_SIZE }).map((_, i) => (
-                  <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
-                    <Skeleton className="aspect-[4/3] w-full" />
-                    <div className="p-4 space-y-2">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-5 w-1/2" />
-                      <Skeleton className="h-3 w-2/3" />
-                      <Skeleton className="h-3 w-full mt-3" />
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex gap-6">
+            {/* Left sidebar - hidden on mobile */}
+            <aside className="hidden lg:block w-[260px] shrink-0">
+              <div className="sticky top-[calc(4rem+4.5rem)] space-y-5">
+                {/* Mini Map */}
+                <div
+                  className="rounded-xl overflow-hidden border border-border cursor-pointer group"
+                  onClick={goToMapView}
+                  title={t("search.openMapView")}
+                >
+                  <div className="h-[180px] relative">
+                    <MiniMapPreview locations={mapLocations} loading={mapLoading} />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                        <MapIcon size={14} />
+                        {t("search.openMapView")}
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
 
-            {advertisements.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {advertisements.map((ad: any, i: number) => (
-                  <div key={ad.uuid} onMouseEnter={() => setHoveredId(ad.uuid)} onMouseLeave={() => setHoveredId(null)}>
-                    <AdvertisementCard data={ad} index={i} />
+                {/* Room type filter */}
+                {apartmentTypes.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t("hero.roomType")}</p>
+                    <div className="flex flex-col gap-1.5">
+                      {apartmentTypes.map((at) => (
+                        <button
+                          key={at.uuid}
+                          onClick={() => setApartmentTypeUuid((prev) => (prev === at.uuid ? "" : at.uuid))}
+                          className={cn(
+                            "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                            apartmentTypeUuid === at.uuid
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "border-border bg-background text-foreground hover:bg-secondary",
+                          )}
+                        >
+                          {at.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
+
+                {/* Price filter */}
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t("hero.priceRange")}</p>
+                  <div className="flex flex-col gap-1.5">
+                    {filterPrices.map((fp) => (
+                      <button
+                        key={fp.uuid}
+                        onClick={() => handlePriceSelect(fp.uuid)}
+                        className={cn(
+                          "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                          selectedPriceUuid === fp.uuid
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-border bg-background text-foreground hover:bg-secondary",
+                        )}
+                      >
+                        {fp.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Size filter */}
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t("hero.areaSize")}</p>
+                  <div className="flex flex-col gap-1.5">
+                    {filterApartmentSizes.map((fs) => (
+                      <button
+                        key={fs.uuid}
+                        onClick={() => handleSizeSelect(fs.uuid)}
+                        className={cn(
+                          "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                          selectedSizeUuid === fs.uuid
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-border bg-background text-foreground hover:bg-secondary",
+                        )}
+                      >
+                        {fs.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-            )}
+            </aside>
 
-            {!loading && advertisements.length === 0 && (
-              <EmptyState
-                icon={Search}
-                title={t("search.noResult")}
-                description={t("search.noResultHint")}
-                actionLabel={t("nav.searchNow")}
-                actionTo="/search"
-              />
-            )}
-          </div>
+            {/* Right: Room list */}
+            <div className="flex-1 min-w-0" ref={listRef}>
+              {/* Mobile: filter chips + map button */}
+              <div className="lg:hidden flex items-center gap-2 mb-4 overflow-x-auto thin-scrollbar pb-2">
+                <button onClick={goToMapView} className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-colors">
+                  <MapIcon size={16} />
+                  {t("search.map")}
+                </button>
+                {apartmentTypes.length > 0 && (
+                  <Select value={apartmentTypeUuid || "__all__"} onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}>
+                    <SelectTrigger className="w-auto shrink-0"><SelectValue placeholder={t("hero.roomType")} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                      {apartmentTypes.map((at) => (<SelectItem key={at.uuid} value={at.uuid}>{at.name}</SelectItem>))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
+                  <SelectTrigger className="w-auto shrink-0"><SelectValue placeholder={t("hero.priceRange")} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
+                    {filterPrices.map((fp) => (<SelectItem key={fp.uuid} value={fp.uuid}>{fp.name}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+                <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
+                  <SelectTrigger className="w-auto shrink-0"><SelectValue placeholder={t("hero.areaSize")} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
+                    {filterApartmentSizes.map((fs) => (<SelectItem key={fs.uuid} value={fs.uuid}>{fs.name}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {/* Map section below list */}
-          <div ref={mapRef} className="mt-8">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <MapIcon size={20} />
-              {t("search.map")}
-            </h2>
-            <div className="h-[500px] rounded-xl overflow-hidden border border-border">
-              <MapView
-                locations={mapLocations}
-                hoveredId={hoveredId}
-                loading={mapLoading && mapLocations.length === 0}
-                onMarkerClick={(id) => navigate(`/advertisement/${id}`)}
-              />
+              {error && (
+                <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
+                  {error}
+                </div>
+              )}
+
+              {loading && advertisements.length === 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                    <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
+                      <Skeleton className="aspect-[4/3] w-full" />
+                      <div className="p-4 space-y-2">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-5 w-1/2" />
+                        <Skeleton className="h-3 w-2/3" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {advertisements.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {advertisements.map((ad: any, i: number) => (
+                    <div key={ad.uuid}>
+                      <AdvertisementCard data={ad} index={i} />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {!loading && advertisements.length === 0 && (
+                <EmptyState
+                  icon={Search}
+                  title={t("search.noResult")}
+                  description={t("search.noResultHint")}
+                  actionLabel={t("nav.searchNow")}
+                  actionTo="/search"
+                />
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => page > 1 && handlePageChange(page - 1)}
+                          className={cn(page <= 1 && "pointer-events-none opacity-50", "cursor-pointer")}
+                        />
+                      </PaginationItem>
+                      {getPageNumbers().map((p, i) =>
+                        p === "ellipsis" ? (
+                          <PaginationItem key={`ellipsis-${i}`}><PaginationEllipsis /></PaginationItem>
+                        ) : (
+                          <PaginationItem key={p}>
+                            <PaginationLink isActive={page === p} onClick={() => handlePageChange(p as number)} className="cursor-pointer">{p}</PaginationLink>
+                          </PaginationItem>
+                        ),
+                      )}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => page < totalPages && handlePageChange(page + 1)}
+                          className={cn(page >= totalPages && "pointer-events-none opacity-50", "cursor-pointer")}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </div>
           </div>
         </div>
