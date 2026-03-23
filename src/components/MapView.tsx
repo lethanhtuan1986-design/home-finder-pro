@@ -14,6 +14,8 @@ interface MapViewProps {
   hoveredId?: string | null;
   loading?: boolean;
   onMarkerClick?: (id: string) => void;
+  onBoundsChange?: (bounds: { neLat: number; neLng: number; swLat: number; swLng: number }) => void;
+  useGeolocation?: boolean;
 }
 
 const parsePoint = (point: string): LatLngTuple | null => {
@@ -94,7 +96,7 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   `;
 };
 
-export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick }: MapViewProps) => {
+export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, useGeolocation = false }: MapViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
@@ -122,6 +124,34 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
 
     mapRef.current = map;
     setTimeout(() => map.invalidateSize(), 200);
+
+    // Emit bounds on move
+    if (onBoundsChange) {
+      const emitBounds = () => {
+        const b = map.getBounds();
+        onBoundsChange({
+          neLat: b.getNorthEast().lat,
+          neLng: b.getNorthEast().lng,
+          swLat: b.getSouthWest().lat,
+          swLng: b.getSouthWest().lng,
+        });
+      };
+      map.on("moveend", emitBounds);
+      map.on("zoomend", emitBounds);
+      // Emit initial bounds
+      setTimeout(emitBounds, 300);
+    }
+
+    // Geolocation
+    if (useGeolocation && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          map.setView([pos.coords.latitude, pos.coords.longitude], 14);
+        },
+        () => {/* ignore error, keep default center */},
+        { timeout: 5000 }
+      );
+    }
 
     return () => {
       map.remove();
