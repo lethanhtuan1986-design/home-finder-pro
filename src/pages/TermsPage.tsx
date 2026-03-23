@@ -687,7 +687,7 @@ export default function TermsPage() {
       />
       <Navbar />
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background pt-16">
         {/* Header */}
         <div className="bg-primary/5 border-b border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
