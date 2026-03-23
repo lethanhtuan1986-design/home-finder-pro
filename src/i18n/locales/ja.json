@@ -150,5 +150,10 @@
     "title": "404",
     "message": "ページが見つかりません",
     "backHome": "ホームに戻る"
+  },
+  "depositModal": {
+    "title": "アプリで予約金を支払う",
+    "description": "予約金を支払うには、XanhStayアプリをダウンロードしてください。",
+    "downloadOn": "ダウンロード"
   }
 }

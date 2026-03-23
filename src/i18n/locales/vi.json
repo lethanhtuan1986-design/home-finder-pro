@@ -150,5 +150,10 @@
     "title": "404",
     "message": "Trang không tồn tại",
     "backHome": "Về trang chủ"
+  },
+  "depositModal": {
+    "title": "Đặt cọc qua ứng dụng",
+    "description": "Để đặt cọc giữ chỗ, vui lòng tải ứng dụng XanhStay trên điện thoại.",
+    "downloadOn": "Tải trên"
   }
 }
