@@ -1,9 +1,9 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import L, { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import { formatVNPrice, getImageUrl } from "@/services/index";
-import { Loader2 } from "lucide-react";
+import { Loader2, LocateFixed } from "lucide-react";
 import type { MapLocationGroup } from "@/services/advertisement.service";
 
 const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
@@ -35,7 +35,6 @@ const buildingSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="
 
 const shortenAddress = (address: string): string => {
   if (!address) return "Không rõ";
-  // Try to extract street/alley name, e.g. "Ngõ 209 Đội Cấn" or "31A Đội Cấn"
   const parts = address.split(",").map(s => s.trim());
   const short = parts[0] || address;
   return short.length > 22 ? short.slice(0, 20) + "…" : short;
@@ -59,8 +58,6 @@ const createClusterIcon = (totalAds: number, address: string, isHovered: boolean
 };
 
 const mapPinSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>`;
-
-
 
 const buildPopupHtml = (loc: MapLocationGroup) => {
   const ads = loc.ads;
@@ -96,11 +93,12 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   `;
 };
 
-export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, useGeolocation = false }: MapViewProps) => {
+export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange }: MapViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const initialFitDoneRef = useRef(false);
+  const [locating, setLocating] = useState(false);
 
   const validLocations = useMemo(() =>
     locations.filter((loc) => parsePoint(loc.point) !== null),
@@ -139,19 +137,7 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
       };
       map.on("moveend", emitBounds);
       map.on("zoomend", emitBounds);
-      // Emit initial bounds
       setTimeout(emitBounds, 300);
-    }
-
-    // Geolocation
-    if (useGeolocation && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          map.setView([pos.coords.latitude, pos.coords.longitude], 14);
-        },
-        () => {/* ignore error, keep default center */},
-        { timeout: 5000 }
-      );
     }
 
     return () => {
@@ -204,7 +190,7 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
       markersRef.current.set(key, marker);
     });
 
-    // Only fitBounds on the very first data load, then let user control freely
+    // Auto fitBounds on first data load only
     if (!initialFitDoneRef.current && points.length > 0) {
       initialFitDoneRef.current = true;
       const bounds = L.latLngBounds(points);
@@ -221,9 +207,34 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
     return () => observer.disconnect();
   }, []);
 
+  // My Location handler
+  const handleMyLocation = useCallback(() => {
+    const map = mapRef.current;
+    if (!map || !navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        map.flyTo([pos.coords.latitude, pos.coords.longitude], 15, { duration: 1.5 });
+        setLocating(false);
+      },
+      () => setLocating(false),
+      { timeout: 8000 }
+    );
+  }, []);
+
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border min-h-[400px]">
       <div ref={containerRef} style={{ width: "100%", height: "100%", minHeight: 400, zIndex: 0 }} />
+
+      {/* My Location Button */}
+      <button
+        onClick={handleMyLocation}
+        disabled={locating}
+        className="absolute bottom-20 right-3 z-[1000] w-10 h-10 rounded-xl bg-card border border-border shadow-lg flex items-center justify-center hover:bg-secondary transition-colors disabled:opacity-60"
+        title="Vị trí của tôi"
+      >
+        <LocateFixed size={18} className={`text-primary ${locating ? "animate-pulse" : ""}`} />
+      </button>
 
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-[1000] pointer-events-none">

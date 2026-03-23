@@ -290,16 +290,16 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: hsl(var(--card));
-  color: hsl(var(--primary));
-  border: 2px solid hsl(var(--border));
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 2px solid hsl(var(--primary));
   border-radius: 10px;
   padding: 5px 10px;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   max-width: 160px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1.5px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.15);
   cursor: pointer;
   transform: scale(1);
   transition: transform 0.2s cubic-bezier(0.2,0.8,0.2,1), background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -307,26 +307,26 @@
 
 .marker-pin:hover,
 .marker-pin--active {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  border-color: hsl(var(--primary));
-  transform: scale(1.1);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.12);
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border-color: hsl(var(--foreground));
+  transform: scale(1.15);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 3px 8px rgba(0,0,0,0.15);
 }
 
 .marker-pin:hover .marker-pin__icon,
 .marker-pin--active .marker-pin__icon {
-  color: hsl(var(--primary-foreground));
+  color: hsl(var(--background));
 }
 
 .marker-pin:hover .marker-pin__arrow,
 .marker-pin--active .marker-pin__arrow {
-  border-top-color: hsl(var(--primary));
+  border-top-color: hsl(var(--foreground));
 }
 
 .marker-pin__icon {
   flex-shrink: 0;
-  color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   transition: color 0.2s ease;
 }
 
@@ -347,9 +347,9 @@
   height: 0;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 8px solid hsl(var(--card));
+  border-top: 8px solid hsl(var(--primary));
   transition: border-top-color 0.2s ease;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
 }
 
 /* Red count badge */

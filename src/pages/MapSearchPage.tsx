@@ -310,7 +310,6 @@ const MapSearchPage = () => {
             loading={mapLoading && mapLocations.length === 0}
             onMarkerClick={(id) => navigate(`/advertisement/${id}`)}
             onBoundsChange={handleBoundsChange}
-            useGeolocation
           />
 
           {/* Mobile: toggle list button */}
