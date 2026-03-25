@@ -20,7 +20,7 @@ const Index = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { data: apartmentTypes = [] } = useQuery<ApartmentTypeItem[]>({
+  const { data: apartmentTypesRaw } = useQuery({
     queryKey: ['dropdown-apartment-type'],
     queryFn: () =>
       httpRequest({
@@ -34,6 +34,10 @@ const Index = () => {
         }),
       }),
   });
+
+  const apartmentTypes: ApartmentTypeItem[] = Array.isArray(apartmentTypesRaw)
+    ? apartmentTypesRaw
+    : (apartmentTypesRaw as any)?.items ?? [];
 
   const { data: featuredData, isLoading: featuredLoading } = useQuery<{ items: AdvertisementData[] }>({
     queryKey: ['featured-advertisements'],
