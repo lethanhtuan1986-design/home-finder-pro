@@ -139,54 +139,50 @@ export const HeroSearch = () => {
       {/* Main filters row */}
       <div className="flex flex-col md:flex-row items-stretch gap-2">
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div className="search-field">
-            <Select
-              value={provinceId}
-              onValueChange={(val) => {
-                setProvinceId(val === "__all__" ? "" : val);
-                setWardId("");
-              }}
-            >
-              <SelectTrigger className="search-field-select-trigger">
-                <SelectValue placeholder={t("hero.area")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">{t("hero.area")}</SelectItem>
-                {provinces.map((p) => (
-                  <SelectItem key={p.code} value={p.code}>
-                    {p.fullName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Select
+            value={provinceId}
+            onValueChange={(val) => {
+              setProvinceId(val === "__all__" ? "" : val);
+              setWardId("");
+            }}
+          >
+            <SelectTrigger className="h-11 rounded-xl bg-secondary/50 border-border">
+              <SelectValue placeholder={t("hero.area")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t("hero.area")}</SelectItem>
+              {provinces.map((p) => (
+                <SelectItem key={p.code} value={p.code}>
+                  {p.fullName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-          <div className="search-field">
-            <Select
-              value={priceUuid}
-              onValueChange={(val) =>
-                setPriceUuid(val === "__all__" ? "" : val)
-              }
-            >
-              <SelectTrigger className="search-field-select-trigger">
-                <SelectValue placeholder={t("hero.priceRange")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">{t("hero.priceRange")}</SelectItem>
-                {filterPrices.map((fp) => (
-                  <SelectItem key={fp.uuid} value={fp.uuid}>
-                    {fp.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Select
+            value={priceUuid}
+            onValueChange={(val) =>
+              setPriceUuid(val === "__all__" ? "" : val)
+            }
+          >
+            <SelectTrigger className="h-11 rounded-xl bg-secondary/50 border-border">
+              <SelectValue placeholder={t("hero.priceRange")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t("hero.priceRange")}</SelectItem>
+              {filterPrices.map((fp) => (
+                <SelectItem key={fp.uuid} value={fp.uuid}>
+                  {fp.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2">
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-colors whitespace-nowrap h-fit ${
+            className={`relative flex items-center gap-2 px-4 h-11 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
               showAdvanced
                 ? "bg-primary/10 text-primary border border-primary/20"
                 : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
@@ -205,7 +201,7 @@ export const HeroSearch = () => {
 
           <button
             onClick={handleSearch}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap h-fit"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap"
           >
             <Search size={20} />
             <span>{t("hero.searchBtn")}</span>
