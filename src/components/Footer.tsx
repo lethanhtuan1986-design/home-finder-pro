@@ -10,7 +10,7 @@ export const Footer = () => {
     "flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-colors duration-300";
 
   return (
-    <footer className="" text-gray-100">
+    <footer className= text-gray-100">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-14 md:py-16">
         {/* Main grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
