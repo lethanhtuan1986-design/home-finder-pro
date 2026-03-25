@@ -19,8 +19,8 @@ import {
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-import heroBanner1 from "@/assets/banner-hero.jpg";
-import heroBanner2 from "@/assets/banner-promo.jpg";
+import heroBanner1 from "@/assets/banner-hero.png";
+import heroBanner2 from "@/assets/banner-promo.png";
 
 const bannerImages = [heroBanner1, heroBanner2];
 
