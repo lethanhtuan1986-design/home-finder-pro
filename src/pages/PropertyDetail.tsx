@@ -1,10 +1,11 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PropertyGallery } from "@/components/PropertyGallery";
 import { ScheduleForm } from "@/components/ScheduleForm";
+import { DepositButton } from "@/components/DepositButton";
 import { SEO } from "@/components/SEO";
 import { useSavedRooms } from "@/hooks/useSavedRooms";
 import { useRecentRooms } from "@/hooks/useRecentRooms";
@@ -386,8 +387,11 @@ const PropertyDetail = () => {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="sticky top-20">
+            <div className="sticky top-20 space-y-4">
               <ScheduleForm propertyTitle={detail.title} apartmentUuid={apt.uuid} advertisementUuid={detail.uuid} />
+
+              {/* Nút Đặt cọc */}
+              <DepositButton />
             </div>
           </div>
         </div>
