@@ -10,7 +10,7 @@ import { useSavedRooms } from "@/hooks/useSavedRooms";
 import { useRecentRooms } from "@/hooks/useRecentRooms";
 import { useTranslation } from "react-i18next";
 import advertisementService, { AdvertisementDetailData } from "@/services/advertisement.service";
-import { formatVNPrice, getImageUrl, httpRequest } from "@/services/index";
+import { formatVNPrice, getImageUrl, httpRequest, formatVNPhone } from "@/services/index";
 import {
   MapPin,
   Maximize,

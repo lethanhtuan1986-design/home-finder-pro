@@ -144,6 +144,22 @@ export function formatVNPrice(price: number): string {
   return price.toLocaleString("vi-VN") + "đ";
 }
 
+// ==================== Phone Helper ====================
+
+/**
+ * Format Vietnamese phone number: 0312345678 → 031 234 5678
+ */
+export function formatVNPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) {
+    return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+  }
+  if (digits.length === 11) {
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+  }
+  return phone;
+}
+
 // ==================== Server-side fetch for SEO ====================
 
 export async function fetchForSEO<T>(
