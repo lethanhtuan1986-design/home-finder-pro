@@ -338,50 +338,49 @@ export const HeroSearch = () => {
               </div>
             ))}
             {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30" />
+            <div className="absolute inset-0 bg-black/45" />
             {/* Top gradient for navbar blending */}
             <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/50 to-transparent" />
           </div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[420px] md:min-h-[460px] pt-20 md:pt-16 pb-6 md:pb-8">
-          {/* Content area: brand left, promo right */}
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-4 md:mb-6 gap-4">
-            {/* Left: Brand text */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-              className="text-left"
-            >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-2 drop-shadow-lg">
-                XanhStay
-              </h1>
-              <p className="text-white/85 text-lg md:text-xl font-light drop-shadow-md">
+          {/* Center: Brand text */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+            className="text-center mb-5 md:mb-6"
+          >
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-3 drop-shadow-lg">
+              Xanh<span className="text-primary">Stay</span>
+            </h1>
+            <div className="flex items-center justify-center gap-3 md:gap-4">
+              <span className="h-px w-8 md:w-12 bg-white/40" />
+              <p className="text-white/90 text-base md:text-xl font-light tracking-wide drop-shadow-md italic">
                 {t("slogan")}
               </p>
-            </motion.div>
+              <span className="h-px w-8 md:w-12 bg-white/40" />
+            </div>
+          </motion.div>
 
-            {/* Right: Promo banner */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
-              className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-5 py-4 md:text-right"
-            >
-              <p className="text-amber-200 text-xs font-semibold uppercase tracking-widest mb-1.5">
-                Ưu đãi đặc biệt
-              </p>
-              <div className="space-y-1">
-                <p className="text-white font-bold text-base md:text-lg">
-                  6 Tháng giảm <span className="text-amber-300">3%</span>
-                </p>
-                <p className="text-white font-bold text-base md:text-lg">
-                  12 Tháng giảm <span className="text-amber-300">5%</span>
-                </p>
-              </div>
-            </motion.div>
-          </div>
+          {/* Promo badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
+            className="flex justify-center mb-5 md:mb-6"
+          >
+            <div className="inline-flex items-center gap-3 md:gap-5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2.5">
+              <span className="text-white font-semibold text-sm md:text-base">
+                6 Tháng giảm <span className="text-amber-300 font-bold">3%</span>
+              </span>
+              <span className="w-px h-5 bg-white/30" />
+              <span className="text-white font-semibold text-sm md:text-base">
+                12 Tháng giảm <span className="text-amber-300 font-bold">5%</span>
+              </span>
+            </div>
+          </motion.div>
 
           {/* Search panel */}
           <motion.div
