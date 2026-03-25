@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import bannerPromo from "@/assets/banner-promo.jpg";
+import bannerPromo from "@/assets/banner-promo.png";
 import logoSrc from "@/assets/logo.svg";
 
 export const PromoBanner = () => {
