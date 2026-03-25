@@ -19,11 +19,10 @@ import {
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-import heroBanner1 from "@/assets/hero-banner-1.jpg";
-import heroBanner2 from "@/assets/hero-banner-2.jpg";
-import heroBanner3 from "@/assets/hero-banner-3.jpg";
+import heroBanner1 from "@/assets/banner-hero.jpg";
+import heroBanner2 from "@/assets/banner-promo.jpg";
 
-const bannerImages = [heroBanner1, heroBanner2, heroBanner3];
+const bannerImages = [heroBanner1, heroBanner2];
 
 export const HeroSearch = () => {
   const navigate = useNavigate();

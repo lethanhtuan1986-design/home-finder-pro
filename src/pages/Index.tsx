@@ -3,6 +3,7 @@ import { AdvertisementCard } from "@/components/AdvertisementCard";
 import { CoreValues } from "@/components/CoreValues";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { PromoBanner } from "@/components/PromoBanner";
 
 import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
@@ -148,6 +149,7 @@ const Index = () => {
         </div>
       </section>
 
+      <PromoBanner />
       <CoreValues />
       <Footer />
     </div>
