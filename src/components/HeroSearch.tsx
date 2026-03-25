@@ -338,7 +338,7 @@ export const HeroSearch = () => {
               </div>
             ))}
             {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30" />
+            <div className="absolute inset-0 bg-black/45" />
             {/* Top gradient for navbar blending */}
             <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/50 to-transparent" />
           </div>
