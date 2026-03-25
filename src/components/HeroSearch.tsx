@@ -344,7 +344,7 @@ export const HeroSearch = () => {
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[380px] md:min-h-[460px] pb-6 md:pb-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[420px] md:min-h-[460px] pt-20 md:pt-16 pb-6 md:pb-8">
           {/* Content area: brand left, promo right */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-4 md:mb-6 gap-4">
             {/* Left: Brand text */}
