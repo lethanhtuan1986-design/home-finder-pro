@@ -336,12 +336,12 @@ export const HeroSearch = () => {
                 />
               </div>
             ))}
-            <div className="absolute inset-0 bg-black/50" />
-            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/40 to-transparent" />
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[340px] md:min-h-[420px] pb-6 md:pb-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[400px] md:min-h-[500px] pb-6 md:pb-8">
           {/* Brand text */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
