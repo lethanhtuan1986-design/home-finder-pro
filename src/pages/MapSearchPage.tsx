@@ -12,13 +12,27 @@ import advertisementService, {
   AdvertisementData,
 } from "@/services/advertisement.service";
 import provinceService, { ProvinceItem } from "@/services/province.service";
-import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
+import apartmentTypeService, {
+  ApartmentTypeItem,
+} from "@/services/apartmentType.service";
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
 import { Search, SlidersHorizontal, Loader2, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const parsePoint = (point: string): [number, number] | null => {
@@ -26,7 +40,8 @@ const parsePoint = (point: string): [number, number] | null => {
     const parsed = JSON.parse(point);
     if (Array.isArray(parsed) && parsed.length >= 2) {
       const [lat, lng] = parsed.map(Number);
-      if (isFinite(lat) && isFinite(lng) && !(lat === 0 && lng === 0)) return [lat, lng];
+      if (isFinite(lat) && isFinite(lng) && !(lat === 0 && lng === 0))
+        return [lat, lng];
     }
   } catch {}
   return null;
@@ -42,16 +57,31 @@ const MapSearchPage = () => {
   const [filterOpen, setFilterOpen] = useState(false);
 
   // Map bounding box state
-  const [bounds, setBounds] = useState<{ neLat: number; neLng: number; swLat: number; swLng: number } | null>(null);
+  const [bounds, setBounds] = useState<{
+    neLat: number;
+    neLng: number;
+    swLat: number;
+    swLng: number;
+  } | null>(null);
 
   // Filter states from URL
-  const [provinceId, setProvinceId] = useState(searchParams.get("provinceId") || "");
+  const [provinceId, setProvinceId] = useState(
+    searchParams.get("provinceId") || "",
+  );
   const [wardId, setWardId] = useState(searchParams.get("wardId") || "");
-  const [apartmentTypeUuid, setApartmentTypeUuid] = useState(searchParams.get("apartmentTypeUuid") || "");
-  const [priceFrom, setPriceFrom] = useState(searchParams.get("priceFrom") || "");
+  const [apartmentTypeUuid, setApartmentTypeUuid] = useState(
+    searchParams.get("apartmentTypeUuid") || "",
+  );
+  const [priceFrom, setPriceFrom] = useState(
+    searchParams.get("priceFrom") || "",
+  );
   const [priceTo, setPriceTo] = useState(searchParams.get("priceTo") || "");
-  const [apartmentSizeFrom, setApartmentSizeFrom] = useState(searchParams.get("apartmentSizeFrom") || "");
-  const [apartmentSizeTo, setApartmentSizeTo] = useState(searchParams.get("apartmentSizeTo") || "");
+  const [apartmentSizeFrom, setApartmentSizeFrom] = useState(
+    searchParams.get("apartmentSizeFrom") || "",
+  );
+  const [apartmentSizeTo, setApartmentSizeTo] = useState(
+    searchParams.get("apartmentSizeTo") || "",
+  );
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
 
@@ -61,27 +91,57 @@ const MapSearchPage = () => {
   }, [keyword]);
 
   const selectedPriceUuid =
-    filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
+    filterPrices.find(
+      (fp) =>
+        String(fp.value || "") === priceFrom &&
+        String(fp.valueTo || "") === priceTo,
+    )?.uuid || "";
   const selectedSizeUuid =
     filterApartmentSizes.find(
-      (fs) => String(fs.value || "") === apartmentSizeFrom && String(fs.valueTo || "") === apartmentSizeTo,
+      (fs) =>
+        String(fs.value || "") === apartmentSizeFrom &&
+        String(fs.valueTo || "") === apartmentSizeTo,
     )?.uuid || "";
 
   // API data
   const { data: provinces = [] } = useQuery<ProvinceItem[]>({
     queryKey: ["dropdown-province"],
-    queryFn: () => httpRequest({ http: provinceService.listProvince({ keyword: "" }) }),
+    queryFn: () =>
+      httpRequest({
+        isCatalog: true,
+        http: provinceService.listProvince({ keyword: "" }),
+      }),
   });
 
-  const { data: wards = [], isLoading: wardsLoading } = useQuery<{ code: string; fullName: string; fullNameEn: string }[]>({
+  const { data: wards = [], isLoading: wardsLoading } = useQuery<
+    { code: string; fullName: string; fullNameEn: string }[]
+  >({
     queryKey: ["dropdown-ward", provinceId],
-    queryFn: () => httpRequest({ http: provinceService.listWard({ keyword: "", provinceCode: provinceId }) }),
+    queryFn: () =>
+      httpRequest({
+        isCatalog: true,
+        http: provinceService.listWard({
+          keyword: "",
+          provinceCode: provinceId,
+        }),
+      }),
     enabled: !!provinceId,
   });
 
   const { data: apartmentTypes = [] } = useQuery<ApartmentTypeItem[]>({
     queryKey: ["dropdown-apartment-type"],
-    queryFn: () => httpRequest({ http: apartmentTypeService.listApartmentType({ isPaging: 0, typeFinding: 0, page: 1, pageSize: 100, keyword: "", status: 1 }) }),
+    queryFn: () =>
+      httpRequest({
+        isCatalog: true,
+        http: apartmentTypeService.listApartmentType({
+          isPaging: 0,
+          typeFinding: 0,
+          page: 1,
+          pageSize: 100,
+          keyword: "",
+          status: 1,
+        }),
+      }),
   });
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
@@ -97,9 +157,25 @@ const MapSearchPage = () => {
     return req;
   };
 
-  const { data: mapLocations = [], isLoading: mapLoading } = useQuery<MapLocationGroup[]>({
-    queryKey: ["map-advertisements", debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo],
-    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
+  const { data: mapLocations = [], isLoading: mapLoading } = useQuery<
+    MapLocationGroup[]
+  >({
+    queryKey: [
+      "map-advertisements",
+      debouncedKeyword,
+      provinceId,
+      wardId,
+      apartmentTypeUuid,
+      priceFrom,
+      priceTo,
+      apartmentSizeFrom,
+      apartmentSizeTo,
+    ],
+    queryFn: () =>
+      httpRequest({
+        isCatalog: true,
+        http: advertisementService.getForMap(buildMapRequest()),
+      }),
   });
 
   // Filter ads by current map bounds (client-side bounding box filter)
@@ -113,7 +189,12 @@ const MapSearchPage = () => {
         const coords = parsePoint(loc.point);
         if (!coords) return false;
         const [lat, lng] = coords;
-        return lat >= bounds.swLat && lat <= bounds.neLat && lng >= bounds.swLng && lng <= bounds.neLng;
+        return (
+          lat >= bounds.swLat &&
+          lat <= bounds.neLat &&
+          lng >= bounds.swLng &&
+          lng <= bounds.neLng
+        );
       })
       .flatMap((loc) => loc.ads);
   }, [mapLocations, bounds]);
@@ -130,61 +211,128 @@ const MapSearchPage = () => {
     if (apartmentSizeFrom) params.set("apartmentSizeFrom", apartmentSizeFrom);
     if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
     setSearchParams(params, { replace: true });
-  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo, setSearchParams]);
+  }, [
+    debouncedKeyword,
+    provinceId,
+    wardId,
+    apartmentTypeUuid,
+    priceFrom,
+    priceTo,
+    apartmentSizeFrom,
+    apartmentSizeTo,
+    setSearchParams,
+  ]);
 
   const handlePriceSelect = (uuid: string) => {
-    if (uuid === "__all__" || uuid === selectedPriceUuid) { setPriceFrom(""); setPriceTo(""); }
-    else {
+    if (uuid === "__all__" || uuid === selectedPriceUuid) {
+      setPriceFrom("");
+      setPriceTo("");
+    } else {
       const fp = filterPrices.find((p) => p.uuid === uuid);
-      if (fp) { setPriceFrom(fp.value ? String(fp.value) : ""); setPriceTo(fp.valueTo ? String(fp.valueTo) : ""); }
+      if (fp) {
+        setPriceFrom(fp.value ? String(fp.value) : "");
+        setPriceTo(fp.valueTo ? String(fp.valueTo) : "");
+      }
     }
   };
 
   const handleSizeSelect = (uuid: string) => {
-    if (uuid === "__all__" || uuid === selectedSizeUuid) { setApartmentSizeFrom(""); setApartmentSizeTo(""); }
-    else {
+    if (uuid === "__all__" || uuid === selectedSizeUuid) {
+      setApartmentSizeFrom("");
+      setApartmentSizeTo("");
+    } else {
       const fs = filterApartmentSizes.find((s) => s.uuid === uuid);
-      if (fs) { setApartmentSizeFrom(fs.value ? String(fs.value) : ""); setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : ""); }
+      if (fs) {
+        setApartmentSizeFrom(fs.value ? String(fs.value) : "");
+        setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : "");
+      }
     }
   };
 
-  const handleBoundsChange = useCallback((b: { neLat: number; neLng: number; swLat: number; swLng: number }) => {
-    setBounds(b);
-  }, []);
+  const handleBoundsChange = useCallback(
+    (b: { neLat: number; neLng: number; swLat: number; swLng: number }) => {
+      setBounds(b);
+    },
+    [],
+  );
 
-  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid].filter(Boolean).length;
+  const activeFilterCount = [
+    apartmentTypeUuid,
+    selectedPriceUuid,
+    selectedSizeUuid,
+  ].filter(Boolean).length;
 
   const filterContent = (
     <div className="space-y-5 p-1">
       {/* Keyword */}
       <div>
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">{t("search.keyword")}</label>
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+          {t("search.keyword")}
+        </label>
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder={t("search.keywordPlaceholder")} className="custom-input w-full pl-9" />
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <input
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder={t("search.keywordPlaceholder")}
+            className="custom-input w-full pl-9"
+          />
         </div>
       </div>
 
       {/* Province */}
       <div>
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">{t("search.area")}</label>
-        <Select value={provinceId || "__all__"} onValueChange={(val) => { setProvinceId(val === "__all__" ? "" : val); setWardId(""); }}>
-          <SelectTrigger className="w-full"><SelectValue placeholder={t("search.all")} /></SelectTrigger>
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+          {t("search.area")}
+        </label>
+        <Select
+          value={provinceId || "__all__"}
+          onValueChange={(val) => {
+            setProvinceId(val === "__all__" ? "" : val);
+            setWardId("");
+          }}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={t("search.all")} />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("search.all")}</SelectItem>
-            {provinces.map((p) => (<SelectItem key={p.code} value={p.code}>{p.fullName}</SelectItem>))}
+            {provinces.map((p) => (
+              <SelectItem key={p.code} value={p.code}>
+                {p.fullName}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
       {/* Ward */}
       <div>
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">{t("hero.ward")}</label>
-        <Select value={wardId || "__all__"} onValueChange={(val) => setWardId(val === "__all__" ? "" : val)} disabled={!provinceId}>
-          <SelectTrigger className="w-full"><SelectValue placeholder={!provinceId ? t("hero.selectAreaFirst") : t("search.all")} /></SelectTrigger>
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+          {t("hero.ward")}
+        </label>
+        <Select
+          value={wardId || "__all__"}
+          onValueChange={(val) => setWardId(val === "__all__" ? "" : val)}
+          disabled={!provinceId}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue
+              placeholder={
+                !provinceId ? t("hero.selectAreaFirst") : t("search.all")
+              }
+            />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">{t("search.all")}</SelectItem>
-            {wards.map((w) => (<SelectItem key={w.code} value={w.code}>{w.fullName}</SelectItem>))}
+            {wards.map((w) => (
+              <SelectItem key={w.code} value={w.code}>
+                {w.fullName}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -192,11 +340,25 @@ const MapSearchPage = () => {
       {/* Room type */}
       {apartmentTypes.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t("hero.roomType")}</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            {t("hero.roomType")}
+          </p>
           <div className="flex flex-col gap-1.5">
             {apartmentTypes.map((at) => (
-              <button key={at.uuid} onClick={() => setApartmentTypeUuid((prev) => (prev === at.uuid ? "" : at.uuid))}
-                className={cn("px-3 py-2 rounded-lg border text-sm text-left transition-colors", apartmentTypeUuid === at.uuid ? "bg-primary text-primary-foreground border-primary" : "border-border bg-background text-foreground hover:bg-secondary")}>
+              <button
+                key={at.uuid}
+                onClick={() =>
+                  setApartmentTypeUuid((prev) =>
+                    prev === at.uuid ? "" : at.uuid,
+                  )
+                }
+                className={cn(
+                  "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                  apartmentTypeUuid === at.uuid
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border bg-background text-foreground hover:bg-secondary",
+                )}
+              >
                 {at.name}
               </button>
             ))}
@@ -206,11 +368,21 @@ const MapSearchPage = () => {
 
       {/* Price */}
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t("hero.priceRange")}</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          {t("hero.priceRange")}
+        </p>
         <div className="flex flex-col gap-1.5">
           {filterPrices.map((fp) => (
-            <button key={fp.uuid} onClick={() => handlePriceSelect(fp.uuid)}
-              className={cn("px-3 py-2 rounded-lg border text-sm text-left transition-colors", selectedPriceUuid === fp.uuid ? "bg-primary text-primary-foreground border-primary" : "border-border bg-background text-foreground hover:bg-secondary")}>
+            <button
+              key={fp.uuid}
+              onClick={() => handlePriceSelect(fp.uuid)}
+              className={cn(
+                "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                selectedPriceUuid === fp.uuid
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border bg-background text-foreground hover:bg-secondary",
+              )}
+            >
               {fp.name}
             </button>
           ))}
@@ -219,11 +391,21 @@ const MapSearchPage = () => {
 
       {/* Size */}
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t("hero.areaSize")}</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          {t("hero.areaSize")}
+        </p>
         <div className="flex flex-col gap-1.5">
           {filterApartmentSizes.map((fs) => (
-            <button key={fs.uuid} onClick={() => handleSizeSelect(fs.uuid)}
-              className={cn("px-3 py-2 rounded-lg border text-sm text-left transition-colors", selectedSizeUuid === fs.uuid ? "bg-primary text-primary-foreground border-primary" : "border-border bg-background text-foreground hover:bg-secondary")}>
+            <button
+              key={fs.uuid}
+              onClick={() => handleSizeSelect(fs.uuid)}
+              className={cn(
+                "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                selectedSizeUuid === fs.uuid
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border bg-background text-foreground hover:bg-secondary",
+              )}
+            >
               {fs.name}
             </button>
           ))}
@@ -240,10 +422,19 @@ const MapSearchPage = () => {
       {/* Split layout */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left: Room list panel */}
-        <div className={cn(
-          "flex flex-col border-r border-border bg-card",
-          isMobile ? "w-full absolute inset-0 top-16 z-30" : "w-[380px] shrink-0"
-        )} style={isMobile ? { display: isMobile && bounds ? 'none' : 'flex' } : undefined}>
+        <div
+          className={cn(
+            "flex flex-col border-r border-border bg-card",
+            isMobile
+              ? "w-full absolute inset-0 top-16 z-30"
+              : "w-[380px] shrink-0",
+          )}
+          style={
+            isMobile
+              ? { display: isMobile && bounds ? "none" : "flex" }
+              : undefined
+          }
+        >
           {/* Header */}
           <div className="p-3 border-b border-border flex items-center gap-2">
             <button
@@ -295,8 +486,12 @@ const MapSearchPage = () => {
             {!mapLoading && visibleAds.length === 0 && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Search size={32} className="text-muted-foreground mb-3" />
-                <p className="text-sm font-medium text-foreground">{t("search.noResult")}</p>
-                <p className="text-xs text-muted-foreground mt-1">{t("search.noResultMapHint")}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {t("search.noResult")}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t("search.noResultMapHint")}
+                </p>
               </div>
             )}
           </div>
@@ -315,7 +510,11 @@ const MapSearchPage = () => {
           {/* Mobile: toggle list button */}
           {isMobile && (
             <button
-              onClick={() => setBounds(bounds ? null : { neLat: 0, neLng: 0, swLat: 0, swLng: 0 })}
+              onClick={() =>
+                setBounds(
+                  bounds ? null : { neLat: 0, neLng: 0, swLat: 0, swLng: 0 },
+                )
+              }
               className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] bg-primary text-primary-foreground px-4 py-2.5 rounded-full shadow-lg text-sm font-medium"
             >
               {bounds ? t("search.showList") : t("search.showMap")}

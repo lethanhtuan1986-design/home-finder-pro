@@ -56,7 +56,8 @@ export const HeroSearch = () => {
     }
     const handleScroll = () => {
       if (heroSectionRef.current && searchPanelRef.current) {
-        const heroBottom = heroSectionRef.current.getBoundingClientRect().bottom;
+        const heroBottom =
+          heroSectionRef.current.getBoundingClientRect().bottom;
         setIsSticky(heroBottom < 64); // 64px = navbar height
       }
     };
@@ -67,7 +68,10 @@ export const HeroSearch = () => {
   const { data: provinces = [] } = useQuery<ProvinceItem[]>({
     queryKey: ["dropdown-province"],
     queryFn: () =>
-      httpRequest({ http: provinceService.listProvince({ keyword: "" }) }),
+      httpRequest({
+        isCatalog: true,
+        http: provinceService.listProvince({ keyword: "" }),
+      }),
   });
 
   const { data: wards = [], isLoading: wardsLoading } = useQuery<
@@ -76,6 +80,7 @@ export const HeroSearch = () => {
     queryKey: ["dropdown-ward", provinceId],
     queryFn: () =>
       httpRequest({
+        isCatalog: true,
         http: provinceService.listWard({
           keyword: "",
           provinceCode: provinceId,
@@ -88,6 +93,7 @@ export const HeroSearch = () => {
     queryKey: ["dropdown-apartment-type"],
     queryFn: () =>
       httpRequest({
+        isCatalog: true,
         http: apartmentTypeService.listApartmentType({
           isPaging: 0,
           typeFinding: 0,
@@ -124,7 +130,9 @@ export const HeroSearch = () => {
     navigate(`/search?${params.toString()}`);
   };
 
-  const advancedFilterCount = [wardId, sizeUuid, apartmentTypeUuid].filter(Boolean).length;
+  const advancedFilterCount = [wardId, sizeUuid, apartmentTypeUuid].filter(
+    Boolean,
+  ).length;
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
@@ -152,7 +160,6 @@ export const HeroSearch = () => {
               </SelectContent>
             </Select>
           </div>
-
 
           <div className="search-field">
             <Select
@@ -186,7 +193,9 @@ export const HeroSearch = () => {
             }`}
           >
             <SlidersHorizontal size={18} />
-            <span className="hidden sm:inline">{t("hero.advancedFilters")}</span>
+            <span className="hidden sm:inline">
+              {t("hero.advancedFilters")}
+            </span>
             {advancedFilterCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
                 {advancedFilterCount}
@@ -270,7 +279,9 @@ export const HeroSearch = () => {
                       <SelectValue placeholder={t("hero.roomType")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">{t("hero.roomType")}</SelectItem>
+                      <SelectItem value="__all__">
+                        {t("hero.roomType")}
+                      </SelectItem>
                       {apartmentTypes.map((at) => (
                         <SelectItem key={at.uuid} value={at.uuid}>
                           {at.name}
@@ -291,7 +302,9 @@ export const HeroSearch = () => {
                       <SelectValue placeholder={t("hero.areaSize")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">{t("hero.areaSize")}</SelectItem>
+                      <SelectItem value="__all__">
+                        {t("hero.areaSize")}
+                      </SelectItem>
                       {filterApartmentSizes.map((fs) => (
                         <SelectItem key={fs.uuid} value={fs.uuid}>
                           {fs.name}
@@ -345,7 +358,7 @@ export const HeroSearch = () => {
               XanhStay
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-light">
-              {t('slogan')}
+              {t("slogan")}
             </p>
           </motion.div>
 

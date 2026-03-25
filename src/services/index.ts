@@ -1,11 +1,13 @@
-import axios from 'axios';
-import { toast } from 'sonner';
+import axios from "axios";
+import { toast } from "sonner";
 
 // ==================== Constants ====================
 
-export const BASE_URL = import.meta.env.VITE_BASE_URL || 'https://api.xanhstay.vn/api/v1';
-export const IMAGE_URL = import.meta.env.VITE_IMAGE_URL || 'https://api.xanhstay.vn';
-export const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://xanhstay.vn';
+export const BASE_URL =
+  import.meta.env.VITE_BASE_URL || "https://api.xanhstay.vn/api/v1";
+export const IMAGE_URL =
+  import.meta.env.VITE_IMAGE_URL || "https://api.xanhstay.vn";
+export const SITE_URL = import.meta.env.VITE_SITE_URL || "https://xanhstay.vn";
 
 export const ERROR_CODE_SUCCESS = 0;
 
@@ -15,7 +17,7 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 30000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -23,7 +25,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Add auth token if available
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem("access_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -72,12 +74,14 @@ export const httpRequest = async ({
   msgSuccess,
   showMessageSuccess = false,
   showMessageFailed = false,
+  isCatalog = false,
 }: {
   http: Promise<any>;
   setLoading?: (loading: boolean) => void;
   showMessageSuccess?: boolean;
   showMessageFailed?: boolean;
   msgSuccess?: string;
+  isCatalog?: boolean;
 }) => {
   setLoading?.(true);
 
@@ -89,18 +93,22 @@ export const httpRequest = async ({
     // Call API thành công
     if (res?.error?.code === ERROR_CODE_SUCCESS) {
       if (showMessageSuccess) {
-        toastSuccess(msgSuccess || res?.error?.message || 'Thành công!');
+        toastSuccess(msgSuccess || res?.error?.message || "Thành công!");
+      }
+
+      if (isCatalog) {
+        return res?.data?.items || [];
       }
 
       return res?.data || true;
     } else {
-      throw res?.error?.message || 'Thất bại!';
+      throw res?.error?.message || "Thất bại!";
     }
   } catch (err: any) {
-    console.error('Lỗi gọi api:', err);
+    console.error("Lỗi gọi api:", err);
 
-    if (typeof err === 'string') {
-      if (showMessageFailed) toastWarn(err || 'Có lỗi đã xảy ra!');
+    if (typeof err === "string") {
+      if (showMessageFailed) toastWarn(err || "Có lỗi đã xảy ra!");
       return;
     }
 
@@ -108,8 +116,8 @@ export const httpRequest = async ({
       return Promise.reject(err);
     }
 
-    if (err?.code === 'ERR_NETWORK' || err?.code === 'ECONNABORTED') {
-      if (showMessageFailed) toastInfo('Kiểm tra kết nối internet của bạn!');
+    if (err?.code === "ERR_NETWORK" || err?.code === "ECONNABORTED") {
+      if (showMessageFailed) toastInfo("Kiểm tra kết nối internet của bạn!");
       return;
     }
 
@@ -122,7 +130,7 @@ export const httpRequest = async ({
 // ==================== Image Helper ====================
 
 export function getImageUrl(path: string): string {
-  if (path.startsWith('http')) return path;
+  if (path.startsWith("http")) return path;
   return `${IMAGE_URL}/${path}`;
 }
 
@@ -133,15 +141,18 @@ export function formatVNPrice(price: number): string {
     const m = price / 1000000;
     return m % 1 === 0 ? `${m} triệu` : `${m.toFixed(1)} triệu`;
   }
-  return price.toLocaleString('vi-VN') + 'đ';
+  return price.toLocaleString("vi-VN") + "đ";
 }
 
 // ==================== Server-side fetch for SEO ====================
 
-export async function fetchForSEO<T>(endpoint: string, body: unknown): Promise<ResponseBase<T>> {
+export async function fetchForSEO<T>(
+  endpoint: string,
+  body: unknown,
+): Promise<ResponseBase<T>> {
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 
