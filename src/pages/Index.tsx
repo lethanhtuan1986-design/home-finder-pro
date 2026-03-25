@@ -78,8 +78,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background pb-14 md:pb-0">
       <SEO
-        title="XanhStay - Tìm phòng trọ, căn hộ cho thuê"
-        description="Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam."
+        title="XanhStay - Tìm phòng, căn hộ cho thuê"
+        description="Nền tảng tìm phòng và căn hộ cho thuê thông minh tại Việt Nam."
       />
       <Navbar />
       <HeroSearch />
