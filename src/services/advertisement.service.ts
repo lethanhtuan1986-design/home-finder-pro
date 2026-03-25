@@ -75,6 +75,7 @@ export interface ServicePrice {
     type: number;
     defaultTypePayment: number;
     defaultPrice: number;
+    iconPath: string | null;
     id: number;
     uuid: string;
     status: number;
