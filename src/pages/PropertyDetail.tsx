@@ -10,7 +10,7 @@ import { useSavedRooms } from "@/hooks/useSavedRooms";
 import { useRecentRooms } from "@/hooks/useRecentRooms";
 import { useTranslation } from "react-i18next";
 import advertisementService, { AdvertisementDetailData } from "@/services/advertisement.service";
-import { formatVNPrice, getImageUrl, httpRequest } from "@/services/index";
+import { formatVNPrice, getImageUrl, httpRequest, formatVNPhone } from "@/services/index";
 import {
   MapPin,
   Maximize,
@@ -342,7 +342,7 @@ const PropertyDetail = () => {
                     href={`tel:${detail.phoneNumber}`}
                     className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
                   >
-                    <Phone size={16} /> {detail.phoneNumber}
+                    <Phone size={16} /> {formatVNPhone(detail.phoneNumber)}
                   </a>
                 )}
               </div>
