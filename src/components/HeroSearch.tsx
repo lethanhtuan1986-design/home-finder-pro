@@ -58,7 +58,7 @@ export const HeroSearch = () => {
       if (heroSectionRef.current && searchPanelRef.current) {
         const heroBottom =
           heroSectionRef.current.getBoundingClientRect().bottom;
-        setIsSticky(heroBottom < 64); // 64px = navbar height
+        setIsSticky(heroBottom < 64);
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -320,7 +320,7 @@ export const HeroSearch = () => {
   return (
     <>
       <section ref={heroSectionRef} className="relative overflow-hidden">
-        {/* Banner slideshow background - contained to hero section */}
+        {/* Banner slideshow background */}
         <div className="absolute inset-0">
           <div className="relative w-full h-full overflow-hidden">
             {bannerImages.map((img, idx) => (
@@ -337,26 +337,51 @@ export const HeroSearch = () => {
                 />
               </div>
             ))}
-            <div className="absolute inset-0 bg-black/50" />
-            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
+            {/* Dark overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30" />
+            {/* Top gradient for navbar blending */}
+            <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/50 to-transparent" />
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[340px] md:min-h-[420px] pb-6 md:pb-8">
-          {/* Brand text */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-            className="text-center mb-4 md:mb-6"
-          >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-2">
-              XanhStay
-            </h1>
-            <p className="text-white/80 text-lg md:text-xl font-light">
-              {t("slogan")}
-            </p>
-          </motion.div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[380px] md:min-h-[460px] pb-6 md:pb-8">
+          {/* Content area: brand left, promo right */}
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-4 md:mb-6 gap-4">
+            {/* Left: Brand text */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+              className="text-left"
+            >
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-2 drop-shadow-lg">
+                XanhStay
+              </h1>
+              <p className="text-white/85 text-lg md:text-xl font-light drop-shadow-md">
+                {t("slogan")}
+              </p>
+            </motion.div>
+
+            {/* Right: Promo banner */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
+              className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-5 py-4 md:text-right"
+            >
+              <p className="text-amber-200 text-xs font-semibold uppercase tracking-widest mb-1.5">
+                Ưu đãi đặc biệt
+              </p>
+              <div className="space-y-1">
+                <p className="text-white font-bold text-base md:text-lg">
+                  6 Tháng giảm <span className="text-amber-300">3%</span>
+                </p>
+                <p className="text-white font-bold text-base md:text-lg">
+                  12 Tháng giảm <span className="text-amber-300">5%</span>
+                </p>
+              </div>
+            </motion.div>
+          </div>
 
           {/* Search panel */}
           <motion.div
@@ -364,7 +389,7 @@ export const HeroSearch = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-            className={`relative z-20 max-w-3xl mx-auto ${!isMobile && isSticky ? "invisible" : ""}`}
+            className={`relative z-20 max-w-3xl w-full ${!isMobile && isSticky ? "invisible" : ""}`}
           >
             {searchPanel}
           </motion.div>

@@ -28,7 +28,7 @@ export const Navbar = () => {
     { to: '/policy?tab=about', label: t('nav.about'), icon: Building2 },
   ];
 
-  // On homepage: transparent when at top, solid when scrolled
+  // On homepage: fully transparent at top, solid with blur on scroll
   // On other pages: always solid
   const isTransparent = isHome && !scrolled;
 
@@ -37,7 +37,7 @@ export const Navbar = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isTransparent
           ? 'bg-transparent'
-          : 'bg-card/95 backdrop-blur-xl border-b border-border shadow-sm'
+          : 'bg-card/90 backdrop-blur-xl border-b border-border shadow-sm'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,7 +62,7 @@ export const Navbar = () => {
                       ? 'bg-white/20 text-white'
                       : 'bg-accent text-accent-foreground'
                     : isTransparent
-                      ? 'text-white/80 hover:text-white hover:bg-white/10'
+                      ? 'text-white/90 hover:text-white hover:bg-white/10'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                 }`}
               >
@@ -81,7 +81,7 @@ export const Navbar = () => {
               rel="noopener noreferrer"
               className={`ml-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
                 isTransparent
-                  ? 'border border-white/40 text-white hover:bg-white/10'
+                  ? 'border border-white/50 text-white hover:bg-white/10'
                   : 'border border-primary text-primary hover:bg-primary/10'
               }`}
             >
@@ -90,7 +90,7 @@ export const Navbar = () => {
             </a>
           </div>
 
-          {/* Mobile header right: language + theme + download icon */}
+          {/* Mobile header right */}
           <div className="md:hidden flex items-center gap-1">
             <a
               href="https://apps.apple.com"
