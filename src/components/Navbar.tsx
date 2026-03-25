@@ -90,8 +90,21 @@ export const Navbar = () => {
             </a>
           </div>
 
-          {/* Mobile header right: language + theme only */}
+          {/* Mobile header right: language + theme + download icon */}
           <div className="md:hidden flex items-center gap-1">
+            <a
+              href="https://apps.apple.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`p-2 rounded-lg transition-colors ${
+                isTransparent
+                  ? 'text-white hover:bg-white/10'
+                  : 'text-primary hover:bg-primary/10'
+              }`}
+              aria-label={t('nav.download')}
+            >
+              <Download size={20} />
+            </a>
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
