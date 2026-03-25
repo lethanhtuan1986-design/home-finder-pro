@@ -371,14 +371,21 @@ export const HeroSearch = () => {
             transition={{ duration: 0.5, delay: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
             className="flex justify-center mb-5 md:mb-6"
           >
-            <div className="inline-flex items-center gap-3 md:gap-5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2.5">
-              <span className="text-white font-semibold text-sm md:text-base">
-                6 Tháng giảm <span className="text-amber-300 font-bold">3%</span>
-              </span>
-              <span className="w-px h-5 bg-white/30" />
-              <span className="text-white font-semibold text-sm md:text-base">
-                12 Tháng giảm <span className="text-amber-300 font-bold">5%</span>
-              </span>
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 md:px-6 md:py-3.5 text-center max-w-md">
+              <p className="text-white/80 text-xs md:text-sm mb-2">
+                Thanh toán càng dài — Chi phí càng giảm
+              </p>
+              <div className="flex items-center justify-center gap-3 md:gap-5">
+                <div className="text-center">
+                  <p className="text-amber-300 font-bold text-xl md:text-2xl leading-none">3%</p>
+                  <p className="text-white/70 text-[10px] md:text-xs mt-0.5">Trả trước 6 tháng</p>
+                </div>
+                <span className="w-px h-8 bg-white/25" />
+                <div className="text-center">
+                  <p className="text-amber-300 font-bold text-xl md:text-2xl leading-none">5%</p>
+                  <p className="text-white/70 text-[10px] md:text-xs mt-0.5">Trả trước 12 tháng</p>
+                </div>
+              </div>
             </div>
           </motion.div>
 
