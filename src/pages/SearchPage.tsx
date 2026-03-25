@@ -608,7 +608,7 @@ const SearchPage = () => {
                       key={i}
                       className="bg-card rounded-2xl overflow-hidden border border-border"
                     >
-                      <Skeleton className="aspect-[4/3] w-full" />
+                      <Skeleton className="aspect-[3/2] w-full" />
                       <div className="p-4 space-y-2">
                         <Skeleton className="h-4 w-3/4" />
                         <Skeleton className="h-5 w-1/2" />

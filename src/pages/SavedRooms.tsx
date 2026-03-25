@@ -45,7 +45,7 @@ const SavedRooms = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: Math.min(savedIds.length, 6) }).map((_, i) => (
               <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
-                <Skeleton className="aspect-[4/3] w-full" />
+                <Skeleton className="aspect-[3/2] w-full" />
                 <div className="p-4 space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-5 w-1/2" />

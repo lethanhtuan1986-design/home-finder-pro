@@ -36,7 +36,7 @@ export const HeroSearch = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
-    }, 5000);
+    }, 20000);
     return () => clearInterval(timer);
   }, []);
 
