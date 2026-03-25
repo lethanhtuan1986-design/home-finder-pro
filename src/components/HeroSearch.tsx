@@ -6,17 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { httpRequest } from "@/services/index";
 import provinceService, { ProvinceItem } from "@/services/province.service";
-import apartmentTypeService, {
-  ApartmentTypeItem,
-} from "@/services/apartmentType.service";
+import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
 import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 import heroBanner1 from "@/assets/hero-banner-1.jpg";
@@ -56,8 +48,7 @@ export const HeroSearch = () => {
     }
     const handleScroll = () => {
       if (heroSectionRef.current && searchPanelRef.current) {
-        const heroBottom =
-          heroSectionRef.current.getBoundingClientRect().bottom;
+        const heroBottom = heroSectionRef.current.getBoundingClientRect().bottom;
         setIsSticky(heroBottom < 64);
       }
     };
@@ -113,26 +104,20 @@ export const HeroSearch = () => {
 
     const selectedPrice = filterPrices.find((p) => p.uuid === priceUuid);
     if (selectedPrice) {
-      if (selectedPrice.value)
-        params.set("priceFrom", String(selectedPrice.value));
-      if (selectedPrice.valueTo)
-        params.set("priceTo", String(selectedPrice.valueTo));
+      if (selectedPrice.value) params.set("priceFrom", String(selectedPrice.value));
+      if (selectedPrice.valueTo) params.set("priceTo", String(selectedPrice.valueTo));
     }
 
     const selectedSize = filterApartmentSizes.find((s) => s.uuid === sizeUuid);
     if (selectedSize) {
-      if (selectedSize.value)
-        params.set("apartmentSizeFrom", String(selectedSize.value));
-      if (selectedSize.valueTo)
-        params.set("apartmentSizeTo", String(selectedSize.valueTo));
+      if (selectedSize.value) params.set("apartmentSizeFrom", String(selectedSize.value));
+      if (selectedSize.valueTo) params.set("apartmentSizeTo", String(selectedSize.valueTo));
     }
 
     navigate(`/search?${params.toString()}`);
   };
 
-  const advancedFilterCount = [wardId, sizeUuid, apartmentTypeUuid].filter(
-    Boolean,
-  ).length;
+  const advancedFilterCount = [wardId, sizeUuid, apartmentTypeUuid].filter(Boolean).length;
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
@@ -159,12 +144,7 @@ export const HeroSearch = () => {
             </SelectContent>
           </Select>
 
-          <Select
-            value={priceUuid}
-            onValueChange={(val) =>
-              setPriceUuid(val === "__all__" ? "" : val)
-            }
-          >
+          <Select value={priceUuid} onValueChange={(val) => setPriceUuid(val === "__all__" ? "" : val)}>
             <SelectTrigger className="h-11 rounded-xl bg-secondary/50 border-border">
               <SelectValue placeholder={t("hero.priceRange")} />
             </SelectTrigger>
@@ -189,9 +169,7 @@ export const HeroSearch = () => {
             }`}
           >
             <SlidersHorizontal size={18} />
-            <span className="hidden sm:inline">
-              {t("hero.advancedFilters")}
-            </span>
+            <span className="hidden sm:inline">{t("hero.advancedFilters")}</span>
             {advancedFilterCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
                 {advancedFilterCount}
@@ -235,21 +213,13 @@ export const HeroSearch = () => {
                 <div className="search-field">
                   <Select
                     value={wardId}
-                    onValueChange={(val) =>
-                      setWardId(val === "__all__" ? "" : val)
-                    }
-                    disabled={
-                      !provinceId || (wardsLoading && wards.length === 0)
-                    }
+                    onValueChange={(val) => setWardId(val === "__all__" ? "" : val)}
+                    disabled={!provinceId || (wardsLoading && wards.length === 0)}
                   >
                     <SelectTrigger className="search-field-select-trigger">
                       <SelectValue
                         placeholder={
-                          !provinceId
-                            ? t("hero.selectAreaFirst")
-                            : wardsLoading
-                              ? t("search.loading")
-                              : t("hero.ward")
+                          !provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("hero.ward")
                         }
                       />
                     </SelectTrigger>
@@ -267,17 +237,13 @@ export const HeroSearch = () => {
                 <div className="search-field">
                   <Select
                     value={apartmentTypeUuid}
-                    onValueChange={(val) =>
-                      setApartmentTypeUuid(val === "__all__" ? "" : val)
-                    }
+                    onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
                   >
                     <SelectTrigger className="search-field-select-trigger">
                       <SelectValue placeholder={t("hero.roomType")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">
-                        {t("hero.roomType")}
-                      </SelectItem>
+                      <SelectItem value="__all__">{t("hero.roomType")}</SelectItem>
                       {apartmentTypes.map((at) => (
                         <SelectItem key={at.uuid} value={at.uuid}>
                           {at.name}
@@ -288,19 +254,12 @@ export const HeroSearch = () => {
                 </div>
 
                 <div className="search-field">
-                  <Select
-                    value={sizeUuid}
-                    onValueChange={(val) =>
-                      setSizeUuid(val === "__all__" ? "" : val)
-                    }
-                  >
+                  <Select value={sizeUuid} onValueChange={(val) => setSizeUuid(val === "__all__" ? "" : val)}>
                     <SelectTrigger className="search-field-select-trigger">
                       <SelectValue placeholder={t("hero.areaSize")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">
-                        {t("hero.areaSize")}
-                      </SelectItem>
+                      <SelectItem value="__all__">{t("hero.areaSize")}</SelectItem>
                       {filterApartmentSizes.map((fs) => (
                         <SelectItem key={fs.uuid} value={fs.uuid}>
                           {fs.name}
@@ -329,12 +288,7 @@ export const HeroSearch = () => {
                 className="absolute inset-0 transition-opacity duration-[1500ms] ease-in-out"
                 style={{ opacity: currentBanner === idx ? 1 : 0 }}
               >
-                <img
-                  src={img}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  loading={idx === 0 ? "eager" : "lazy"}
-                />
+                <img src={img} alt="" className="w-full h-full object-cover" loading={idx === 0 ? "eager" : "lazy"} />
               </div>
             ))}
             {/* Dark overlay for text readability */}
@@ -372,9 +326,7 @@ export const HeroSearch = () => {
             className="flex justify-center mb-5 md:mb-6"
           >
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 md:px-6 md:py-3.5 text-center max-w-md">
-              <p className="text-white/80 text-xs md:text-sm mb-2">
-                Thanh toán càng dài — Chi phí càng giảm
-              </p>
+              <p className="text-white/80 text-xs md:text-sm mb-2">Thanh toán càng dài, Chi phí càng giảm</p>
               <div className="flex items-center justify-center gap-3 md:gap-5">
                 <div className="text-center">
                   <p className="text-amber-300 font-bold text-xl md:text-2xl leading-none">3%</p>
@@ -405,9 +357,7 @@ export const HeroSearch = () => {
       {/* Sticky search panel for desktop */}
       {!isMobile && isSticky && (
         <div className="fixed top-16 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-            {searchPanel}
-          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">{searchPanel}</div>
         </div>
       )}
     </>
