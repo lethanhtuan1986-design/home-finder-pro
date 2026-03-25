@@ -9,9 +9,9 @@
     "download": "Tải ứng dụng"
   },
   "hero": {
-    "title": "Tìm phòng trọ phù hợp",
+    "title": "Tìm phòng phù hợp",
     "titleHighlight": "trong vài giây",
-    "subtitle": "Nền tảng tìm phòng thông minh giúp bạn khám phá phòng trọ và căn hộ phù hợp nhanh nhất.",
+    "subtitle": "Nền tảng tìm phòng thông minh giúp bạn khám phá phòng và căn hộ phù hợp nhanh nhất.",
     "area": "Tỉnh/Thành phố",
     "roomType": "Loại phòng",
     "priceRange": "Khoảng giá",
@@ -39,7 +39,7 @@
   },
   "listing": {
     "featured": "Phòng nổi bật",
-    "featuredSub": "Các phòng trọ và căn hộ được đề xuất cho bạn",
+    "featuredSub": "Các phòng và căn hộ được đề xuất cho bạn",
     "viewAll": "Xem tất cả",
     "perMonth": "/tháng",
     "people": "người",
@@ -70,8 +70,8 @@
     "loadError": "Không thể tải thông tin bài đăng."
   },
   "search": {
-    "title": "Tìm phòng trọ, căn hộ cho thuê",
-    "desc": "Tìm kiếm phòng trọ và căn hộ cho thuê phù hợp với nhu cầu. Lọc theo giá, diện tích, khu vực.",
+    "title": "Tìm phòng, căn hộ cho thuê",
+    "desc": "Tìm kiếm phòng và căn hộ cho thuê phù hợp với nhu cầu. Lọc theo giá, diện tích, khu vực.",
     "keyword": "Từ khóa",
     "keywordPlaceholder": "Tìm theo tên, địa chỉ...",
     "area": "Tỉnh/Thành phố",
@@ -116,7 +116,7 @@
     "emptyHint": "Nhấn ❤️ trên các phòng bạn thích để lưu lại"
   },
   "mapPage": {
-    "title": "Bản đồ phòng trọ",
+    "title": "Bản đồ phòng",
     "count": "{{count}} phòng trên bản đồ"
   },
   "appDownload": {
@@ -130,7 +130,7 @@
     "sectionTitle": "Giá trị cốt lõi",
     "sectionSubtitle": "Những giá trị nền tảng định hình XanhStay",
     "trust": "Uy tín & Minh bạch",
-    "trustDesc": "Mọi thông tin phòng trọ đều được xác minh, đảm bảo chính xác và đáng tin cậy.",
+    "trustDesc": "Mọi thông tin phòng đều được xác minh, đảm bảo chính xác và đáng tin cậy.",
     "green": "Sống xanh, sống bền",
     "greenDesc": "Hướng tới không gian sống thân thiện với môi trường và bền vững cho cộng đồng.",
     "community": "Cộng đồng gắn kết",
@@ -143,7 +143,7 @@
     "intuitiveDesc": "Giao diện trực quan, bản đồ tương tác giúp tìm phòng dễ dàng chỉ trong vài bước."
   },
   "footer": {
-    "description": "Nền tảng tìm phòng trọ và căn hộ cho thuê thông minh tại Việt Nam.",
+    "description": "Nền tảng tìm phòng và căn hộ cho thuê thông minh tại Việt Nam.",
     "explore": "Khám phá",
     "searchRooms": "Tìm phòng",
     "mapView": "Bản đồ",
