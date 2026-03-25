@@ -53,7 +53,7 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
     >
       <Link to={`/advertisement/${data?.uuid}`} className="block overflow-hidden">
         <div className="bg-card rounded-2xl overflow-hidden border border-border card-hover">
-          <div className="relative aspect-[4/3] overflow-hidden">
+          <div className="relative aspect-[3/2] overflow-hidden">
             <img
               src={imageUrl}
               alt={data?.title || ""}
