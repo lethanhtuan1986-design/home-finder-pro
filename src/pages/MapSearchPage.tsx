@@ -172,7 +172,10 @@ const MapSearchPage = () => {
       apartmentSizeTo,
     ],
     queryFn: () =>
-      httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
+      httpRequest({
+        isCatalog: true,
+        http: advertisementService.getForMap(buildMapRequest()),
+      }),
   });
 
   // Filter ads by current map bounds (client-side bounding box filter)

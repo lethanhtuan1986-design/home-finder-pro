@@ -197,7 +197,10 @@ const SearchPage = () => {
       apartmentSizeTo,
     ],
     queryFn: () =>
-      httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
+      httpRequest({
+        isCatalog: true,
+        http: advertisementService.getForMap(buildMapRequest()),
+      }),
   });
 
   const advertisements = useMemo(

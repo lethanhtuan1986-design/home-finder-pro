@@ -24,7 +24,7 @@ const Index = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { data: apartmentTypesRaw } = useQuery({
+  const { data: apartmentTypesRaw = [] } = useQuery({
     queryKey: ["dropdown-apartment-type"],
     queryFn: () =>
       httpRequest({
@@ -39,10 +39,6 @@ const Index = () => {
         }),
       }),
   });
-
-  const apartmentTypes: ApartmentTypeItem[] = Array.isArray(apartmentTypesRaw)
-    ? apartmentTypesRaw
-    : ((apartmentTypesRaw as any)?.items ?? []);
 
   const { data: featuredData, isLoading: featuredLoading } = useQuery<{
     items: AdvertisementData[];
@@ -66,7 +62,7 @@ const Index = () => {
   };
 
   const quickFilters = [
-    ...apartmentTypes.map((at) => ({
+    ...apartmentTypesRaw.map((at) => ({
       label: at.name,
       params: { apartmentTypeUuid: at.uuid },
     })),
