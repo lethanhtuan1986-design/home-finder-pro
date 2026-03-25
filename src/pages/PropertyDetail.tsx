@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PropertyGallery } from "@/components/PropertyGallery";
 import { ScheduleForm } from "@/components/ScheduleForm";
+import { DepositButton } from "@/components/DepositButton";
 import { SEO } from "@/components/SEO";
 import { useSavedRooms } from "@/hooks/useSavedRooms";
 import { useRecentRooms } from "@/hooks/useRecentRooms";
