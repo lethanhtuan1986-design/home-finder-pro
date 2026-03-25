@@ -57,12 +57,12 @@ export interface ApartmentUu extends BaseEntity {
 }
 
 export interface RoomTypeGroup {
-  roomUu: BaseEntity;
+  roomUu: BaseEntity & { iconPath?: string | null };
   count: number;
 }
 
 export interface FurnitureTypeGroup {
-  furnitureUu: BaseEntity;
+  furnitureUu: BaseEntity & { iconPath?: string | null };
   count: number;
 }
 
