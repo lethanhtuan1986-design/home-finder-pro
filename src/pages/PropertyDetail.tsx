@@ -234,7 +234,11 @@ const PropertyDetail = () => {
                       key={g.roomUu.uuid}
                       className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 rounded-lg px-3 py-2"
                     >
-                      <Bed size={16} className="text-primary shrink-0" />
+                      {g.roomUu.iconPath ? (
+                        <img src={getImageUrl(g.roomUu.iconPath)} alt={g.roomUu.name} className="w-4 h-4 shrink-0" />
+                      ) : (
+                        <Bed size={16} className="text-primary shrink-0" />
+                      )}
                       {g.roomUu.name} <span className="font-semibold text-foreground">×{g.count}</span>
                     </div>
                   ))}
@@ -248,7 +252,11 @@ const PropertyDetail = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {apt.furnitureTypeGroups.map((g) => (
                     <div key={g.furnitureUu.uuid} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Check size={16} className="text-primary shrink-0" />
+                      {g.furnitureUu.iconPath ? (
+                        <img src={getImageUrl(g.furnitureUu.iconPath)} alt={g.furnitureUu.name} className="w-4 h-4 shrink-0" />
+                      ) : (
+                        <Check size={16} className="text-primary shrink-0" />
+                      )}
                       {g.furnitureUu.name} <span className="text-foreground font-medium">×{g.count}</span>
                     </div>
                   ))}
