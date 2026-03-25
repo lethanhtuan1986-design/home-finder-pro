@@ -273,7 +273,13 @@ const PropertyDetail = () => {
                         <tr key={sp.uuid} className="border-t border-border">
                           <td className="px-4 py-2.5 text-muted-foreground">
                             <div className="flex items-center gap-2">
-                              {sp.serviceUu.type === 0 ? (
+                              {sp.serviceUu.iconPath ? (
+                                <img
+                                  src={getImageUrl(sp.serviceUu.iconPath)}
+                                  alt={sp.serviceUu.name}
+                                  className="w-4 h-4 shrink-0"
+                                />
+                              ) : sp.serviceUu.type === 0 ? (
                                 <Zap size={14} className="text-yellow-500" />
                               ) : sp.serviceUu.type === 1 ? (
                                 <Droplets size={14} className="text-blue-500" />
