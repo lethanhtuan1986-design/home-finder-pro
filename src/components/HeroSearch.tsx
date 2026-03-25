@@ -19,10 +19,11 @@ import {
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-import heroBanner1 from "@/assets/banner-hero.png";
-import heroBanner2 from "@/assets/banner-promo.png";
+import heroBanner1 from "@/assets/hero-banner-1.jpg";
+import heroBanner2 from "@/assets/hero-banner-2.jpg";
+import heroBanner3 from "@/assets/hero-banner-3.jpg";
 
-const bannerImages = [heroBanner1, heroBanner2];
+const bannerImages = [heroBanner1, heroBanner2, heroBanner3];
 
 export const HeroSearch = () => {
   const navigate = useNavigate();
@@ -336,14 +337,26 @@ export const HeroSearch = () => {
                 />
               </div>
             ))}
-            <div className="absolute inset-0 bg-black/30" />
-            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[400px] md:min-h-[500px] pb-6 md:pb-8">
-          {/* Brand text hidden - already on banner image */}
-          <h1 className="sr-only">XanhStay - {t("slogan")}</h1>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[340px] md:min-h-[420px] pb-6 md:pb-8">
+          {/* Brand text */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+            className="text-center mb-4 md:mb-6"
+          >
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-2">
+              XanhStay
+            </h1>
+            <p className="text-white/80 text-lg md:text-xl font-light">
+              {t("slogan")}
+            </p>
+          </motion.div>
 
           {/* Search panel */}
           <motion.div
