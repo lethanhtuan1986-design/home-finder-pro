@@ -299,47 +299,86 @@ export const HeroSearch = () => {
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[420px] md:min-h-[460px] pt-20 md:pt-16 pb-6 md:pb-8">
-          {/* Center: Brand text */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-            className="text-center mb-5 md:mb-6"
-          >
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-3 drop-shadow-lg">
-              Xanh<span className="text-primary">Stay</span>
-            </h1>
-            <div className="flex items-center justify-center gap-3 md:gap-4">
-              <span className="h-px w-8 md:w-12 bg-white/40" />
-              <p className="text-white/90 text-base md:text-xl font-light tracking-wide drop-shadow-md italic">
-                {t("slogan")}
-              </p>
-              <span className="h-px w-8 md:w-12 bg-white/40" />
-            </div>
-          </motion.div>
+          {/* Banner content - changes per slide */}
+          <div className="relative mb-5 md:mb-6 min-h-[140px] md:min-h-[160px] flex items-center justify-center">
+            {/* Banner 1: Branding */}
+            <AnimatePresence mode="wait">
+              {currentBanner === 0 && (
+                <motion.div
+                  key="slide-brand"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+                  className="text-center absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-3 drop-shadow-lg">
+                    Xanh<span className="text-primary">Stay</span>
+                  </h1>
+                  <div className="flex items-center justify-center gap-3 md:gap-4">
+                    <span className="h-px w-8 md:w-12 bg-white/40" />
+                    <p className="text-white/90 text-base md:text-xl font-light tracking-wide drop-shadow-md italic">
+                      {t("slogan")}
+                    </p>
+                    <span className="h-px w-8 md:w-12 bg-white/40" />
+                  </div>
+                </motion.div>
+              )}
 
-          {/* Promo badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
-            className="flex justify-center mb-5 md:mb-6"
-          >
-            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 md:px-6 md:py-3.5 text-center max-w-md">
-              <p className="text-white/80 text-xs md:text-sm mb-2">Thanh toán càng dài, Chi phí càng giảm</p>
-              <div className="flex items-center justify-center gap-3 md:gap-5">
-                <div className="text-center">
-                  <p className="text-amber-300 font-bold text-xl md:text-2xl leading-none">3%</p>
-                  <p className="text-white/70 text-[10px] md:text-xs mt-0.5">Trả trước 6 tháng</p>
-                </div>
-                <span className="w-px h-8 bg-white/25" />
-                <div className="text-center">
-                  <p className="text-amber-300 font-bold text-xl md:text-2xl leading-none">5%</p>
-                  <p className="text-white/70 text-[10px] md:text-xs mt-0.5">Trả trước 12 tháng</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+              {/* Banner 2: Promo */}
+              {currentBanner === 1 && (
+                <motion.div
+                  key="slide-promo"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+                  className="text-center absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <p className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-lg">
+                    Xanh<span className="text-primary">Stay</span>
+                  </p>
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 md:px-6 md:py-3.5 text-center max-w-md">
+                    <p className="text-white/80 text-xs md:text-sm mb-2">Thanh toán càng dài, Chi phí càng giảm</p>
+                    <div className="flex items-center justify-center gap-3 md:gap-5">
+                      <div className="text-center">
+                        <p className="text-amber-300 font-bold text-xl md:text-2xl leading-none">3%</p>
+                        <p className="text-white/70 text-[10px] md:text-xs mt-0.5">Trả trước 6 tháng</p>
+                      </div>
+                      <span className="w-px h-8 bg-white/25" />
+                      <div className="text-center">
+                        <p className="text-amber-300 font-bold text-xl md:text-2xl leading-none">5%</p>
+                        <p className="text-white/70 text-[10px] md:text-xs mt-0.5">Trả trước 12 tháng</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Banner 3: Repeat branding or different content */}
+              {currentBanner === 2 && (
+                <motion.div
+                  key="slide-brand2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+                  className="text-center absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-3 drop-shadow-lg">
+                    Xanh<span className="text-primary">Stay</span>
+                  </h1>
+                  <div className="flex items-center justify-center gap-3 md:gap-4">
+                    <span className="h-px w-8 md:w-12 bg-white/40" />
+                    <p className="text-white/90 text-base md:text-xl font-light tracking-wide drop-shadow-md italic">
+                      {t("slogan")}
+                    </p>
+                    <span className="h-px w-8 md:w-12 bg-white/40" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* Search panel */}
           <motion.div
