@@ -5,6 +5,7 @@ import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
 import { AdvertisementCard } from "@/components/AdvertisementCard";
 import { Footer } from "@/components/Footer";
+import { FloatingCallButton } from "@/components/FloatingCallButton";
 import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
 import advertisementService, {
   GetListAdvertisementRequest,
@@ -15,23 +16,28 @@ import provinceService, { ProvinceItem } from "@/services/province.service";
 import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
-import { Search, Map as MapIcon, Loader2 } from "lucide-react";
+import { Search, Map as MapIcon, Loader2, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
-} from "@/components/ui/pagination";
 import { MiniMapPreview } from "@/components/MiniMapPreview";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const PAGE_SIZE = 20;
+
+const SORT_OPTIONS = [
+  { value: "0", label: "Mới nhất" },
+  { value: "1", label: "Giá thấp → cao" },
+  { value: "2", label: "Giá cao → thấp" },
+  { value: "3", label: "Xem nhiều nhất" },
+  { value: "4", label: "Đánh giá cao nhất" },
+];
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,7 +56,8 @@ const SearchPage = () => {
   const [apartmentSizeTo, setApartmentSizeTo] = useState(searchParams.get("apartmentSizeTo") || "");
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
-  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+  const [typeOrder, setTypeOrder] = useState(searchParams.get("typeOrder") || "0");
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   // Debounce keyword
   useEffect(() => {
@@ -110,8 +117,10 @@ const SearchPage = () => {
   const buildRequest = (): GetListAdvertisementRequest => {
     const req: GetListAdvertisementRequest = {
       isPaging: 1,
-      page,
+      page: 1,
       pageSize: PAGE_SIZE,
+      isHot: 0,
+      typeOrder: Number(typeOrder),
     };
     if (debouncedKeyword) req.keyword = debouncedKeyword;
     if (provinceId) req.provinceId = provinceId;
@@ -125,7 +134,7 @@ const SearchPage = () => {
   };
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
-    const req: GetAdvertisementsForMapRequest = { isPaging: 0 };
+    const req: GetAdvertisementsForMapRequest = { isPaging: 0, isHot: 0, typeOrder: Number(typeOrder) };
     if (debouncedKeyword) req.keyword = debouncedKeyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
@@ -152,7 +161,7 @@ const SearchPage = () => {
       priceTo,
       apartmentSizeFrom,
       apartmentSizeTo,
-      page,
+      typeOrder,
     ],
     queryFn: () => httpRequest({ http: advertisementService.getListPaged(buildRequest()) }),
   });
@@ -178,18 +187,7 @@ const SearchPage = () => {
 
   const advertisements = useMemo(() => (listData as any)?.items || [], [listData]);
   const totalCount = (listData as any)?.pagination?.totalCount ?? 0;
-  const totalPages = (listData as any)?.pagination?.totalPage ?? 1;
   const error = queryError ? t("search.serverError") : null;
-
-  // Reset page when filters change
-  const isInitialMount = useRef(true);
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-    setPage(1);
-  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
 
   // Sync state to URL
   useEffect(() => {
@@ -202,7 +200,7 @@ const SearchPage = () => {
     if (priceTo) params.set("priceTo", priceTo);
     if (apartmentSizeFrom) params.set("apartmentSizeFrom", apartmentSizeFrom);
     if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
-    if (page > 1) params.set("page", String(page));
+    if (typeOrder !== "0") params.set("typeOrder", typeOrder);
     setSearchParams(params, { replace: true });
   }, [
     debouncedKeyword,
@@ -213,7 +211,7 @@ const SearchPage = () => {
     priceTo,
     apartmentSizeFrom,
     apartmentSizeTo,
-    page,
+    typeOrder,
     setSearchParams,
   ]);
 
@@ -243,11 +241,6 @@ const SearchPage = () => {
     }
   };
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    listRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   // Navigate to map view preserving all filters
   const goToMapView = () => {
     const params = new URLSearchParams();
@@ -262,47 +255,140 @@ const SearchPage = () => {
     navigate(`/search/map?${params.toString()}`);
   };
 
-  const getPageNumbers = () => {
-    const pages: (number | "ellipsis")[] = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (page > 3) pages.push("ellipsis");
-      const start = Math.max(2, page - 1);
-      const end = Math.min(totalPages - 1, page + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (page < totalPages - 2) pages.push("ellipsis");
-      pages.push(totalPages);
-    }
-    return pages;
-  };
-
-  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid].filter(Boolean).length;
+  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid, provinceId, wardId].filter(Boolean).length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col pt-16">
       <SEO title={t("search.title")} description={t("search.desc")} />
       <Navbar />
 
-      {/* Sticky top search bar */}
+      {/* Sticky top search & filter bar */}
       <div className="sticky top-16 z-40 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[160px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.keyword")}</label>
-              <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder={t("search.keywordPlaceholder")}
-                  className="custom-input w-full pl-9"
-                />
-              </div>
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-2">
+          {/* Row 1: keyword + quick filters */}
+          <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex-1 min-w-[200px] max-w-md relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder={t("search.keywordPlaceholder")}
+                className="custom-input w-full pl-9 h-11"
+              />
             </div>
-            <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.area")}</label>
+
+            {/* Quick filter dropdowns */}
+            {apartmentTypes.length > 0 && (
+              <Select
+                value={apartmentTypeUuid || "__all__"}
+                onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
+              >
+                <SelectTrigger className="w-auto shrink-0 h-11">
+                  <SelectValue placeholder={t("hero.roomType")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                  {apartmentTypes.map((at) => (
+                    <SelectItem key={at.uuid} value={at.uuid}>
+                      {at.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
+              <SelectTrigger className="w-auto shrink-0 h-11">
+                <SelectValue placeholder={t("hero.priceRange")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
+                {filterPrices.map((fp) => (
+                  <SelectItem key={fp.uuid} value={fp.uuid}>
+                    {fp.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
+              <SelectTrigger className="w-auto shrink-0 h-11">
+                <SelectValue placeholder={t("hero.areaSize")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
+                {filterApartmentSizes.map((fs) => (
+                  <SelectItem key={fs.uuid} value={fs.uuid}>
+                    {fs.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Row 2: toolbar buttons + result count */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={goToMapView}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-colors h-9"
+            >
+              <MapIcon size={16} />
+              {t("search.map")}
+            </button>
+
+            <Select value={typeOrder} onValueChange={setTypeOrder}>
+              <SelectTrigger className="w-auto shrink-0 h-9 text-sm">
+                <div className="flex items-center gap-1.5">
+                  <ArrowUpDown size={14} />
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <button
+              onClick={() => setAdvancedOpen(true)}
+              className={cn(
+                "relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors h-9",
+                activeFilterCount > 0
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              )}
+            >
+              <SlidersHorizontal size={14} />
+              {t("hero.advancedFilters")}
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+
+            <div className="flex items-center gap-2 ml-auto shrink-0">
+              <p className="text-sm text-foreground font-medium whitespace-nowrap">
+                {totalCount} {t("search.found")}
+              </p>
+              {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Advanced filter dialog */}
+      <Dialog open={advancedOpen} onOpenChange={setAdvancedOpen}>
+        <DialogContent className="sm:max-w-lg rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>{t("hero.advancedFilters")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">{t("search.area")}</label>
               <Select
                 value={provinceId || "__all__"}
                 onValueChange={(val) => {
@@ -310,7 +396,7 @@ const SearchPage = () => {
                   setWardId("");
                 }}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-11">
                   <SelectValue placeholder={t("search.all")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -323,14 +409,15 @@ const SearchPage = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("hero.ward")}</label>
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">{t("hero.ward")}</label>
               <Select
                 value={wardId || "__all__"}
                 onValueChange={(val) => setWardId(val === "__all__" ? "" : val)}
                 disabled={!provinceId || (wardsLoading && wards.length === 0)}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-11">
                   <SelectValue
                     placeholder={
                       !provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("search.all")
@@ -348,24 +435,57 @@ const SearchPage = () => {
               </Select>
             </div>
 
-            {/* Result count */}
-            <div className="flex items-center gap-2 shrink-0">
-              <p className="text-sm text-muted-foreground whitespace-nowrap">
-                {totalCount} {t("search.found")}
-              </p>
-              {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">{t("hero.priceRange")}</label>
+              <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
+                <SelectTrigger className="w-full h-11">
+                  <SelectValue placeholder={t("hero.allPrices")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
+                  {filterPrices.map((fp) => (
+                    <SelectItem key={fp.uuid} value={fp.uuid}>
+                      {fp.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Main content: sidebar + list */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">{t("hero.areaSize")}</label>
+              <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
+                <SelectTrigger className="w-full h-11">
+                  <SelectValue placeholder={t("hero.allSizes")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
+                  {filterApartmentSizes.map((fs) => (
+                    <SelectItem key={fs.uuid} value={fs.uuid}>
+                      {fs.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <button
+              onClick={() => setAdvancedOpen(false)}
+              className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-colors"
+            >
+              {t("search.applyFilters")}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Main content */}
       <div className="flex-1">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex gap-4">
-            {/* Left sidebar - hidden on mobile */}
+            {/* Left sidebar: Map + Ad banner */}
             <aside className="hidden lg:block w-[260px] shrink-0">
-              <div className="sticky top-[calc(4rem+4.5rem)] space-y-5">
+              <div className="sticky top-[calc(4rem+7.5rem)] space-y-5">
                 {/* Mini Map */}
                 <div
                   className="rounded-xl overflow-hidden border border-border cursor-pointer group"
@@ -383,74 +503,20 @@ const SearchPage = () => {
                   </div>
                 </div>
 
-                {/* Room type filter */}
-                {apartmentTypes.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                      {t("hero.roomType")}
-                    </p>
-                    <div className="flex flex-col gap-1.5">
-                      {apartmentTypes.map((at) => (
-                        <button
-                          key={at.uuid}
-                          onClick={() => setApartmentTypeUuid((prev) => (prev === at.uuid ? "" : at.uuid))}
-                          className={cn(
-                            "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
-                            apartmentTypeUuid === at.uuid
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "border-border bg-background text-foreground hover:bg-secondary",
-                          )}
-                        >
-                          {at.name}
-                        </button>
-                      ))}
+                {/* Ad banner placeholder */}
+                <div className="rounded-xl overflow-hidden border border-border bg-accent/30 p-5 text-center">
+                  <p className="text-primary font-bold text-lg mb-1">XanhStay</p>
+                  <p className="text-sm text-muted-foreground mb-3">Thanh toán càng dài, chi phí càng giảm</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="text-center">
+                      <p className="text-primary font-bold text-xl">3%</p>
+                      <p className="text-xs text-muted-foreground">6 tháng</p>
                     </div>
-                  </div>
-                )}
-
-                {/* Price filter */}
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    {t("hero.priceRange")}
-                  </p>
-                  <div className="flex flex-col gap-1.5">
-                    {filterPrices.map((fp) => (
-                      <button
-                        key={fp.uuid}
-                        onClick={() => handlePriceSelect(fp.uuid)}
-                        className={cn(
-                          "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
-                          selectedPriceUuid === fp.uuid
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "border-border bg-background text-foreground hover:bg-secondary",
-                        )}
-                      >
-                        {fp.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Size filter */}
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    {t("hero.areaSize")}
-                  </p>
-                  <div className="flex flex-col gap-1.5">
-                    {filterApartmentSizes.map((fs) => (
-                      <button
-                        key={fs.uuid}
-                        onClick={() => handleSizeSelect(fs.uuid)}
-                        className={cn(
-                          "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
-                          selectedSizeUuid === fs.uuid
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "border-border bg-background text-foreground hover:bg-secondary",
-                        )}
-                      >
-                        {fs.name}
-                      </button>
-                    ))}
+                    <span className="w-px h-8 bg-border" />
+                    <div className="text-center">
+                      <p className="text-primary font-bold text-xl">5%</p>
+                      <p className="text-xs text-muted-foreground">12 tháng</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -458,61 +524,6 @@ const SearchPage = () => {
 
             {/* Right: Room list */}
             <div className="flex-1 min-w-0" ref={listRef}>
-              {/* Mobile: filter chips + map button */}
-              <div className="lg:hidden flex items-center gap-2 mb-4 overflow-x-auto thin-scrollbar pb-2">
-                <button
-                  onClick={goToMapView}
-                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-colors"
-                >
-                  <MapIcon size={16} />
-                  {t("search.map")}
-                </button>
-                {apartmentTypes.length > 0 && (
-                  <Select
-                    value={apartmentTypeUuid || "__all__"}
-                    onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
-                  >
-                    <SelectTrigger className="w-auto shrink-0">
-                      <SelectValue placeholder={t("hero.roomType")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
-                      {apartmentTypes.map((at) => (
-                        <SelectItem key={at.uuid} value={at.uuid}>
-                          {at.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-                <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
-                  <SelectTrigger className="w-auto shrink-0">
-                    <SelectValue placeholder={t("hero.priceRange")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
-                    {filterPrices.map((fp) => (
-                      <SelectItem key={fp.uuid} value={fp.uuid}>
-                        {fp.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
-                  <SelectTrigger className="w-auto shrink-0">
-                    <SelectValue placeholder={t("hero.areaSize")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
-                    {filterApartmentSizes.map((fs) => (
-                      <SelectItem key={fs.uuid} value={fs.uuid}>
-                        {fs.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
               {error && (
                 <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
                   {error}
@@ -554,49 +565,13 @@ const SearchPage = () => {
                 />
               )}
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="mt-8 flex justify-center">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          onClick={() => page > 1 && handlePageChange(page - 1)}
-                          className={cn(page <= 1 && "pointer-events-none opacity-50", "cursor-pointer")}
-                        />
-                      </PaginationItem>
-                      {getPageNumbers().map((p, i) =>
-                        p === "ellipsis" ? (
-                          <PaginationItem key={`ellipsis-${i}`}>
-                            <PaginationEllipsis />
-                          </PaginationItem>
-                        ) : (
-                          <PaginationItem key={p}>
-                            <PaginationLink
-                              isActive={page === p}
-                              onClick={() => handlePageChange(p as number)}
-                              className="cursor-pointer"
-                            >
-                              {p}
-                            </PaginationLink>
-                          </PaginationItem>
-                        ),
-                      )}
-                      <PaginationItem>
-                        <PaginationNext
-                          onClick={() => page < totalPages && handlePageChange(page + 1)}
-                          className={cn(page >= totalPages && "pointer-events-none opacity-50", "cursor-pointer")}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              )}
+              {/* Pagination hidden - only show first page of 20 items */}
             </div>
           </div>
         </div>
       </div>
 
+      <FloatingCallButton />
       <Footer />
     </div>
   );

@@ -145,7 +145,7 @@ const MapSearchPage = () => {
   });
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
-    const req: GetAdvertisementsForMapRequest = { isPaging: 0 };
+    const req: GetAdvertisementsForMapRequest = { isPaging: 0, isHot: 0, typeOrder: 0 };
     if (debouncedKeyword) req.keyword = debouncedKeyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;

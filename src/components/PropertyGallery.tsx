@@ -4,7 +4,6 @@ import LightGallery from 'lightgallery/react';
 import lgZoom from 'lightgallery/plugins/zoom';
 import lgThumbnail from 'lightgallery/plugins/thumbnail';
 
-// LightGallery CSS
 import 'lightgallery/css/lightgallery.css';
 import 'lightgallery/css/lg-zoom.css';
 import 'lightgallery/css/lg-thumbnail.css';
@@ -17,6 +16,8 @@ interface PropertyGalleryProps {
 export const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
   const [current, setCurrent] = useState(0);
   const lightGalleryRef = useRef<any>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   const prev = useCallback(() => setCurrent(i => (i === 0 ? images.length - 1 : i - 1)), [images.length]);
   const next = useCallback(() => setCurrent(i => (i === images.length - 1 ? 0 : i + 1)), [images.length]);
@@ -25,14 +26,41 @@ export const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
     lightGalleryRef.current?.openGallery(index ?? current);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50;
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) next();
+      else prev();
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   return (
     <>
-      <div className="relative rounded-2xl overflow-hidden aspect-[16/9] md:aspect-[2/1] bg-muted group">
+      <div
+        className="relative rounded-2xl overflow-hidden aspect-[16/9] md:aspect-[2/1] bg-muted group"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <img
           src={images[current]}
           alt={`${title} - Ảnh ${current + 1}`}
           className="w-full h-full object-cover cursor-pointer"
           onClick={() => openLightbox()}
+          draggable={false}
         />
         {images.length > 1 && (
           <>
@@ -61,7 +89,6 @@ export const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
         </button>
       </div>
 
-      {/* LightGallery - hidden trigger elements */}
       <LightGallery
         onInit={(ref) => { lightGalleryRef.current = ref.instance; }}
         plugins={[lgZoom, lgThumbnail]}

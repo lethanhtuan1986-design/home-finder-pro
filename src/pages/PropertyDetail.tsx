@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { PropertyGallery } from "@/components/PropertyGallery";
 import { ScheduleForm } from "@/components/ScheduleForm";
 import { DepositButton } from "@/components/DepositButton";
+import { FloatingCallButton } from "@/components/FloatingCallButton";
 import { SEO } from "@/components/SEO";
 import { useSavedRooms } from "@/hooks/useSavedRooms";
 import { useRecentRooms } from "@/hooks/useRecentRooms";
@@ -187,12 +188,15 @@ const PropertyDetail = () => {
                   whileTap={{ scale: 0.7 }}
                   animate={isSaved(detail.uuid) ? { scale: [1, 1.3, 0.9, 1.1, 1] } : { scale: 1 }}
                   transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="shrink-0 w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary hover:shadow-md transition-all"
+                  className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-full border border-border hover:bg-secondary hover:shadow-md transition-all"
                 >
                   <Heart
                     size={20}
                     className={`transition-colors duration-200 ${isSaved(detail.uuid) ? "fill-destructive text-destructive" : "text-muted-foreground"}`}
                   />
+                  <span className="text-sm font-medium text-foreground whitespace-nowrap">
+                    {isSaved(detail.uuid) ? t("listing.savedLabel") : t("listing.saveLabel")}
+                  </span>
                 </motion.button>
               </div>
 
@@ -427,6 +431,7 @@ const PropertyDetail = () => {
       {/* Bottom padding for sticky bar on mobile */}
       <div className="h-20 lg:hidden" />
 
+      <FloatingCallButton />
       <Footer />
     </div>
   );

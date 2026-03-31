@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { FloatingCallButton } from '@/components/FloatingCallButton';
 
 import { SEO } from '@/components/SEO';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
@@ -21,8 +22,12 @@ const SavedRooms = () => {
     queryFn: () =>
       httpRequest({
         http: advertisementService.getListPaged({
-          isPaging: 0,
+          isPaging: 1,
+          page: 1,
+          pageSize: 20,
           adsLikeds: savedIds,
+          isHot: 0,
+          typeOrder: 0,
         }),
       }),
     enabled: savedIds.length > 0,
@@ -82,6 +87,7 @@ const SavedRooms = () => {
           />
         )}
       </div>
+      <FloatingCallButton />
       <Footer />
     </div>
   );

@@ -40,6 +40,10 @@
   "listing": {
     "featured": "Phòng nổi bật",
     "featuredSub": "Các phòng và căn hộ được đề xuất cho bạn",
+    "recommended": "Phòng đề xuất",
+    "recommendedSub": "Các phòng và căn hộ được đề xuất dành riêng cho bạn",
+    "latest": "Phòng mới cập nhật",
+    "latestSub": "Phòng vừa được đăng gần đây nhất",
     "viewAll": "Xem tất cả",
     "perMonth": "/tháng",
     "people": "người",
@@ -50,7 +54,9 @@
     "depositNotice": "Đặt cọc qua ứng dụng",
     "depositDownloadApp": "Để thực hiện đặt cọc, vui lòng tải ứng dụng XanhStay trên điện thoại.",
     "preDeposit": "Đặt cọc giữ chỗ",
-    "room": "Phòng"
+    "room": "Phòng",
+    "saveLabel": "Lưu tin",
+    "savedLabel": "Tin đã lưu"
   },
   "detail": {
     "back": "Quay lại",
@@ -89,6 +95,7 @@
     "loading": "Đang tải...",
     "serverError": "Không thể kết nối đến máy chủ. Đang hiển thị dữ liệu mẫu.",
     "openMapView": "Xem trên bản đồ",
+    "applyFilters": "Áp dụng bộ lọc",
     "filter": "Bộ lọc",
     "noResultMapHint": "Hãy di chuyển bản đồ hoặc thay đổi bộ lọc",
     "showList": "Xem danh sách",
@@ -126,6 +133,10 @@
     "getItOn": "Tải trên"
   },
   "slogan": "Dẫn lối an cư, an nhiên về nhà",
+  "reviews": {
+    "title": "Khách hàng nói gì?",
+    "subtitle": "Đánh giá chân thực từ cộng đồng người dùng XanhStay"
+  },
   "coreValues": {
     "sectionTitle": "Giá trị cốt lõi",
     "sectionSubtitle": "Những giá trị nền tảng định hình XanhStay",
