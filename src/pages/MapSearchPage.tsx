@@ -8,7 +8,6 @@ import { MapView } from "@/components/MapView";
 import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
 import advertisementService, {
   GetAdvertisementsForMapRequest,
-  MapLocationGroup,
   AdvertisementData,
 } from "@/services/advertisement.service";
 import provinceService, { ProvinceItem } from "@/services/province.service";
