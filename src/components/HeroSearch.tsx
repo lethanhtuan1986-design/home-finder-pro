@@ -21,6 +21,7 @@ export const HeroSearch = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [provinceId, setProvinceId] = useState("");
   const [wardId, setWardId] = useState("");
   const [priceUuid, setPriceUuid] = useState("");
