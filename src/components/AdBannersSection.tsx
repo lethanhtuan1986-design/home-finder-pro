@@ -35,7 +35,7 @@ export const AdBannersSection = () => (
         <Link
           key={i}
           to={b.link}
-          className="group relative rounded-2xl overflow-hidden aspect-[4/3] block"
+          className="group relative rounded-2xl overflow-hidden aspect-[8/3] block"
         >
           <img
             src={b.image}

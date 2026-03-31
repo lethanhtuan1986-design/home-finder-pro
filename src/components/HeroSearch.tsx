@@ -125,19 +125,7 @@ export const HeroSearch = () => {
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
       {/* Main filters row */}
       <div className="flex flex-col md:flex-row items-stretch gap-2">
-        {/* Search input */}
-        <div className="flex-1 relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder={t("search.keywordPlaceholder")}
-            className="w-full h-11 pl-9 pr-3 rounded-xl bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-
-        {/* Province select */}
+        {/* Province select - first */}
         <Select
           value={provinceId}
           onValueChange={(val) => {
@@ -157,6 +145,18 @@ export const HeroSearch = () => {
             ))}
           </SelectContent>
         </Select>
+
+        {/* Search input */}
+        <div className="flex-1 relative">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            placeholder={t("search.keywordPlaceholder")}
+            className="w-full h-11 pl-9 pr-3 rounded-xl bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
 
         <div className="flex gap-2">
           {/* Advanced filter - icon only */}
