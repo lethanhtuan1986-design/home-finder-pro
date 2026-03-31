@@ -298,7 +298,7 @@ export const HeroSearch = () => {
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[420px] md:min-h-[460px] pt-20 md:pt-16 pb-6 md:pb-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end min-h-[420px] md:min-h-[460px] pb-6 md:pb-8" style={{ paddingTop: 'calc(var(--promo-banner-height, 0px) + 5rem)' }}>
           {/* Banner content - changes per slide */}
           <div className="relative mb-5 md:mb-6 min-h-[140px] md:min-h-[160px] flex items-center justify-center">
             {/* Banner 1: Branding */}
