@@ -174,7 +174,7 @@ const SearchPage = () => {
     const items = (listData as any)?.items || [];
     return items.flatMap((loc: any) => loc.ads || []);
   }, [listData]);
-  const totalCount = (listData as any)?.pagination?.totalCount ?? advertisements.length;
+  const totalCount = advertisements.length;
   const error = queryError ? t("search.serverError") : null;
 
   // Sync state to URL
