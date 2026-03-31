@@ -38,10 +38,8 @@
     "trustedDesc": "Mọi phòng đều được xác minh bởi đội ngũ XanhStay."
   },
   "listing": {
-    "recommended": "Phòng đề xuất",
-    "recommendedSub": "Các phòng và căn hộ được đề xuất cho bạn",
-    "latest": "Phòng mới cập nhật",
-    "latestSub": "Phòng vừa đăng gần đây nhất",
+    "featured": "Phòng nổi bật",
+    "featuredSub": "Các phòng và căn hộ được đề xuất cho bạn",
     "viewAll": "Xem tất cả",
     "perMonth": "/tháng",
     "people": "người",
@@ -52,9 +50,7 @@
     "depositNotice": "Đặt cọc qua ứng dụng",
     "depositDownloadApp": "Để thực hiện đặt cọc, vui lòng tải ứng dụng XanhStay trên điện thoại.",
     "preDeposit": "Đặt cọc giữ chỗ",
-    "room": "Phòng",
-    "saveRoom": "Lưu tin",
-    "savedRoom": "Tin đã lưu"
+    "room": "Phòng"
   },
   "detail": {
     "back": "Quay lại",
@@ -96,12 +92,7 @@
     "filter": "Bộ lọc",
     "noResultMapHint": "Hãy di chuyển bản đồ hoặc thay đổi bộ lọc",
     "showList": "Xem danh sách",
-    "showMap": "Xem bản đồ",
-    "sort": "Sắp xếp",
-    "advanced": "Nâng cao",
-    "advancedFilters": "Bộ lọc nâng cao",
-    "apply": "Áp dụng",
-    "reset": "Xóa bộ lọc"
+    "showMap": "Xem bản đồ"
   },
   "schedule": {
     "title": "Đặt lịch xem",
@@ -135,15 +126,6 @@
     "getItOn": "Tải trên"
   },
   "slogan": "Dẫn lối an cư, an nhiên về nhà",
-  "testimonials": {
-    "title": "Khách hàng nói gì về XanhStay",
-    "subtitle": "Hàng nghìn khách hàng đã tin tưởng và lựa chọn XanhStay"
-  },
-  "announcement": {
-    "promo1": "🎉 Thanh toán trước 6 tháng giảm ngay 3% — 12 tháng giảm 5%!",
-    "promo2": "🏠 Đăng ký nhận thông báo phòng mới miễn phí trên ứng dụng XanhStay",
-    "promo3": "⭐ Phòng xác minh 100% — An tâm thuê, không lo lừa đảo"
-  },
   "coreValues": {
     "sectionTitle": "Giá trị cốt lõi",
     "sectionSubtitle": "Những giá trị nền tảng định hình XanhStay",

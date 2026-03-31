@@ -187,20 +187,12 @@ const PropertyDetail = () => {
                   whileTap={{ scale: 0.7 }}
                   animate={isSaved(detail.uuid) ? { scale: [1, 1.3, 0.9, 1.1, 1] } : { scale: 1 }}
                   transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className={cn(
-                    "shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all",
-                    isSaved(detail.uuid)
-                      ? "border-destructive/30 bg-destructive/5 text-destructive"
-                      : "border-border hover:bg-secondary hover:shadow-md text-muted-foreground"
-                  )}
+                  className="shrink-0 w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary hover:shadow-md transition-all"
                 >
                   <Heart
-                    size={18}
-                    className={`transition-colors duration-200 ${isSaved(detail.uuid) ? "fill-destructive text-destructive" : ""}`}
+                    size={20}
+                    className={`transition-colors duration-200 ${isSaved(detail.uuid) ? "fill-destructive text-destructive" : "text-muted-foreground"}`}
                   />
-                  <span className="text-sm font-medium">
-                    {isSaved(detail.uuid) ? t("listing.savedRoom") : t("listing.saveRoom")}
-                  </span>
                 </motion.button>
               </div>
 

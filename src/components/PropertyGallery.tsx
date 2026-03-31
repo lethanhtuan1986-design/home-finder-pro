@@ -1,9 +1,8 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import LightGallery from 'lightgallery/react';
 import lgZoom from 'lightgallery/plugins/zoom';
 import lgThumbnail from 'lightgallery/plugins/thumbnail';
-import useEmblaCarousel from 'embla-carousel-react';
 
 // LightGallery CSS
 import 'lightgallery/css/lightgallery.css';
@@ -19,17 +18,8 @@ export const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
   const [current, setCurrent] = useState(0);
   const lightGalleryRef = useRef<any>(null);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: false });
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    const onSelect = () => setCurrent(emblaApi.selectedScrollSnap());
-    emblaApi.on('select', onSelect);
-    return () => { emblaApi.off('select', onSelect); };
-  }, [emblaApi]);
-
-  const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const prev = useCallback(() => setCurrent(i => (i === 0 ? images.length - 1 : i - 1)), [images.length]);
+  const next = useCallback(() => setCurrent(i => (i === images.length - 1 ? 0 : i + 1)), [images.length]);
 
   const openLightbox = (index?: number) => {
     lightGalleryRef.current?.openGallery(index ?? current);
@@ -38,21 +28,12 @@ export const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
   return (
     <>
       <div className="relative rounded-2xl overflow-hidden aspect-[16/9] md:aspect-[2/1] bg-muted group">
-        <div className="overflow-hidden w-full h-full" ref={emblaRef}>
-          <div className="flex w-full h-full">
-            {images.map((img, idx) => (
-              <div key={idx} className="flex-[0_0_100%] min-w-0 w-full h-full">
-                <img
-                  src={img}
-                  alt={`${title} - Ảnh ${idx + 1}`}
-                  className="w-full h-full object-cover cursor-pointer"
-                  onClick={() => openLightbox(idx)}
-                  loading={idx === 0 ? 'eager' : 'lazy'}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <img
+          src={images[current]}
+          alt={`${title} - Ảnh ${current + 1}`}
+          className="w-full h-full object-cover cursor-pointer"
+          onClick={() => openLightbox()}
+        />
         {images.length > 1 && (
           <>
             <button
