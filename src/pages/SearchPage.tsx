@@ -10,20 +10,18 @@ import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
 import advertisementService, {
   GetAdvertisementsForMapRequest,
   AdvertisementData,
-  MapLocationGroup,
 } from "@/services/advertisement.service";
 import provinceService, { ProvinceItem } from "@/services/province.service";
 import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
-import { Search, Map as MapIcon, List, Loader2, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Search, Map as MapIcon, Loader2, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapView } from "@/components/MapView";
+import { MiniMapPreview } from "@/components/MiniMapPreview";
 import { geocodeKeyword, GeoBounds } from "@/lib/geocoding";
-import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
   DialogContent,
@@ -45,20 +43,8 @@ const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const isMobile = useIsMobile();
 
   const listRef = useRef<HTMLDivElement>(null);
-
-  // View mode: list or map
-  const [viewMode, setViewMode] = useState<"list" | "map">(
-    searchParams.get("view") === "map" ? "map" : "list"
-  );
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  // Map bounding box (only used when in map mode and user pans)
-  const [mapBounds, setMapBounds] = useState<{
-    neLat: number; neLng: number; swLat: number; swLng: number;
-  } | null>(null);
 
   // Filter states from URL
   const [provinceId, setProvinceId] = useState(searchParams.get("provinceId") || "");
@@ -73,9 +59,6 @@ const SearchPage = () => {
   const [typeOrder, setTypeOrder] = useState(searchParams.get("typeOrder") || "0");
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
-  // Mobile map: toggle list/map
-  const [mobileShowList, setMobileShowList] = useState(false);
-
   // Debounce keyword
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedKeyword(keyword), 500);
@@ -84,22 +67,34 @@ const SearchPage = () => {
 
   const selectedPriceUuid =
     filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
+
   const selectedSizeUuid =
     filterApartmentSizes.find(
       (fs) => String(fs.value || "") === apartmentSizeFrom && String(fs.valueTo || "") === apartmentSizeTo,
     )?.uuid || "";
 
-  // Dropdown data
+  // API data
   const { data: provinces = [] } = useQuery<ProvinceItem[]>({
     queryKey: ["dropdown-province"],
-    queryFn: () => httpRequest({ isCatalog: true, http: provinceService.listProvince({ keyword: "" }) }),
+    queryFn: () =>
+      httpRequest({
+        isCatalog: true,
+        http: provinceService.listProvince({ keyword: "" }),
+      }),
   });
 
   const { data: wards = [], isLoading: wardsLoading } = useQuery<
     { code: string; fullName: string; fullNameEn: string }[]
   >({
     queryKey: ["dropdown-ward", provinceId],
-    queryFn: () => httpRequest({ isCatalog: true, http: provinceService.listWard({ keyword: "", provinceCode: provinceId }) }),
+    queryFn: () =>
+      httpRequest({
+        isCatalog: true,
+        http: provinceService.listWard({
+          keyword: "",
+          provinceCode: provinceId,
+        }),
+      }),
     enabled: !!provinceId,
   });
 
@@ -108,11 +103,18 @@ const SearchPage = () => {
     queryFn: () =>
       httpRequest({
         isCatalog: true,
-        http: apartmentTypeService.listApartmentType({ isPaging: 0, typeFinding: 0, page: 1, pageSize: 100, keyword: "", status: 1 }),
+        http: apartmentTypeService.listApartmentType({
+          isPaging: 0,
+          typeFinding: 0,
+          page: 1,
+          pageSize: 100,
+          keyword: "",
+          status: 1,
+        }),
       }),
   });
 
-  // Geocode keyword for bounding box (used in list mode or initial map)
+  // Geocode keyword for bounding box
   const { data: geoBounds } = useQuery<GeoBounds | null>({
     queryKey: ["geocode", debouncedKeyword],
     queryFn: () => geocodeKeyword(debouncedKeyword),
@@ -120,8 +122,7 @@ const SearchPage = () => {
     staleTime: 1000 * 60 * 10,
   });
 
-  // Build single shared request
-  const buildRequest = useCallback((): GetAdvertisementsForMapRequest => {
+  const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = {
       isPaging: 1,
       page: 1,
@@ -137,30 +138,22 @@ const SearchPage = () => {
     if (priceTo) req.priceTo = Number(priceTo);
     if (apartmentSizeFrom) req.apartmentSizeFrom = Number(apartmentSizeFrom);
     if (apartmentSizeTo) req.apartmentSizeTo = Number(apartmentSizeTo);
-
-    // In map mode, use map bounds from pan; otherwise use geocoded bounds
-    if (viewMode === "map" && mapBounds) {
-      req.neLat = mapBounds.neLat;
-      req.neLng = mapBounds.neLng;
-      req.swLat = mapBounds.swLat;
-      req.swLng = mapBounds.swLng;
-    } else if (geoBounds) {
+    if (geoBounds) {
       req.neLat = geoBounds.neLat;
       req.neLng = geoBounds.neLng;
       req.swLat = geoBounds.swLat;
       req.swLng = geoBounds.swLng;
     }
     return req;
-  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo, typeOrder, viewMode, mapBounds, geoBounds]);
+  };
 
-  // Single shared API call
   const {
-    data: apiData,
+    data: listData,
     isLoading: loading,
     error: queryError,
   } = useQuery({
     queryKey: [
-      "search-advertisements",
+      "advertisements-map",
       debouncedKeyword,
       provinceId,
       wardId,
@@ -170,22 +163,17 @@ const SearchPage = () => {
       apartmentSizeFrom,
       apartmentSizeTo,
       typeOrder,
-      viewMode === "map" ? mapBounds?.neLat : geoBounds?.neLat,
-      viewMode === "map" ? mapBounds?.swLat : geoBounds?.swLat,
-      viewMode,
+      geoBounds?.neLat,
+      geoBounds?.swLat,
     ],
-    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildRequest()) }),
+    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
   });
 
-  // Parse response - API returns { items: MapLocationGroup[], pagination }
-  const mapLocations = useMemo<MapLocationGroup[]>(() => {
-    return (apiData as any)?.items || [];
-  }, [apiData]);
-
-  const advertisements = useMemo<AdvertisementData[]>(() => {
-    return mapLocations.flatMap((loc) => loc.ads || []);
-  }, [mapLocations]);
-
+  // Response is { items: MapLocationGroup[], pagination } - flatten ads from location groups
+  const advertisements = useMemo(() => {
+    const items = (listData as any)?.items || [];
+    return items.flatMap((loc: any) => loc.ads || []);
+  }, [listData]);
   const totalCount = advertisements.length;
   const error = queryError ? t("search.serverError") : null;
 
@@ -201,155 +189,64 @@ const SearchPage = () => {
     if (apartmentSizeFrom) params.set("apartmentSizeFrom", apartmentSizeFrom);
     if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
     if (typeOrder !== "0") params.set("typeOrder", typeOrder);
-    if (viewMode === "map") params.set("view", "map");
     setSearchParams(params, { replace: true });
-  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo, typeOrder, viewMode, setSearchParams]);
+  }, [
+    debouncedKeyword,
+    provinceId,
+    wardId,
+    apartmentTypeUuid,
+    priceFrom,
+    priceTo,
+    apartmentSizeFrom,
+    apartmentSizeTo,
+    typeOrder,
+    setSearchParams,
+  ]);
 
   const handlePriceSelect = (uuid: string) => {
     if (uuid === "__all__" || uuid === selectedPriceUuid) {
-      setPriceFrom(""); setPriceTo("");
+      setPriceFrom("");
+      setPriceTo("");
     } else {
       const fp = filterPrices.find((p) => p.uuid === uuid);
-      if (fp) { setPriceFrom(fp.value ? String(fp.value) : ""); setPriceTo(fp.valueTo ? String(fp.valueTo) : ""); }
+      if (fp) {
+        setPriceFrom(fp.value ? String(fp.value) : "");
+        setPriceTo(fp.valueTo ? String(fp.valueTo) : "");
+      }
     }
   };
 
   const handleSizeSelect = (uuid: string) => {
     if (uuid === "__all__" || uuid === selectedSizeUuid) {
-      setApartmentSizeFrom(""); setApartmentSizeTo("");
+      setApartmentSizeFrom("");
+      setApartmentSizeTo("");
     } else {
       const fs = filterApartmentSizes.find((s) => s.uuid === uuid);
-      if (fs) { setApartmentSizeFrom(fs.value ? String(fs.value) : ""); setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : ""); }
+      if (fs) {
+        setApartmentSizeFrom(fs.value ? String(fs.value) : "");
+        setApartmentSizeTo(fs.valueTo ? String(fs.valueTo) : "");
+      }
     }
   };
 
-  const handleBoundsChange = useCallback((b: { neLat: number; neLng: number; swLat: number; swLng: number }) => {
-    setMapBounds(b);
-  }, []);
-
-  const toggleView = () => {
-    const next = viewMode === "list" ? "map" : "list";
-    setViewMode(next);
-    if (next === "list") setMapBounds(null);
+  // Navigate to map view preserving all filters
+  const goToMapView = () => {
+    const params = new URLSearchParams();
+    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (provinceId) params.set("provinceId", provinceId);
+    if (wardId) params.set("wardId", wardId);
+    if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
+    if (priceFrom) params.set("priceFrom", priceFrom);
+    if (priceTo) params.set("priceTo", priceTo);
+    if (apartmentSizeFrom) params.set("apartmentSizeFrom", apartmentSizeFrom);
+    if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
+    navigate(`/search/map?${params.toString()}`);
   };
 
   const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid, provinceId, wardId].filter(Boolean).length;
 
-  // ====== LIST VIEW ======
-  const renderListView = () => (
-    <div className="flex-1">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex-1 min-w-0" ref={listRef}>
-          {error && (
-            <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
-              {error}
-            </div>
-          )}
-
-          {loading && advertisements.length === 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {Array.from({ length: PAGE_SIZE }).map((_, i) => (
-                <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
-                  <Skeleton className="aspect-[3/2] w-full" />
-                  <div className="p-4 space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-5 w-1/2" />
-                    <Skeleton className="h-3 w-2/3" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {advertisements.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {advertisements.map((ad, i) => (
-                <div key={ad.uuid}>
-                  <AdvertisementCard data={ad} index={i} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {!loading && advertisements.length === 0 && (
-            <EmptyState
-              icon={Search}
-              title={t("search.noResult")}
-              description={t("search.noResultHint")}
-              actionLabel={t("nav.searchNow")}
-              actionTo="/search"
-            />
-          )}
-        </div>
-      </div>
-      <FloatingCallButton />
-      <Footer />
-    </div>
-  );
-
-  // ====== MAP VIEW ======
-  const renderMapView = () => (
-    <div className="flex-1 flex overflow-hidden">
-      {/* Left: Room list sidebar */}
-      <div
-        className={cn(
-          "flex flex-col border-r border-border bg-card",
-          isMobile
-            ? "w-full absolute inset-0 top-16 z-30"
-            : "w-[380px] shrink-0",
-        )}
-        style={isMobile ? { display: !mobileShowList ? "none" : "flex" } : undefined}
-      >
-        <div className="flex-1 overflow-y-auto p-3 space-y-3">
-          {loading && advertisements.length === 0 && (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 size={24} className="animate-spin text-primary" />
-            </div>
-          )}
-          {advertisements.map((ad, i) => (
-            <div
-              key={ad.uuid}
-              onMouseEnter={() => setHoveredId(ad.uuid)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <AdvertisementCard data={ad} index={i} />
-            </div>
-          ))}
-          {!loading && advertisements.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Search size={32} className="text-muted-foreground mb-3" />
-              <p className="text-sm font-medium text-foreground">{t("search.noResult")}</p>
-              <p className="text-xs text-muted-foreground mt-1">{t("search.noResultMapHint")}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Right: Map */}
-      <div className="flex-1 relative">
-        <MapView
-          locations={mapLocations}
-          hoveredId={hoveredId}
-          loading={loading && mapLocations.length === 0}
-          onMarkerClick={(id) => navigate(`/advertisement/${id}`)}
-          onBoundsChange={handleBoundsChange}
-        />
-
-        {/* Mobile: toggle list button */}
-        {isMobile && (
-          <button
-            onClick={() => setMobileShowList(!mobileShowList)}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] bg-primary text-primary-foreground px-4 py-2.5 rounded-full shadow-lg text-sm font-medium"
-          >
-            {mobileShowList ? t("search.showMap") : t("search.showList")}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-
   return (
-    <div className={cn("min-h-screen bg-background flex flex-col pt-16", viewMode === "map" && "h-screen")}>
+    <div className="min-h-screen bg-background flex flex-col pt-16">
       <SEO title={t("search.title")} description={t("search.desc")} />
       <Navbar />
 
@@ -368,6 +265,7 @@ const SearchPage = () => {
               />
             </div>
 
+            {/* Quick filter dropdowns */}
             {apartmentTypes.length > 0 && (
               <Select
                 value={apartmentTypeUuid || "__all__"}
@@ -379,7 +277,9 @@ const SearchPage = () => {
                 <SelectContent>
                   <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
                   {apartmentTypes.map((at) => (
-                    <SelectItem key={at.uuid} value={at.uuid}>{at.name}</SelectItem>
+                    <SelectItem key={at.uuid} value={at.uuid}>
+                      {at.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -392,7 +292,9 @@ const SearchPage = () => {
               <SelectContent>
                 <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
                 {filterPrices.map((fp) => (
-                  <SelectItem key={fp.uuid} value={fp.uuid}>{fp.name}</SelectItem>
+                  <SelectItem key={fp.uuid} value={fp.uuid}>
+                    {fp.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -404,7 +306,9 @@ const SearchPage = () => {
               <SelectContent>
                 <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
                 {filterApartmentSizes.map((fs) => (
-                  <SelectItem key={fs.uuid} value={fs.uuid}>{fs.name}</SelectItem>
+                  <SelectItem key={fs.uuid} value={fs.uuid}>
+                    {fs.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -412,13 +316,12 @@ const SearchPage = () => {
 
           {/* Row 2: toolbar buttons + result count */}
           <div className="flex items-center gap-2">
-            {/* Toggle list/map */}
             <button
-              onClick={toggleView}
+              onClick={goToMapView}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-colors h-9"
             >
-              {viewMode === "list" ? <MapIcon size={16} /> : <List size={16} />}
-              {viewMode === "list" ? t("search.map") : t("search.list")}
+              <MapIcon size={16} />
+              {t("search.map")}
             </button>
 
             <Select value={typeOrder} onValueChange={setTypeOrder}>
@@ -430,7 +333,9 @@ const SearchPage = () => {
               </SelectTrigger>
               <SelectContent>
                 {SORT_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -474,7 +379,10 @@ const SearchPage = () => {
               <label className="text-sm font-medium text-foreground">{t("search.area")}</label>
               <Select
                 value={provinceId || "__all__"}
-                onValueChange={(val) => { setProvinceId(val === "__all__" ? "" : val); setWardId(""); }}
+                onValueChange={(val) => {
+                  setProvinceId(val === "__all__" ? "" : val);
+                  setWardId("");
+                }}
               >
                 <SelectTrigger className="w-full h-11">
                   <SelectValue placeholder={t("search.all")} />
@@ -482,7 +390,9 @@ const SearchPage = () => {
                 <SelectContent>
                   <SelectItem value="__all__">{t("search.all")}</SelectItem>
                   {provinces.map((p) => (
-                    <SelectItem key={p.code} value={p.code}>{p.fullName}</SelectItem>
+                    <SelectItem key={p.code} value={p.code}>
+                      {p.fullName}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -496,12 +406,18 @@ const SearchPage = () => {
                 disabled={!provinceId || (wardsLoading && wards.length === 0)}
               >
                 <SelectTrigger className="w-full h-11">
-                  <SelectValue placeholder={!provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("search.all")} />
+                  <SelectValue
+                    placeholder={
+                      !provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("search.all")
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__all__">{t("search.all")}</SelectItem>
                   {wards.map((w) => (
-                    <SelectItem key={w.code} value={w.code}>{w.fullName}</SelectItem>
+                    <SelectItem key={w.code} value={w.code}>
+                      {w.fullName}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -516,7 +432,9 @@ const SearchPage = () => {
                 <SelectContent>
                   <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
                   {filterPrices.map((fp) => (
-                    <SelectItem key={fp.uuid} value={fp.uuid}>{fp.name}</SelectItem>
+                    <SelectItem key={fp.uuid} value={fp.uuid}>
+                      {fp.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -531,7 +449,9 @@ const SearchPage = () => {
                 <SelectContent>
                   <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
                   {filterApartmentSizes.map((fs) => (
-                    <SelectItem key={fs.uuid} value={fs.uuid}>{fs.name}</SelectItem>
+                    <SelectItem key={fs.uuid} value={fs.uuid}>
+                      {fs.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -547,8 +467,100 @@ const SearchPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Main content: list or map */}
-      {viewMode === "list" ? renderListView() : renderMapView()}
+      {/* Main content */}
+      <div className="flex-1">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex gap-4">
+            {/* Left sidebar: Map + Ad banner */}
+            <aside className="hidden lg:block w-[260px] shrink-0">
+              <div className="sticky top-[calc(4rem+7.5rem)] space-y-5">
+                {/* Mini Map */}
+                <div
+                  className="rounded-xl overflow-hidden border border-border cursor-pointer group"
+                  onClick={goToMapView}
+                  title={t("search.openMapView")}
+                >
+                  <div className="h-[180px] relative">
+                    <MiniMapPreview locations={[]} loading={loading} />
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors flex items-center justify-center">
+                      <span className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-lg group-hover:scale-105 transition-transform">
+                        <MapIcon size={14} />
+                        {t("search.openMapView")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ad banner placeholder */}
+                <div className="rounded-xl overflow-hidden border border-border bg-accent/30 p-5 text-center">
+                  <p className="text-primary font-bold text-lg mb-1">XanhStay</p>
+                  <p className="text-sm text-muted-foreground mb-3">Thanh toán càng dài, chi phí càng giảm</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="text-center">
+                      <p className="text-primary font-bold text-xl">3%</p>
+                      <p className="text-xs text-muted-foreground">6 tháng</p>
+                    </div>
+                    <span className="w-px h-8 bg-border" />
+                    <div className="text-center">
+                      <p className="text-primary font-bold text-xl">5%</p>
+                      <p className="text-xs text-muted-foreground">12 tháng</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            {/* Right: Room list */}
+            <div className="flex-1 min-w-0" ref={listRef}>
+              {error && (
+                <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
+                  {error}
+                </div>
+              )}
+
+              {loading && advertisements.length === 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                    <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
+                      <Skeleton className="aspect-[3/2] w-full" />
+                      <div className="p-4 space-y-2">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-5 w-1/2" />
+                        <Skeleton className="h-3 w-2/3" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {advertisements.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {advertisements.map((ad: any, i: number) => (
+                    <div key={ad.uuid}>
+                      <AdvertisementCard data={ad} index={i} />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {!loading && advertisements.length === 0 && (
+                <EmptyState
+                  icon={Search}
+                  title={t("search.noResult")}
+                  description={t("search.noResultHint")}
+                  actionLabel={t("nav.searchNow")}
+                  actionTo="/search"
+                />
+              )}
+
+              {/* Pagination hidden - only show first page of 20 items */}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <FloatingCallButton />
+      <Footer />
     </div>
   );
 };
