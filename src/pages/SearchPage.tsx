@@ -170,6 +170,7 @@ const SearchPage = () => {
       geoBounds?.swLat,
     ],
     queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
+    enabled: isGeoReady,
   });
 
   // Response is { items: MapLocationGroup[], pagination } - flatten ads from location groups
