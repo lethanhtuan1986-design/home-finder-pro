@@ -15,7 +15,7 @@ import provinceService, { ProvinceItem } from "@/services/province.service";
 import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
-import { Search, Map as MapIcon, Loader2 } from "lucide-react";
+import { Search, Map as MapIcon, Loader2, SlidersHorizontal, ArrowUpDown, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,12 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { MiniMapPreview } from "@/components/MiniMapPreview";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const PAGE_SIZE = 20;
 
@@ -51,6 +57,7 @@ const SearchPage = () => {
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   // Debounce keyword
   useEffect(() => {
@@ -262,6 +269,18 @@ const SearchPage = () => {
     navigate(`/search/map?${params.toString()}`);
   };
 
+  const resetFilters = () => {
+    setProvinceId("");
+    setWardId("");
+    setApartmentTypeUuid("");
+    setPriceFrom("");
+    setPriceTo("");
+    setApartmentSizeFrom("");
+    setApartmentSizeTo("");
+    setKeyword("");
+    setAdvancedOpen(false);
+  };
+
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
     if (totalPages <= 7) {
@@ -278,101 +297,213 @@ const SearchPage = () => {
     return pages;
   };
 
-  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid].filter(Boolean).length;
+  const activeFilterCount = [provinceId, wardId, apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid].filter(Boolean).length;
+
+  // Active filter chips
+  const activeChips: { label: string; onRemove: () => void }[] = [];
+  if (provinceId) {
+    const p = provinces.find((p) => p.code === provinceId);
+    if (p) activeChips.push({ label: p.fullName, onRemove: () => { setProvinceId(""); setWardId(""); } });
+  }
+  if (apartmentTypeUuid) {
+    const at = apartmentTypes.find((a) => a.uuid === apartmentTypeUuid);
+    if (at) activeChips.push({ label: at.name, onRemove: () => setApartmentTypeUuid("") });
+  }
+  if (selectedPriceUuid) {
+    const fp = filterPrices.find((f) => f.uuid === selectedPriceUuid);
+    if (fp) activeChips.push({ label: fp.name, onRemove: () => { setPriceFrom(""); setPriceTo(""); } });
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col pt-16">
       <SEO title={t("search.title")} description={t("search.desc")} />
       <Navbar />
 
-      {/* Sticky top search bar */}
+      {/* Sticky toolbar */}
       <div className="sticky top-16 z-40 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[160px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.keyword")}</label>
-              <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder={t("search.keywordPlaceholder")}
-                  className="custom-input w-full pl-9"
-                />
-              </div>
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-2">
+          {/* Search bar row */}
+          <div className="flex gap-2 items-center">
+            <div className="flex-1 relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder={t("search.keywordPlaceholder")}
+                className="custom-input w-full pl-9 h-11"
+              />
             </div>
-            <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.area")}</label>
+
+            {/* 3 toolbar buttons */}
+            <button
+              onClick={goToMapView}
+              className="h-11 px-4 rounded-xl border border-border bg-card text-sm font-medium text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
+            >
+              <MapIcon size={16} />
+              <span className="hidden sm:inline">{t("search.map")}</span>
+            </button>
+
+            <button
+              onClick={() => setAdvancedOpen(true)}
+              className={cn(
+                "relative h-11 px-4 rounded-xl border text-sm font-medium transition-colors flex items-center gap-2 whitespace-nowrap",
+                activeFilterCount > 0
+                  ? "bg-primary/10 text-primary border-primary/20"
+                  : "border-border bg-card text-foreground hover:bg-secondary"
+              )}
+            >
+              <SlidersHorizontal size={16} />
+              <span className="hidden sm:inline">{t("search.advanced")}</span>
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Active filter chips + count */}
+          <div className="flex items-center gap-2 overflow-x-auto thin-scrollbar">
+            {activeChips.map((chip, i) => (
+              <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium whitespace-nowrap">
+                {chip.label}
+                <button onClick={chip.onRemove} className="hover:text-primary/70">
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+            <span className="text-sm text-muted-foreground whitespace-nowrap ml-auto">
+              {totalCount} {t("search.found")}
+              {loading && <Loader2 size={14} className="inline-block ml-1 animate-spin" />}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Advanced filters dialog */}
+      <Dialog open={advancedOpen} onOpenChange={setAdvancedOpen}>
+        <DialogContent className="sm:max-w-lg rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>{t("search.advancedFilters")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("search.area")}</label>
               <Select
                 value={provinceId || "__all__"}
-                onValueChange={(val) => {
-                  setProvinceId(val === "__all__" ? "" : val);
-                  setWardId("");
-                }}
+                onValueChange={(val) => { setProvinceId(val === "__all__" ? "" : val); setWardId(""); }}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-11">
                   <SelectValue placeholder={t("search.all")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__all__">{t("search.all")}</SelectItem>
                   {provinces.map((p) => (
-                    <SelectItem key={p.code} value={p.code}>
-                      {p.fullName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("hero.ward")}</label>
-              <Select
-                value={wardId || "__all__"}
-                onValueChange={(val) => setWardId(val === "__all__" ? "" : val)}
-                disabled={!provinceId || (wardsLoading && wards.length === 0)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue
-                    placeholder={
-                      !provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("search.all")
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__all__">{t("search.all")}</SelectItem>
-                  {wards.map((w) => (
-                    <SelectItem key={w.code} value={w.code}>
-                      {w.fullName}
-                    </SelectItem>
+                    <SelectItem key={p.code} value={p.code}>{p.fullName}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Result count */}
-            <div className="flex items-center gap-2 shrink-0">
-              <p className="text-sm text-muted-foreground whitespace-nowrap">
-                {totalCount} {t("search.found")}
-              </p>
-              {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("hero.ward")}</label>
+              <Select
+                value={wardId || "__all__"}
+                onValueChange={(val) => setWardId(val === "__all__" ? "" : val)}
+                disabled={!provinceId}
+              >
+                <SelectTrigger className="w-full h-11">
+                  <SelectValue placeholder={!provinceId ? t("hero.selectAreaFirst") : t("search.all")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t("search.all")}</SelectItem>
+                  {wards.map((w) => (
+                    <SelectItem key={w.code} value={w.code}>{w.fullName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("hero.roomType")}</label>
+              <Select
+                value={apartmentTypeUuid || "__all__"}
+                onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
+              >
+                <SelectTrigger className="w-full h-11">
+                  <SelectValue placeholder={t("hero.allTypes")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                  {apartmentTypes.map((at) => (
+                    <SelectItem key={at.uuid} value={at.uuid}>{at.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("hero.priceRange")}</label>
+              <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
+                <SelectTrigger className="w-full h-11">
+                  <SelectValue placeholder={t("hero.allPrices")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
+                  {filterPrices.map((fp) => (
+                    <SelectItem key={fp.uuid} value={fp.uuid}>{fp.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("hero.areaSize")}</label>
+              <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
+                <SelectTrigger className="w-full h-11">
+                  <SelectValue placeholder={t("hero.allSizes")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
+                  {filterApartmentSizes.map((fs) => (
+                    <SelectItem key={fs.uuid} value={fs.uuid}>{fs.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={resetFilters}
+                className="flex-1 h-11 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:bg-secondary transition-colors"
+              >
+                {t("search.reset")}
+              </button>
+              <button
+                onClick={() => setAdvancedOpen(false)}
+                className="flex-1 h-11 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                {t("search.apply")}
+              </button>
             </div>
           </div>
-        </div>
-      </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Main content: sidebar + list */}
       <div className="flex-1">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex gap-4">
-            {/* Left sidebar - hidden on mobile */}
-            <aside className="hidden lg:block w-[260px] shrink-0">
-              <div className="sticky top-[calc(4rem+4.5rem)] space-y-5">
-                {/* Mini Map */}
+            {/* Left sidebar - map + ad banner */}
+            <aside className="hidden lg:block w-[300px] shrink-0">
+              <div className="sticky top-[calc(4rem+7rem)] space-y-5">
+                {/* Map preview - wider */}
                 <div
                   className="rounded-xl overflow-hidden border border-border cursor-pointer group"
                   onClick={goToMapView}
                   title={t("search.openMapView")}
                 >
-                  <div className="h-[180px] relative">
+                  <div className="h-[220px] relative">
                     <MiniMapPreview locations={mapLocations} loading={mapLoading} />
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors flex items-center justify-center">
                       <span className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-lg group-hover:scale-105 transition-transform">
@@ -383,75 +514,23 @@ const SearchPage = () => {
                   </div>
                 </div>
 
-                {/* Room type filter */}
-                {apartmentTypes.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                      {t("hero.roomType")}
-                    </p>
-                    <div className="flex flex-col gap-1.5">
-                      {apartmentTypes.map((at) => (
-                        <button
-                          key={at.uuid}
-                          onClick={() => setApartmentTypeUuid((prev) => (prev === at.uuid ? "" : at.uuid))}
-                          className={cn(
-                            "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
-                            apartmentTypeUuid === at.uuid
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "border-border bg-background text-foreground hover:bg-secondary",
-                          )}
-                        >
-                          {at.name}
-                        </button>
-                      ))}
-                    </div>
+                {/* Ad banner placeholder */}
+                <div className="rounded-xl border border-border overflow-hidden bg-gradient-to-b from-primary/5 to-primary/10 p-5 text-center space-y-3">
+                  <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                    <img src="/images/logo.svg" alt="XanhStay" className="h-7" />
                   </div>
-                )}
-
-                {/* Price filter */}
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    {t("hero.priceRange")}
+                  <p className="text-sm font-semibold text-foreground">Thanh toán trước, giảm ngay!</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Trả trước 6 tháng giảm <span className="text-primary font-bold">3%</span> • 12 tháng giảm <span className="text-primary font-bold">5%</span>
                   </p>
-                  <div className="flex flex-col gap-1.5">
-                    {filterPrices.map((fp) => (
-                      <button
-                        key={fp.uuid}
-                        onClick={() => handlePriceSelect(fp.uuid)}
-                        className={cn(
-                          "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
-                          selectedPriceUuid === fp.uuid
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "border-border bg-background text-foreground hover:bg-secondary",
-                        )}
-                      >
-                        {fp.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Size filter */}
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    {t("hero.areaSize")}
-                  </p>
-                  <div className="flex flex-col gap-1.5">
-                    {filterApartmentSizes.map((fs) => (
-                      <button
-                        key={fs.uuid}
-                        onClick={() => handleSizeSelect(fs.uuid)}
-                        className={cn(
-                          "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
-                          selectedSizeUuid === fs.uuid
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "border-border bg-background text-foreground hover:bg-secondary",
-                        )}
-                      >
-                        {fs.name}
-                      </button>
-                    ))}
-                  </div>
+                  <a
+                    href="https://apps.apple.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 transition-colors"
+                  >
+                    Tải ứng dụng
+                  </a>
                 </div>
               </div>
             </aside>
@@ -472,7 +551,7 @@ const SearchPage = () => {
                     value={apartmentTypeUuid || "__all__"}
                     onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
                   >
-                    <SelectTrigger className="w-auto shrink-0">
+                    <SelectTrigger className="w-auto shrink-0 h-11">
                       <SelectValue placeholder={t("hero.roomType")} />
                     </SelectTrigger>
                     <SelectContent>
@@ -486,7 +565,7 @@ const SearchPage = () => {
                   </Select>
                 )}
                 <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
-                  <SelectTrigger className="w-auto shrink-0">
+                  <SelectTrigger className="w-auto shrink-0 h-11">
                     <SelectValue placeholder={t("hero.priceRange")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -494,19 +573,6 @@ const SearchPage = () => {
                     {filterPrices.map((fp) => (
                       <SelectItem key={fp.uuid} value={fp.uuid}>
                         {fp.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
-                  <SelectTrigger className="w-auto shrink-0">
-                    <SelectValue placeholder={t("hero.areaSize")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
-                    {filterApartmentSizes.map((fs) => (
-                      <SelectItem key={fs.uuid} value={fs.uuid}>
-                        {fs.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
