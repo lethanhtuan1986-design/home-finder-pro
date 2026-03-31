@@ -6,6 +6,7 @@ import { TopPromoBanner } from "@/components/TopPromoBanner";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { FloatingCallButton } from "@/components/FloatingCallButton";
+import { AdBannersSection } from "@/components/AdBannersSection";
 
 import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
@@ -127,6 +128,7 @@ const Index = () => {
       <TopPromoBanner />
       <Navbar />
       <HeroSearch />
+      <AdBannersSection />
 
       {/* Listings */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
