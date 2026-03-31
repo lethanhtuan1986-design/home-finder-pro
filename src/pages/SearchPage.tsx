@@ -380,6 +380,28 @@ const SearchPage = () => {
               </Select>
             </div>
 
+            {apartmentTypes.length > 0 && (
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">{t("hero.roomType")}</label>
+                <Select
+                  value={apartmentTypeUuid || "__all__"}
+                  onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
+                >
+                  <SelectTrigger className="w-full h-11">
+                    <SelectValue placeholder={t("hero.allTypes")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                    {apartmentTypes.map((at) => (
+                      <SelectItem key={at.uuid} value={at.uuid}>
+                        {at.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">{t("hero.priceRange")}</label>
               <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
