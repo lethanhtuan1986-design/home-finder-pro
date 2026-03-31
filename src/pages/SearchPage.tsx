@@ -254,11 +254,11 @@ const SearchPage = () => {
       <SEO title={t("search.title")} description={t("search.desc")} />
       <Navbar />
 
-      {/* Sticky top search & filter bar */}
+      {/* Sticky top search & filter bar - single row */}
       <div className="sticky top-16 z-40 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-2">
-          {/* Row 1: keyword + quick filters */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-wrap gap-2 items-center">
+            {/* Search input */}
             <div className="flex-1 min-w-[200px] max-w-md relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -269,67 +269,9 @@ const SearchPage = () => {
               />
             </div>
 
-            {/* Quick filter dropdowns */}
-            {apartmentTypes.length > 0 && (
-              <Select
-                value={apartmentTypeUuid || "__all__"}
-                onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
-              >
-                <SelectTrigger className="w-auto shrink-0 h-11">
-                  <SelectValue placeholder={t("hero.roomType")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
-                  {apartmentTypes.map((at) => (
-                    <SelectItem key={at.uuid} value={at.uuid}>
-                      {at.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-
-            <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
-              <SelectTrigger className="w-auto shrink-0 h-11">
-                <SelectValue placeholder={t("hero.priceRange")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
-                {filterPrices.map((fp) => (
-                  <SelectItem key={fp.uuid} value={fp.uuid}>
-                    {fp.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
-              <SelectTrigger className="w-auto shrink-0 h-11">
-                <SelectValue placeholder={t("hero.areaSize")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
-                {filterApartmentSizes.map((fs) => (
-                  <SelectItem key={fs.uuid} value={fs.uuid}>
-                    {fs.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Row 2: toolbar buttons + result count */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={goToMapView}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-colors h-9"
-            >
-              <MapIcon size={16} />
-              {t("search.map")}
-            </button>
-
+            {/* Sort */}
             <Select value={typeOrder} onValueChange={setTypeOrder}>
-              <SelectTrigger className="w-auto shrink-0 h-9 text-sm">
+              <SelectTrigger className="w-auto shrink-0 h-11 text-sm">
                 <div className="flex items-center gap-1.5">
                   <ArrowUpDown size={14} />
                   <SelectValue />
@@ -344,17 +286,18 @@ const SearchPage = () => {
               </SelectContent>
             </Select>
 
+            {/* Advanced filter */}
             <button
               onClick={() => setAdvancedOpen(true)}
               className={cn(
-                "relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors h-9",
+                "relative flex items-center gap-1.5 px-3 rounded-lg text-sm font-medium transition-colors h-11",
                 activeFilterCount > 0
                   ? "bg-primary/10 text-primary border border-primary/20"
                   : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
               )}
             >
-              <SlidersHorizontal size={14} />
-              {t("hero.advancedFilters")}
+              <SlidersHorizontal size={16} />
+              <span className="hidden sm:inline">{t("hero.advancedFilters")}</span>
               {activeFilterCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
                   {activeFilterCount}
@@ -362,6 +305,16 @@ const SearchPage = () => {
               )}
             </button>
 
+            {/* Map button */}
+            <button
+              onClick={goToMapView}
+              className="flex items-center gap-1.5 px-3 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-colors h-11"
+            >
+              <MapIcon size={16} />
+              <span className="hidden sm:inline">{t("search.map")}</span>
+            </button>
+
+            {/* Result count */}
             <div className="flex items-center gap-2 ml-auto shrink-0">
               <p className="text-sm text-foreground font-medium whitespace-nowrap">
                 {totalCount} {t("search.found")}
@@ -427,6 +380,28 @@ const SearchPage = () => {
               </Select>
             </div>
 
+            {apartmentTypes.length > 0 && (
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">{t("hero.roomType")}</label>
+                <Select
+                  value={apartmentTypeUuid || "__all__"}
+                  onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
+                >
+                  <SelectTrigger className="w-full h-11">
+                    <SelectValue placeholder={t("hero.allTypes")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
+                    {apartmentTypes.map((at) => (
+                      <SelectItem key={at.uuid} value={at.uuid}>
+                        {at.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">{t("hero.priceRange")}</label>
               <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
@@ -477,7 +452,7 @@ const SearchPage = () => {
           <div className="flex gap-4">
             {/* Left sidebar: Map + Ad banner */}
             <aside className="hidden lg:block w-[260px] shrink-0">
-              <div className="sticky top-[calc(4rem+7.5rem)] space-y-5">
+              <div className="sticky top-[calc(4rem+5rem)] space-y-5">
                 {/* Mini Map */}
                 <div
                   className="rounded-xl overflow-hidden border border-border cursor-pointer group"
