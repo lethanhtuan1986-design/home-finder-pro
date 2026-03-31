@@ -146,6 +146,7 @@ export interface GetListAdvertisementRequest {
   page?: number;
   pageSize?: number;
   typeFinding?: number;
+  typeOrder?: number;
   parentApartmentUuid?: string;
   apartmentCode?: string;
   apartmentUuid?: string;
@@ -160,6 +161,7 @@ export interface GetListAdvertisementRequest {
   provinceId?: string;
   wardId?: string;
   address?: string;
+  isHot?: number;
 }
 
 export interface GetSimilarAdvertisementRequest {
