@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, Megaphone } from 'lucide-react';
 
 const promoMessages = [
@@ -7,14 +7,46 @@ const promoMessages = [
   "🏠 Đăng phòng miễn phí trên XanhStay — Tiếp cận hàng nghìn người thuê!",
 ];
 
-export const TopPromoBanner = () => {
+interface TopPromoBannerProps {
+  onHeightChange?: (height: number) => void;
+}
+
+export const TopPromoBanner = ({ onHeightChange }: TopPromoBannerProps) => {
   const [visible, setVisible] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  if (!visible) return null;
+  // Auto-rotate messages
+  useEffect(() => {
+    if (!visible) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % promoMessages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [visible]);
+
+  // Measure and report height
+  const measuredRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node) {
+        onHeightChange?.(node.getBoundingClientRect().height);
+      } else {
+        onHeightChange?.(0);
+      }
+    },
+    [onHeightChange]
+  );
+
+  if (!visible) {
+    // Report 0 when hidden
+    useEffect(() => { onHeightChange?.(0); }, [onHeightChange]);
+    return null;
+  }
 
   return (
-    <div className="bg-primary text-primary-foreground text-xs sm:text-sm relative z-[60]">
+    <div
+      ref={measuredRef}
+      className="bg-primary text-primary-foreground text-xs sm:text-sm relative z-[60]"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-2 py-2">
         <Megaphone size={14} className="shrink-0 opacity-80" />
         <p className="text-center font-medium truncate">
