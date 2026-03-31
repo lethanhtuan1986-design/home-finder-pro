@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { FloatingCallButton } from '@/components/FloatingCallButton';
 
 import { SEO } from '@/components/SEO';
 import { AdvertisementCard } from '@/components/AdvertisementCard';
