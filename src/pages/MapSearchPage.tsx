@@ -86,7 +86,7 @@ const MapSearchPage = () => {
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedKeyword(keyword), 500);
+    const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
     return () => clearTimeout(timer);
   }, [keyword]);
 
