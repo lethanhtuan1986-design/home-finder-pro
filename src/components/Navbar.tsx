@@ -5,11 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
 
-interface NavbarProps {
-  topOffset?: number;
-}
-
-export const Navbar = ({ topOffset = 0 }: NavbarProps) => {
+export const Navbar = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
@@ -32,12 +28,13 @@ export const Navbar = ({ topOffset = 0 }: NavbarProps) => {
     { to: '/policy?tab=about', label: t('nav.about'), icon: Building2 },
   ];
 
+  // On homepage: fully transparent at top, solid with blur on scroll
+  // On other pages: always solid
   const isTransparent = isHome && !scrolled;
 
   return (
     <nav
-      style={{ top: `${topOffset}px` }}
-      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isTransparent
           ? 'bg-transparent'
           : 'bg-card/90 backdrop-blur-xl border-b border-border shadow-sm'
