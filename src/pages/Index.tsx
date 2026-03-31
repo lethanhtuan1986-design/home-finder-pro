@@ -6,6 +6,7 @@ import { TopPromoBanner } from "@/components/TopPromoBanner";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { FloatingCallButton } from "@/components/FloatingCallButton";
+import { AdBannersSection } from "@/components/AdBannersSection";
 
 import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
