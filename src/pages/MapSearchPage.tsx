@@ -171,7 +171,13 @@ const MapSearchPage = () => {
     if (priceTo) req.priceTo = Number(priceTo);
     if (apartmentSizeFrom) req.apartmentSizeFrom = Number(apartmentSizeFrom);
     if (apartmentSizeTo) req.apartmentSizeTo = Number(apartmentSizeTo);
-    if (bounds) {
+    // If keyword search, use geocoded bounds; otherwise use map viewport bounds
+    if (debouncedKeyword && geoBounds) {
+      req.neLat = geoBounds.neLat;
+      req.neLng = geoBounds.neLng;
+      req.swLat = geoBounds.swLat;
+      req.swLng = geoBounds.swLng;
+    } else if (!debouncedKeyword && bounds) {
       req.neLat = bounds.neLat;
       req.neLng = bounds.neLng;
       req.swLat = bounds.swLat;
@@ -179,6 +185,9 @@ const MapSearchPage = () => {
     }
     return req;
   };
+
+  // Only fetch after geocoding completes (or if no keyword)
+  const isGeoReady = !debouncedKeyword || (!isGeocoding && geoBounds !== undefined);
 
   const { data: mapData, isLoading: mapLoading } = useQuery({
     queryKey: [
@@ -193,11 +202,14 @@ const MapSearchPage = () => {
       apartmentSizeTo,
       bounds?.neLat,
       bounds?.swLat,
+      geoBounds?.neLat,
+      geoBounds?.swLat,
     ],
     queryFn: () =>
       httpRequest({
         http: advertisementService.getForMap(buildMapRequest()),
       }),
+    enabled: isGeoReady,
   });
 
   const mapLocations = useMemo(() => {
