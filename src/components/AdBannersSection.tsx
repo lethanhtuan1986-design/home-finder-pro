@@ -45,11 +45,11 @@ export const AdBannersSection = () => (
             height={512}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-            <h3 className="text-lg font-bold mb-1">{b.title}</h3>
-            <p className="text-sm text-white/80 mb-3">{b.description}</p>
-            <span className="inline-flex items-center gap-1 text-sm font-semibold text-white group-hover:underline">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/5" />
+          <div className="absolute bottom-0 left-0 right-0 p-5">
+            <h3 className="text-lg font-bold mb-1 text-white drop-shadow-md">{b.title}</h3>
+            <p className="text-sm text-white/90 mb-3 drop-shadow-sm">{b.description}</p>
+            <span className="inline-flex items-center gap-1 text-sm font-semibold text-white drop-shadow-sm group-hover:underline">
               {b.cta} <ArrowRight size={14} />
             </span>
           </div>
