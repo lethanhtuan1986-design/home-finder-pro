@@ -115,12 +115,15 @@ const SearchPage = () => {
   });
 
   // Geocode keyword for bounding box
-  const { data: geoBounds } = useQuery<GeoBounds | null>({
+  const { data: geoBounds, isFetching: isGeocoding } = useQuery<GeoBounds | null>({
     queryKey: ["geocode", debouncedKeyword],
     queryFn: () => geocodeKeyword(debouncedKeyword),
     enabled: !!debouncedKeyword,
     staleTime: 1000 * 60 * 10,
   });
+
+  // Only fetch ads after geocoding completes (or if no keyword)
+  const isGeoReady = !debouncedKeyword || (!isGeocoding && geoBounds !== undefined);
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = {
@@ -167,6 +170,7 @@ const SearchPage = () => {
       geoBounds?.swLat,
     ],
     queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
+    enabled: isGeoReady,
   });
 
   // Response is { items: MapLocationGroup[], pagination } - flatten ads from location groups
