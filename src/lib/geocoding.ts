@@ -22,11 +22,15 @@ export async function geocodeKeyword(keyword: string): Promise<GeoBounds | null>
     const data: NominatimResult[] = await res.json();
     if (!data || data.length === 0) return null;
     const [south, north, west, east] = data[0].boundingbox.map(Number);
+    const KM_BUFFER = 5;
+    const latBuffer = KM_BUFFER / 111;
+    const centerLat = (south + north) / 2;
+    const lngBuffer = KM_BUFFER / (111 * Math.cos((centerLat * Math.PI) / 180));
     return {
-      neLat: north,
-      neLng: east,
-      swLat: south,
-      swLng: west,
+      neLat: north + latBuffer,
+      neLng: east + lngBuffer,
+      swLat: south - latBuffer,
+      swLng: west - lngBuffer,
     };
   } catch {
     return null;
