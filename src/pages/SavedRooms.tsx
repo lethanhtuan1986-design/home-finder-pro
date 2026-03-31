@@ -22,8 +22,12 @@ const SavedRooms = () => {
     queryFn: () =>
       httpRequest({
         http: advertisementService.getListPaged({
-          isPaging: 0,
+          isPaging: 1,
+          page: 1,
+          pageSize: 20,
           adsLikeds: savedIds,
+          isHot: 0,
+          typeOrder: 0,
         }),
       }),
     enabled: savedIds.length > 0,
