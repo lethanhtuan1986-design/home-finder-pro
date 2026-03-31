@@ -477,7 +477,7 @@ const SearchPage = () => {
                   title={t("search.openMapView")}
                 >
                   <div className="h-[180px] relative">
-                    <MiniMapPreview locations={mapLocations} loading={mapLoading} />
+                    <MiniMapPreview locations={[]} loading={loading} />
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors flex items-center justify-center">
                       <span className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-lg group-hover:scale-105 transition-transform">
                         <MapIcon size={14} />
