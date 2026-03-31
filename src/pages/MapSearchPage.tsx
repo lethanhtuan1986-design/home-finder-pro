@@ -144,7 +144,7 @@ const MapSearchPage = () => {
   });
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
-    const req: GetAdvertisementsForMapRequest = { isPaging: 0, isHot: 0, typeOrder: 0 };
+    const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: 1, pageSize: 100, isHot: 0, typeOrder: 0 };
     if (debouncedKeyword) req.keyword = debouncedKeyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
@@ -153,12 +153,16 @@ const MapSearchPage = () => {
     if (priceTo) req.priceTo = Number(priceTo);
     if (apartmentSizeFrom) req.apartmentSizeFrom = Number(apartmentSizeFrom);
     if (apartmentSizeTo) req.apartmentSizeTo = Number(apartmentSizeTo);
+    if (bounds) {
+      req.neLat = bounds.neLat;
+      req.neLng = bounds.neLng;
+      req.swLat = bounds.swLat;
+      req.swLng = bounds.swLng;
+    }
     return req;
   };
 
-  const { data: mapLocations = [], isLoading: mapLoading } = useQuery<
-    MapLocationGroup[]
-  >({
+  const { data: mapData, isLoading: mapLoading } = useQuery({
     queryKey: [
       "map-advertisements",
       debouncedKeyword,
@@ -169,34 +173,43 @@ const MapSearchPage = () => {
       priceTo,
       apartmentSizeFrom,
       apartmentSizeTo,
+      bounds?.neLat,
+      bounds?.swLat,
     ],
     queryFn: () =>
       httpRequest({
-        isCatalog: true,
         http: advertisementService.getForMap(buildMapRequest()),
       }),
   });
 
-  // Filter ads by current map bounds (client-side bounding box filter)
-  const visibleAds = useMemo(() => {
-    if (!bounds) {
-      // No bounds yet, show all ads
-      return mapLocations.flatMap((loc) => loc.ads);
-    }
-    return mapLocations
-      .filter((loc) => {
-        const coords = parsePoint(loc.point);
-        if (!coords) return false;
-        const [lat, lng] = coords;
-        return (
-          lat >= bounds.swLat &&
-          lat <= bounds.neLat &&
-          lng >= bounds.swLng &&
-          lng <= bounds.neLng
-        );
-      })
-      .flatMap((loc) => loc.ads);
-  }, [mapLocations, bounds]);
+  const mapAds: AdvertisementData[] = useMemo(() => (mapData as any)?.items || [], [mapData]);
+
+  // Convert flat ads to location groups for MapView
+  const mapLocations = useMemo(() => {
+    const groups = new Map<string, { point: string; address: string; ads: AdvertisementData[] }>();
+    mapAds.forEach((ad) => {
+      const point = ad.apartmentUu?.point || (ad as any).point;
+      if (!point) return;
+      const key = point;
+      if (!groups.has(key)) {
+        groups.set(key, {
+          point,
+          address: ad.apartmentUu?.address || "",
+          ads: [],
+        });
+      }
+      groups.get(key)!.ads.push(ad);
+    });
+    return Array.from(groups.values()).map((g) => ({
+      point: g.point,
+      longitude: 0,
+      address: g.address,
+      totalAds: g.ads.length,
+      ads: g.ads,
+    }));
+  }, [mapAds]);
+
+  const visibleAds = mapAds;
 
   // Sync to URL
   useEffect(() => {
