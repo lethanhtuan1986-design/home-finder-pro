@@ -8,9 +8,8 @@ import { Footer } from "@/components/Footer";
 import { FloatingCallButton } from "@/components/FloatingCallButton";
 import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
 import advertisementService, {
-  GetListAdvertisementRequest,
   GetAdvertisementsForMapRequest,
-  MapLocationGroup,
+  AdvertisementData,
 } from "@/services/advertisement.service";
 import provinceService, { ProvinceItem } from "@/services/province.service";
 import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
@@ -22,6 +21,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MiniMapPreview } from "@/components/MiniMapPreview";
+import { geocodeKeyword, GeoBounds } from "@/lib/geocoding";
 import {
   Dialog,
   DialogContent,
