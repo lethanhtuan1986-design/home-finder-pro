@@ -34,7 +34,8 @@ export const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      style={{ top: 'var(--promo-banner-height, 0px)' }}
+      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
         isTransparent
           ? 'bg-transparent'
           : 'bg-card/90 backdrop-blur-xl border-b border-border shadow-sm'
