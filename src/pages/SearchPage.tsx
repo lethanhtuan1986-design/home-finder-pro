@@ -114,8 +114,16 @@ const SearchPage = () => {
       }),
   });
 
-  const buildRequest = (): GetListAdvertisementRequest => {
-    const req: GetListAdvertisementRequest = {
+  // Geocode keyword for bounding box
+  const { data: geoBounds } = useQuery<GeoBounds | null>({
+    queryKey: ["geocode", debouncedKeyword],
+    queryFn: () => geocodeKeyword(debouncedKeyword),
+    enabled: !!debouncedKeyword,
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const buildMapRequest = (): GetAdvertisementsForMapRequest => {
+    const req: GetAdvertisementsForMapRequest = {
       isPaging: 1,
       page: 1,
       pageSize: PAGE_SIZE,
@@ -130,19 +138,12 @@ const SearchPage = () => {
     if (priceTo) req.priceTo = Number(priceTo);
     if (apartmentSizeFrom) req.apartmentSizeFrom = Number(apartmentSizeFrom);
     if (apartmentSizeTo) req.apartmentSizeTo = Number(apartmentSizeTo);
-    return req;
-  };
-
-  const buildMapRequest = (): GetAdvertisementsForMapRequest => {
-    const req: GetAdvertisementsForMapRequest = { isPaging: 0, isHot: 0, typeOrder: Number(typeOrder) };
-    if (debouncedKeyword) req.keyword = debouncedKeyword;
-    if (provinceId) req.provinceId = provinceId;
-    if (wardId) req.wardId = wardId;
-    if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
-    if (priceFrom) req.priceFrom = Number(priceFrom);
-    if (priceTo) req.priceTo = Number(priceTo);
-    if (apartmentSizeFrom) req.apartmentSizeFrom = Number(apartmentSizeFrom);
-    if (apartmentSizeTo) req.apartmentSizeTo = Number(apartmentSizeTo);
+    if (geoBounds) {
+      req.neLat = geoBounds.neLat;
+      req.neLng = geoBounds.neLng;
+      req.swLat = geoBounds.swLat;
+      req.swLng = geoBounds.swLng;
+    }
     return req;
   };
 
@@ -152,7 +153,7 @@ const SearchPage = () => {
     error: queryError,
   } = useQuery({
     queryKey: [
-      "advertisements",
+      "advertisements-map",
       debouncedKeyword,
       provinceId,
       wardId,
@@ -162,27 +163,10 @@ const SearchPage = () => {
       apartmentSizeFrom,
       apartmentSizeTo,
       typeOrder,
+      geoBounds?.neLat,
+      geoBounds?.swLat,
     ],
-    queryFn: () => httpRequest({ http: advertisementService.getListPaged(buildRequest()) }),
-  });
-
-  const { data: mapLocations = [], isLoading: mapLoading } = useQuery<MapLocationGroup[]>({
-    queryKey: [
-      "map-advertisements",
-      debouncedKeyword,
-      provinceId,
-      wardId,
-      apartmentTypeUuid,
-      priceFrom,
-      priceTo,
-      apartmentSizeFrom,
-      apartmentSizeTo,
-    ],
-    queryFn: () =>
-      httpRequest({
-        isCatalog: true,
-        http: advertisementService.getForMap(buildMapRequest()),
-      }),
+    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
   });
 
   const advertisements = useMemo(() => (listData as any)?.items || [], [listData]);
