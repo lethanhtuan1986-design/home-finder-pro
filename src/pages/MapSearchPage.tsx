@@ -182,34 +182,12 @@ const MapSearchPage = () => {
       }),
   });
 
-  const mapAds: AdvertisementData[] = useMemo(() => (mapData as any)?.items || [], [mapData]);
-
-  // Convert flat ads to location groups for MapView
   const mapLocations = useMemo(() => {
-    const groups = new Map<string, { point: string; address: string; ads: AdvertisementData[] }>();
-    mapAds.forEach((ad) => {
-      const point = ad.apartmentUu?.point || (ad as any).point;
-      if (!point) return;
-      const key = point;
-      if (!groups.has(key)) {
-        groups.set(key, {
-          point,
-          address: ad.apartmentUu?.address || "",
-          ads: [],
-        });
-      }
-      groups.get(key)!.ads.push(ad);
-    });
-    return Array.from(groups.values()).map((g) => ({
-      point: g.point,
-      longitude: 0,
-      address: g.address,
-      totalAds: g.ads.length,
-      ads: g.ads,
-    }));
-  }, [mapAds]);
+    const items = (mapData as any)?.items || [];
+    return items as { point: string; longitude: number; address: string; totalAds: number; ads: AdvertisementData[] }[];
+  }, [mapData]);
 
-  const visibleAds = mapAds;
+  const visibleAds = useMemo(() => mapLocations.flatMap((loc) => loc.ads), [mapLocations]);
 
   // Sync to URL
   useEffect(() => {

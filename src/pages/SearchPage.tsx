@@ -169,8 +169,12 @@ const SearchPage = () => {
     queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
   });
 
-  const advertisements = useMemo(() => (listData as any)?.items || [], [listData]);
-  const totalCount = (listData as any)?.pagination?.totalCount ?? 0;
+  // Response is { items: MapLocationGroup[], pagination } - flatten ads from location groups
+  const advertisements = useMemo(() => {
+    const items = (listData as any)?.items || [];
+    return items.flatMap((loc: any) => loc.ads || []);
+  }, [listData]);
+  const totalCount = advertisements.length;
   const error = queryError ? t("search.serverError") : null;
 
   // Sync state to URL
