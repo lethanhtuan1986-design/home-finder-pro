@@ -434,6 +434,7 @@ const PropertyDetail = () => {
       <FloatingCallButton />
       <Footer />
     </div>
+  );
 };
 
 export default PropertyDetail;
