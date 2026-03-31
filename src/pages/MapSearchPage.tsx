@@ -90,6 +90,23 @@ const MapSearchPage = () => {
     return () => clearTimeout(timer);
   }, [keyword]);
 
+  // Geocoding: wait for bounding box before calling API
+  const [geoBounds, setGeoBounds] = useState<GeoBounds | null>(null);
+  const [isGeocoding, setIsGeocoding] = useState(false);
+
+  useEffect(() => {
+    if (!debouncedKeyword) {
+      setGeoBounds(null);
+      setIsGeocoding(false);
+      return;
+    }
+    setIsGeocoding(true);
+    geocodeKeyword(debouncedKeyword).then((result) => {
+      setGeoBounds(result);
+      setIsGeocoding(false);
+    });
+  }, [debouncedKeyword]);
+
   const selectedPriceUuid =
     filterPrices.find(
       (fp) =>
