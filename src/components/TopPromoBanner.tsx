@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { X, Megaphone } from 'lucide-react';
 
 const promoMessages = [
@@ -14,6 +14,7 @@ interface TopPromoBannerProps {
 export const TopPromoBanner = ({ onHeightChange }: TopPromoBannerProps) => {
   const [visible, setVisible] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
 
   // Auto-rotate messages
   useEffect(() => {
@@ -24,27 +25,22 @@ export const TopPromoBanner = ({ onHeightChange }: TopPromoBannerProps) => {
     return () => clearInterval(timer);
   }, [visible]);
 
-  // Measure and report height
-  const measuredRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (node) {
-        onHeightChange?.(node.getBoundingClientRect().height);
-      } else {
-        onHeightChange?.(0);
-      }
-    },
-    [onHeightChange]
-  );
+  // Report height changes
+  useEffect(() => {
+    if (!visible) {
+      onHeightChange?.(0);
+      return;
+    }
+    if (ref.current) {
+      onHeightChange?.(ref.current.getBoundingClientRect().height);
+    }
+  }, [visible, onHeightChange]);
 
-  if (!visible) {
-    // Report 0 when hidden
-    useEffect(() => { onHeightChange?.(0); }, [onHeightChange]);
-    return null;
-  }
+  if (!visible) return null;
 
   return (
     <div
-      ref={measuredRef}
+      ref={ref}
       className="bg-primary text-primary-foreground text-xs sm:text-sm relative z-[60]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-2 py-2">
