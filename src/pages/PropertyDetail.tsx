@@ -431,9 +431,9 @@ const PropertyDetail = () => {
       {/* Bottom padding for sticky bar on mobile */}
       <div className="h-20 lg:hidden" />
 
+      <FloatingCallButton />
       <Footer />
     </div>
-  );
 };
 
 export default PropertyDetail;
