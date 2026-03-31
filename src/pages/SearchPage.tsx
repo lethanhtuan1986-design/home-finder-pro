@@ -12,22 +12,14 @@ import advertisementService, {
   MapLocationGroup,
 } from "@/services/advertisement.service";
 import provinceService, { ProvinceItem } from "@/services/province.service";
-import apartmentTypeService, {
-  ApartmentTypeItem,
-} from "@/services/apartmentType.service";
+import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
 import { Search, Map as MapIcon, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Pagination,
   PaginationContent,
@@ -49,23 +41,13 @@ const SearchPage = () => {
   const listRef = useRef<HTMLDivElement>(null);
 
   // Filter states from URL
-  const [provinceId, setProvinceId] = useState(
-    searchParams.get("provinceId") || "",
-  );
+  const [provinceId, setProvinceId] = useState(searchParams.get("provinceId") || "");
   const [wardId, setWardId] = useState(searchParams.get("wardId") || "");
-  const [apartmentTypeUuid, setApartmentTypeUuid] = useState(
-    searchParams.get("apartmentTypeUuid") || "",
-  );
-  const [priceFrom, setPriceFrom] = useState(
-    searchParams.get("priceFrom") || "",
-  );
+  const [apartmentTypeUuid, setApartmentTypeUuid] = useState(searchParams.get("apartmentTypeUuid") || "");
+  const [priceFrom, setPriceFrom] = useState(searchParams.get("priceFrom") || "");
   const [priceTo, setPriceTo] = useState(searchParams.get("priceTo") || "");
-  const [apartmentSizeFrom, setApartmentSizeFrom] = useState(
-    searchParams.get("apartmentSizeFrom") || "",
-  );
-  const [apartmentSizeTo, setApartmentSizeTo] = useState(
-    searchParams.get("apartmentSizeTo") || "",
-  );
+  const [apartmentSizeFrom, setApartmentSizeFrom] = useState(searchParams.get("apartmentSizeFrom") || "");
+  const [apartmentSizeTo, setApartmentSizeTo] = useState(searchParams.get("apartmentSizeTo") || "");
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
@@ -77,17 +59,11 @@ const SearchPage = () => {
   }, [keyword]);
 
   const selectedPriceUuid =
-    filterPrices.find(
-      (fp) =>
-        String(fp.value || "") === priceFrom &&
-        String(fp.valueTo || "") === priceTo,
-    )?.uuid || "";
+    filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
 
   const selectedSizeUuid =
     filterApartmentSizes.find(
-      (fs) =>
-        String(fs.value || "") === apartmentSizeFrom &&
-        String(fs.valueTo || "") === apartmentSizeTo,
+      (fs) => String(fs.value || "") === apartmentSizeFrom && String(fs.valueTo || "") === apartmentSizeTo,
     )?.uuid || "";
 
   // API data
@@ -178,13 +154,10 @@ const SearchPage = () => {
       apartmentSizeTo,
       page,
     ],
-    queryFn: () =>
-      httpRequest({ http: advertisementService.getListPaged(buildRequest()) }),
+    queryFn: () => httpRequest({ http: advertisementService.getListPaged(buildRequest()) }),
   });
 
-  const { data: mapLocations = [], isLoading: mapLoading } = useQuery<
-    MapLocationGroup[]
-  >({
+  const { data: mapLocations = [], isLoading: mapLoading } = useQuery<MapLocationGroup[]>({
     queryKey: [
       "map-advertisements",
       debouncedKeyword,
@@ -203,10 +176,7 @@ const SearchPage = () => {
       }),
   });
 
-  const advertisements = useMemo(
-    () => (listData as any)?.items || [],
-    [listData],
-  );
+  const advertisements = useMemo(() => (listData as any)?.items || [], [listData]);
   const totalCount = (listData as any)?.pagination?.totalCount ?? 0;
   const totalPages = (listData as any)?.pagination?.totalPage ?? 1;
   const error = queryError ? t("search.serverError") : null;
@@ -219,16 +189,7 @@ const SearchPage = () => {
       return;
     }
     setPage(1);
-  }, [
-    debouncedKeyword,
-    provinceId,
-    wardId,
-    apartmentTypeUuid,
-    priceFrom,
-    priceTo,
-    apartmentSizeFrom,
-    apartmentSizeTo,
-  ]);
+  }, [debouncedKeyword, provinceId, wardId, apartmentTypeUuid, priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo]);
 
   // Sync state to URL
   useEffect(() => {
@@ -317,11 +278,7 @@ const SearchPage = () => {
     return pages;
   };
 
-  const activeFilterCount = [
-    apartmentTypeUuid,
-    selectedPriceUuid,
-    selectedSizeUuid,
-  ].filter(Boolean).length;
+  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid].filter(Boolean).length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col pt-16">
@@ -333,14 +290,9 @@ const SearchPage = () => {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-wrap gap-3 items-end">
             <div className="flex-1 min-w-[160px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {t("search.keyword")}
-              </label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.keyword")}</label>
               <div className="relative">
-                <Search
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
@@ -350,9 +302,7 @@ const SearchPage = () => {
               </div>
             </div>
             <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {t("search.area")}
-              </label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("search.area")}</label>
               <Select
                 value={provinceId || "__all__"}
                 onValueChange={(val) => {
@@ -374,9 +324,7 @@ const SearchPage = () => {
               </Select>
             </div>
             <div className="flex-1 min-w-[140px]">
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {t("hero.ward")}
-              </label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("hero.ward")}</label>
               <Select
                 value={wardId || "__all__"}
                 onValueChange={(val) => setWardId(val === "__all__" ? "" : val)}
@@ -385,11 +333,7 @@ const SearchPage = () => {
                 <SelectTrigger className="w-full">
                   <SelectValue
                     placeholder={
-                      !provinceId
-                        ? t("hero.selectAreaFirst")
-                        : wardsLoading
-                          ? t("search.loading")
-                          : t("search.all")
+                      !provinceId ? t("hero.selectAreaFirst") : wardsLoading ? t("search.loading") : t("search.all")
                     }
                   />
                 </SelectTrigger>
@@ -409,12 +353,7 @@ const SearchPage = () => {
               <p className="text-sm text-muted-foreground whitespace-nowrap">
                 {totalCount} {t("search.found")}
               </p>
-              {loading && (
-                <Loader2
-                  size={16}
-                  className="animate-spin text-muted-foreground"
-                />
-              )}
+              {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
             </div>
           </div>
         </div>
@@ -423,7 +362,7 @@ const SearchPage = () => {
       {/* Main content: sidebar + list */}
       <div className="flex-1">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex gap-6">
+          <div className="flex gap-4">
             {/* Left sidebar - hidden on mobile */}
             <aside className="hidden lg:block w-[260px] shrink-0">
               <div className="sticky top-[calc(4rem+4.5rem)] space-y-5">
@@ -434,10 +373,7 @@ const SearchPage = () => {
                   title={t("search.openMapView")}
                 >
                   <div className="h-[180px] relative">
-                    <MiniMapPreview
-                      locations={mapLocations}
-                      loading={mapLoading}
-                    />
+                    <MiniMapPreview locations={mapLocations} loading={mapLoading} />
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors flex items-center justify-center">
                       <span className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-lg group-hover:scale-105 transition-transform">
                         <MapIcon size={14} />
@@ -457,11 +393,7 @@ const SearchPage = () => {
                       {apartmentTypes.map((at) => (
                         <button
                           key={at.uuid}
-                          onClick={() =>
-                            setApartmentTypeUuid((prev) =>
-                              prev === at.uuid ? "" : at.uuid,
-                            )
-                          }
+                          onClick={() => setApartmentTypeUuid((prev) => (prev === at.uuid ? "" : at.uuid))}
                           className={cn(
                             "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
                             apartmentTypeUuid === at.uuid
@@ -538,17 +470,13 @@ const SearchPage = () => {
                 {apartmentTypes.length > 0 && (
                   <Select
                     value={apartmentTypeUuid || "__all__"}
-                    onValueChange={(val) =>
-                      setApartmentTypeUuid(val === "__all__" ? "" : val)
-                    }
+                    onValueChange={(val) => setApartmentTypeUuid(val === "__all__" ? "" : val)}
                   >
                     <SelectTrigger className="w-auto shrink-0">
                       <SelectValue placeholder={t("hero.roomType")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__all__">
-                        {t("hero.allTypes")}
-                      </SelectItem>
+                      <SelectItem value="__all__">{t("hero.allTypes")}</SelectItem>
                       {apartmentTypes.map((at) => (
                         <SelectItem key={at.uuid} value={at.uuid}>
                           {at.name}
@@ -557,17 +485,12 @@ const SearchPage = () => {
                     </SelectContent>
                   </Select>
                 )}
-                <Select
-                  value={selectedPriceUuid || "__all__"}
-                  onValueChange={handlePriceSelect}
-                >
+                <Select value={selectedPriceUuid || "__all__"} onValueChange={handlePriceSelect}>
                   <SelectTrigger className="w-auto shrink-0">
                     <SelectValue placeholder={t("hero.priceRange")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="__all__">
-                      {t("hero.allPrices")}
-                    </SelectItem>
+                    <SelectItem value="__all__">{t("hero.allPrices")}</SelectItem>
                     {filterPrices.map((fp) => (
                       <SelectItem key={fp.uuid} value={fp.uuid}>
                         {fp.name}
@@ -575,17 +498,12 @@ const SearchPage = () => {
                     ))}
                   </SelectContent>
                 </Select>
-                <Select
-                  value={selectedSizeUuid || "__all__"}
-                  onValueChange={handleSizeSelect}
-                >
+                <Select value={selectedSizeUuid || "__all__"} onValueChange={handleSizeSelect}>
                   <SelectTrigger className="w-auto shrink-0">
                     <SelectValue placeholder={t("hero.areaSize")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="__all__">
-                      {t("hero.allSizes")}
-                    </SelectItem>
+                    <SelectItem value="__all__">{t("hero.allSizes")}</SelectItem>
                     {filterApartmentSizes.map((fs) => (
                       <SelectItem key={fs.uuid} value={fs.uuid}>
                         {fs.name}
@@ -604,10 +522,7 @@ const SearchPage = () => {
               {loading && advertisements.length === 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                   {Array.from({ length: PAGE_SIZE }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="bg-card rounded-2xl overflow-hidden border border-border"
-                    >
+                    <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
                       <Skeleton className="aspect-[3/2] w-full" />
                       <div className="p-4 space-y-2">
                         <Skeleton className="h-4 w-3/4" />
@@ -647,10 +562,7 @@ const SearchPage = () => {
                       <PaginationItem>
                         <PaginationPrevious
                           onClick={() => page > 1 && handlePageChange(page - 1)}
-                          className={cn(
-                            page <= 1 && "pointer-events-none opacity-50",
-                            "cursor-pointer",
-                          )}
+                          className={cn(page <= 1 && "pointer-events-none opacity-50", "cursor-pointer")}
                         />
                       </PaginationItem>
                       {getPageNumbers().map((p, i) =>
@@ -672,14 +584,8 @@ const SearchPage = () => {
                       )}
                       <PaginationItem>
                         <PaginationNext
-                          onClick={() =>
-                            page < totalPages && handlePageChange(page + 1)
-                          }
-                          className={cn(
-                            page >= totalPages &&
-                              "pointer-events-none opacity-50",
-                            "cursor-pointer",
-                          )}
+                          onClick={() => page < totalPages && handlePageChange(page + 1)}
+                          className={cn(page >= totalPages && "pointer-events-none opacity-50", "cursor-pointer")}
                         />
                       </PaginationItem>
                     </PaginationContent>
