@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { PropertyGallery } from "@/components/PropertyGallery";
 import { ScheduleForm } from "@/components/ScheduleForm";
 import { DepositButton } from "@/components/DepositButton";
+import { FloatingCallButton } from "@/components/FloatingCallButton";
 import { SEO } from "@/components/SEO";
 import { useSavedRooms } from "@/hooks/useSavedRooms";
 import { useRecentRooms } from "@/hooks/useRecentRooms";
