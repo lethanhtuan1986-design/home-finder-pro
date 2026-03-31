@@ -99,6 +99,7 @@ export const HeroSearch = () => {
 
   const handleSearch = () => {
     const params = new URLSearchParams();
+    if (searchKeyword.trim()) params.set("q", searchKeyword.trim());
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
