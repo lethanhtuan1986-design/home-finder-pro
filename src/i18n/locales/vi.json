@@ -40,6 +40,10 @@
   "listing": {
     "featured": "Phòng nổi bật",
     "featuredSub": "Các phòng và căn hộ được đề xuất cho bạn",
+    "recommended": "Phòng đề xuất",
+    "recommendedSub": "Các phòng và căn hộ được đề xuất dành riêng cho bạn",
+    "latest": "Phòng mới cập nhật",
+    "latestSub": "Phòng vừa được đăng gần đây nhất",
     "viewAll": "Xem tất cả",
     "perMonth": "/tháng",
     "people": "người",
@@ -50,7 +54,9 @@
     "depositNotice": "Đặt cọc qua ứng dụng",
     "depositDownloadApp": "Để thực hiện đặt cọc, vui lòng tải ứng dụng XanhStay trên điện thoại.",
     "preDeposit": "Đặt cọc giữ chỗ",
-    "room": "Phòng"
+    "room": "Phòng",
+    "saveLabel": "Lưu tin",
+    "savedLabel": "Tin đã lưu"
   },
   "detail": {
     "back": "Quay lại",

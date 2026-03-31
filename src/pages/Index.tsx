@@ -1,8 +1,11 @@
 import { HeroSearch } from "@/components/HeroSearch";
 import { AdvertisementCard } from "@/components/AdvertisementCard";
 import { CoreValues } from "@/components/CoreValues";
+import { CustomerReviews } from "@/components/CustomerReviews";
+import { TopPromoBanner } from "@/components/TopPromoBanner";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { FloatingCallButton } from "@/components/FloatingCallButton";
 
 import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
@@ -19,10 +22,22 @@ import { ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useMemo, useState } from "react";
+
+/** Fisher-Yates shuffle */
+function shuffleArray<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 const Index = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<"recommended" | "latest">("recommended");
 
   const { data: apartmentTypesRaw = [] } = useQuery({
     queryKey: ["dropdown-apartment-type"],
@@ -40,21 +55,49 @@ const Index = () => {
       }),
   });
 
-  const { data: featuredData, isLoading: featuredLoading } = useQuery<{
+  // Phòng đề xuất (IsHot=1, shuffle)
+  const { data: recommendedData, isLoading: recommendedLoading } = useQuery<{
     items: AdvertisementData[];
   }>({
-    queryKey: ["featured-advertisements"],
+    queryKey: ["recommended-advertisements"],
     queryFn: () =>
       httpRequest({
         http: advertisementService.getListPaged({
           isPaging: 1,
           page: 1,
-          pageSize: 6,
+          pageSize: 20,
+          isHot: 1,
+          typeOrder: 0,
         }),
       }),
   });
 
-  const featuredAds = (featuredData?.items ?? []).filter(Boolean);
+  // Phòng mới cập nhật (future: Phòng có khuyến mại)
+  const { data: latestData, isLoading: latestLoading } = useQuery<{
+    items: AdvertisementData[];
+  }>({
+    queryKey: ["latest-advertisements"],
+    queryFn: () =>
+      httpRequest({
+        http: advertisementService.getListPaged({
+          isPaging: 1,
+          page: 1,
+          pageSize: 20,
+          isHot: 0,
+          typeOrder: 0,
+        }),
+      }),
+  });
+
+  // Shuffle recommended ads
+  const recommendedAds = useMemo(
+    () => shuffleArray((recommendedData?.items ?? []).filter(Boolean)),
+    [recommendedData]
+  );
+  const latestAds = (latestData?.items ?? []).filter(Boolean);
+
+  const currentAds = activeTab === "recommended" ? recommendedAds : latestAds;
+  const currentLoading = activeTab === "recommended" ? recommendedLoading : latestLoading;
 
   const handleFilterClick = (params: Record<string, string>) => {
     const searchParams = new URLSearchParams(params);
@@ -62,7 +105,7 @@ const Index = () => {
   };
 
   const quickFilters = [
-    ...apartmentTypesRaw.map((at) => ({
+    ...apartmentTypesRaw.map((at: ApartmentTypeItem) => ({
       label: at.name,
       params: { apartmentTypeUuid: at.uuid },
     })),
@@ -81,6 +124,7 @@ const Index = () => {
         title="XanhStay - Tìm phòng, căn hộ cho thuê"
         description="Nền tảng tìm phòng và căn hộ cho thuê thông minh tại Việt Nam."
       />
+      <TopPromoBanner />
       <Navbar />
       <HeroSearch />
 
@@ -88,8 +132,35 @@ const Index = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-end justify-between mb-6">
           <div>
-            <h2 className="section-title">{t("listing.featured")}</h2>
-            <p className="section-subtitle mt-1">{t("listing.featuredSub")}</p>
+            {/* Tabs: Phòng đề xuất / Phòng mới cập nhật */}
+            <div className="flex gap-1 bg-secondary rounded-xl p-1">
+              <button
+                onClick={() => setActiveTab("recommended")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  activeTab === "recommended"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("listing.recommended")}
+              </button>
+              {/* NOTE: This tab can be renamed to "Phòng có khuyến mại" in the future */}
+              <button
+                onClick={() => setActiveTab("latest")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  activeTab === "latest"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("listing.latest")}
+              </button>
+            </div>
+            <p className="section-subtitle mt-2">
+              {activeTab === "recommended"
+                ? t("listing.recommendedSub")
+                : t("listing.latestSub")}
+            </p>
           </div>
           <Link
             to="/search"
@@ -113,7 +184,7 @@ const Index = () => {
         </div>
 
         <div className="mt-6">
-          {featuredLoading ? (
+          {currentLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
@@ -132,7 +203,7 @@ const Index = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredAds.map((ad, i) => (
+              {currentAds.map((ad, i) => (
                 <AdvertisementCard key={ad.uuid} data={ad} index={i} />
               ))}
             </div>
@@ -148,7 +219,9 @@ const Index = () => {
         </div>
       </section>
 
+      <CustomerReviews />
       <CoreValues />
+      <FloatingCallButton />
       <Footer />
     </div>
   );
