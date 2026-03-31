@@ -122,7 +122,7 @@ const SearchPage = () => {
     staleTime: 1000 * 60 * 10,
   });
 
-  const buildMapRequest = (withBounds?: GeoBounds | null): GetAdvertisementsForMapRequest => {
+  const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = {
       isPaging: 1,
       page: 1,
@@ -138,72 +138,43 @@ const SearchPage = () => {
     if (priceTo) req.priceTo = Number(priceTo);
     if (apartmentSizeFrom) req.apartmentSizeFrom = Number(apartmentSizeFrom);
     if (apartmentSizeTo) req.apartmentSizeTo = Number(apartmentSizeTo);
-    if (withBounds) {
-      req.neLat = withBounds.neLat;
-      req.neLng = withBounds.neLng;
-      req.swLat = withBounds.swLat;
-      req.swLng = withBounds.swLng;
+    if (geoBounds) {
+      req.neLat = geoBounds.neLat;
+      req.neLng = geoBounds.neLng;
+      req.swLat = geoBounds.swLat;
+      req.swLng = geoBounds.swLng;
     }
     return req;
   };
 
-  // Query 1: without geo bounds (keyword-only search)
   const {
-    data: listDataNoBounds,
-    isLoading: loadingNoBounds,
-    error: errorNoBounds,
+    data: listData,
+    isLoading: loading,
+    error: queryError,
   } = useQuery({
     queryKey: [
-      "advertisements-map-no-bounds",
+      "advertisements-map",
       debouncedKeyword,
-      provinceId, wardId, apartmentTypeUuid,
-      priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo,
+      provinceId,
+      wardId,
+      apartmentTypeUuid,
+      priceFrom,
+      priceTo,
+      apartmentSizeFrom,
+      apartmentSizeTo,
       typeOrder,
+      geoBounds?.neLat,
+      geoBounds?.swLat,
     ],
     queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
   });
 
-  // Query 2: with geo bounds (only when geocoding returns results)
-  const {
-    data: listDataWithBounds,
-    isLoading: loadingWithBounds,
-    error: errorWithBounds,
-  } = useQuery({
-    queryKey: [
-      "advertisements-map-with-bounds",
-      debouncedKeyword,
-      provinceId, wardId, apartmentTypeUuid,
-      priceFrom, priceTo, apartmentSizeFrom, apartmentSizeTo,
-      typeOrder,
-      geoBounds?.neLat, geoBounds?.neLng, geoBounds?.swLat, geoBounds?.swLng,
-    ],
-    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest(geoBounds)) }),
-    enabled: !!geoBounds,
-  });
-
-  const loading = loadingNoBounds || (!!geoBounds && loadingWithBounds);
-
-  // Merge & deduplicate results from both queries
+  // Response is { items: MapLocationGroup[], pagination } - flatten ads from location groups
   const advertisements = useMemo(() => {
-    const flatten = (data: any) => {
-      const items = data?.items || [];
-      return items.flatMap((loc: any) => loc.ads || []);
-    };
-    const adsNoBounds: AdvertisementData[] = flatten(listDataNoBounds);
-    const adsWithBounds: AdvertisementData[] = geoBounds ? flatten(listDataWithBounds) : [];
-    // Deduplicate by uuid
-    const seen = new Set<string>();
-    const merged: AdvertisementData[] = [];
-    for (const ad of [...adsWithBounds, ...adsNoBounds]) {
-      if (!seen.has(ad.uuid)) {
-        seen.add(ad.uuid);
-        merged.push(ad);
-      }
-    }
-    return merged;
-  }, [listDataNoBounds, listDataWithBounds, geoBounds]);
+    const items = (listData as any)?.items || [];
+    return items.flatMap((loc: any) => loc.ads || []);
+  }, [listData]);
   const totalCount = advertisements.length;
-  const queryError = errorNoBounds || errorWithBounds;
   const error = queryError ? t("search.serverError") : null;
 
   // Sync state to URL
