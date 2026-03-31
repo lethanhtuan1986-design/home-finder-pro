@@ -452,7 +452,7 @@ const SearchPage = () => {
           <div className="flex gap-4">
             {/* Left sidebar: Map + Ad banner */}
             <aside className="hidden lg:block w-[260px] shrink-0">
-              <div className="sticky top-[calc(4rem+7.5rem)] space-y-5">
+              <div className="sticky top-[calc(4rem+5rem)] space-y-5">
                 {/* Mini Map */}
                 <div
                   className="rounded-xl overflow-hidden border border-border cursor-pointer group"
