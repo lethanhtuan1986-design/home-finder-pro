@@ -87,6 +87,7 @@ const SavedRooms = () => {
           />
         )}
       </div>
+      <FloatingCallButton />
       <Footer />
     </div>
   );
