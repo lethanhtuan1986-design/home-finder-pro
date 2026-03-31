@@ -213,7 +213,7 @@ export interface MapLocationGroup {
 }
 
 export interface GetAdvertisementsForMapResponse {
-  items: AdvertisementData[];
+  items: MapLocationGroup[];
   pagination: Pagination;
 }
 
