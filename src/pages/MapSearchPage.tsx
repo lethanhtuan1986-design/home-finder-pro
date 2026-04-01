@@ -84,6 +84,7 @@ const MapSearchPage = () => {
   );
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
+  const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
@@ -101,11 +102,11 @@ const MapSearchPage = () => {
       return;
     }
     setIsGeocoding(true);
-    geocodeKeyword(debouncedKeyword).then((result) => {
+    geocodeKeyword(debouncedKeyword, radiusKm).then((result) => {
       setGeoBounds(result);
       setIsGeocoding(false);
     });
-  }, [debouncedKeyword]);
+  }, [debouncedKeyword, radiusKm]);
 
   const selectedPriceUuid =
     filterPrices.find(
