@@ -126,8 +126,8 @@ const SearchPage = () => {
   // Only fetch ads after geocoding completes (or if no keyword)
   const isGeoReady = !debouncedKeyword || (!isGeocoding && geoBounds !== undefined);
 
-  const buildMapRequest = (): GetAdvertisementsForMapRequest => {
-    const req: GetAdvertisementsForMapRequest = {
+  const buildListRequest = (): GetListAdvertisementRequest => {
+    const req: GetListAdvertisementRequest = {
       isPaging: 1,
       page: 1,
       pageSize: PAGE_SIZE,
