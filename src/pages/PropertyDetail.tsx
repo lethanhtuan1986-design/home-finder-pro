@@ -271,7 +271,7 @@ const PropertyDetail = () => {
             )}
 
             {detail.adPrices && detail.adPrices.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="order-8 lg:order-none">
                 <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.serviceCost")}</h2>
                 <div className="border border-border rounded-xl overflow-hidden">
                   <table className="w-full text-sm">
