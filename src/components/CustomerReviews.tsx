@@ -120,12 +120,6 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
         </div>
       )}
 
-      {/* Apartment name */}
-      {review.apartmentUu?.name && (
-        <p className="text-xs text-primary font-medium truncate">
-          {review.apartmentUu.name}
-        </p>
-      )}
     </div>
   );
 };
