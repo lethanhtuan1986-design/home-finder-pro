@@ -9,17 +9,7 @@ const promoMessages = [
 
 export const TopPromoBanner = () => {
   const [visible, setVisible] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
-
-  // Rotate messages
-  useEffect(() => {
-    if (!visible) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((i) => (i + 1) % promoMessages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [visible]);
 
   // Set CSS variable for banner height so Navbar can offset itself
   useEffect(() => {
@@ -37,19 +27,25 @@ export const TopPromoBanner = () => {
 
   if (!visible) return null;
 
+  // Duplicate messages for seamless loop
+  const marqueeText = promoMessages.join('     ·     ');
+
   return (
     <div
       ref={ref}
-      className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-xs sm:text-sm"
+      className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-xs sm:text-sm overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-2 py-2">
-        <Megaphone size={14} className="shrink-0 opacity-80" />
-        <p className="text-center font-medium truncate">
-          {promoMessages[currentIndex]}
-        </p>
+      <div className="flex items-center py-2 px-2">
+        <Megaphone size={14} className="shrink-0 opacity-80 ml-2 mr-2" />
+        <div className="flex-1 overflow-hidden relative">
+          <div className="animate-marquee-promo whitespace-nowrap inline-block">
+            <span className="font-medium">{marqueeText}</span>
+            <span className="font-medium ml-16">{marqueeText}</span>
+          </div>
+        </div>
         <button
           onClick={() => setVisible(false)}
-          className="shrink-0 ml-2 p-0.5 rounded hover:bg-primary-foreground/20 transition-colors"
+          className="shrink-0 ml-2 mr-1 p-0.5 rounded hover:bg-primary-foreground/20 transition-colors"
           aria-label="Đóng"
         >
           <X size={14} />
