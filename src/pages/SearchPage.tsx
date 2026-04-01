@@ -53,24 +53,6 @@ const SearchPage = () => {
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
   const [geoBounds, setGeoBounds] = useState<GeoBounds | null>(null);
 
-  // Build enriched suffix for autocomplete (province/ward names)
-  const enrichSuffix = useMemo(() => {
-    const parts: string[] = [];
-    if (wardId) {
-      const ward = wards.find((w) => w.code === wardId);
-      if (ward) parts.push(ward.fullName);
-    }
-    if (provinceId) {
-      const province = provinces.find((p) => p.code === provinceId);
-      if (province) parts.push(province.fullName);
-    }
-    return parts.join(" ");
-  }, [provinceId, wardId, provinces, wards]);
-
-  const handleLocationSelect = useCallback((_result: any, bounds: GeoBounds) => {
-    setGeoBounds(bounds);
-  }, []);
-
   const selectedPriceUuid =
     filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
 
@@ -120,6 +102,24 @@ const SearchPage = () => {
       }),
   });
 
+  // Build enriched suffix for autocomplete (province/ward names)
+  const enrichSuffix = useMemo(() => {
+    const parts: string[] = [];
+    if (wardId) {
+      const ward = wards.find((w) => w.code === wardId);
+      if (ward) parts.push(ward.fullName);
+    }
+    if (provinceId) {
+      const province = provinces.find((p) => p.code === provinceId);
+      if (province) parts.push(province.fullName);
+    }
+    return parts.join(" ");
+  }, [provinceId, wardId, provinces, wards]);
+
+  const handleLocationSelect = useCallback((_result: any, bounds: GeoBounds) => {
+    setGeoBounds(bounds);
+  }, []);
+
   const buildListRequest = (): GetListAdvertisementRequest => {
     const req: GetListAdvertisementRequest = {
       isPaging: 1,
@@ -128,7 +128,7 @@ const SearchPage = () => {
       isHot: 0,
       typeOrder: Number(typeOrder),
     };
-    if (debouncedKeyword) req.keyword = debouncedKeyword;
+    if (keyword) req.keyword = keyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
     if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
@@ -152,7 +152,7 @@ const SearchPage = () => {
   } = useQuery({
     queryKey: [
       "advertisements-list",
-      debouncedKeyword,
+      keyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
@@ -165,7 +165,6 @@ const SearchPage = () => {
       geoBounds?.swLat,
     ],
     queryFn: () => httpRequest({ http: advertisementService.getListPaged(buildListRequest()) }),
-    enabled: isGeoReady,
   });
 
   const advertisements = useMemo(() => {
@@ -177,7 +176,7 @@ const SearchPage = () => {
   // Sync state to URL
   useEffect(() => {
     const params = new URLSearchParams();
-    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (keyword) params.set("q", keyword);
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
@@ -188,7 +187,7 @@ const SearchPage = () => {
     if (typeOrder !== "0") params.set("typeOrder", typeOrder);
     setSearchParams(params, { replace: true });
   }, [
-    debouncedKeyword,
+    keyword,
     provinceId,
     wardId,
     apartmentTypeUuid,
@@ -229,7 +228,7 @@ const SearchPage = () => {
   // Navigate to map view preserving all filters
   const goToMapView = () => {
     const params = new URLSearchParams();
-    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (keyword) params.set("q", keyword);
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
@@ -254,16 +253,17 @@ const SearchPage = () => {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           {/* Desktop: single row */}
           <div className="hidden md:flex flex-wrap gap-2 items-center">
-            {/* Search input */}
-            <div className="flex-1 min-w-[200px] max-w-md relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder={t("search.keywordPlaceholder")}
-                className="custom-input w-full pl-9 h-11"
-              />
-            </div>
+            {/* Search input with autocomplete */}
+            <LocationAutocomplete
+              value={keyword}
+              onChange={setKeyword}
+              onSelect={handleLocationSelect}
+              enrichSuffix={enrichSuffix}
+              radiusKm={radiusKm}
+              placeholder={t("search.keywordPlaceholder")}
+              className="flex-1 min-w-[200px] max-w-md"
+              inputClassName="h-11"
+            />
 
             {/* Sort */}
             <Select value={typeOrder} onValueChange={setTypeOrder}>
@@ -321,16 +321,17 @@ const SearchPage = () => {
 
           {/* Mobile: 3-row layout */}
           <div className="flex flex-col gap-3 md:hidden">
-            {/* Row 1: Search input full width */}
-            <div className="relative w-full">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder={t("search.keywordPlaceholder")}
-                className="custom-input w-full pl-9 h-12"
-              />
-            </div>
+            {/* Row 1: Search input full width with autocomplete */}
+            <LocationAutocomplete
+              value={keyword}
+              onChange={setKeyword}
+              onSelect={handleLocationSelect}
+              enrichSuffix={enrichSuffix}
+              radiusKm={radiusKm}
+              placeholder={t("search.keywordPlaceholder")}
+              className="w-full"
+              inputClassName="h-12"
+            />
 
             {/* Row 2: Sort + Map + Advanced filter - grid 3 cols */}
             <div className="grid grid-cols-3 gap-2">
@@ -613,8 +614,6 @@ const SearchPage = () => {
                   actionTo="/search"
                 />
               )}
-
-              {/* Pagination hidden - only show first page of 20 items */}
             </div>
           </div>
         </div>
