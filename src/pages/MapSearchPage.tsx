@@ -288,18 +288,14 @@ const MapSearchPage = () => {
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
           {t("search.keyword")}
         </label>
-        <div className="relative">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          />
-          <input
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder={t("search.keywordPlaceholder")}
-            className="custom-input w-full pl-9"
-          />
-        </div>
+        <LocationAutocomplete
+          value={keyword}
+          onChange={setKeyword}
+          onSelect={handleLocationSelect}
+          enrichSuffix={enrichSuffix}
+          radiusKm={radiusKm}
+          placeholder={t("search.keywordPlaceholder")}
+        />
       </div>
 
       {/* Province */}
