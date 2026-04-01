@@ -356,7 +356,7 @@ const PropertyDetail = () => {
 
             {/* Google Maps Embed */}
             {mapCoords && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="order-10 lg:order-none">
                 <h2 className="font-semibold text-lg mb-3 text-foreground flex items-center gap-2">
                   <MapPin size={18} className="text-primary" />
                   Bản đồ
