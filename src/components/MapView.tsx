@@ -9,6 +9,12 @@ import type { MapLocationGroup } from "@/services/advertisement.service";
 const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
 const DEFAULT_ZOOM = 13;
 
+interface FlyToTarget {
+  lat: number;
+  lng: number;
+  zoom: number;
+}
+
 interface SearchOverlay {
   centerLat: number;
   centerLng: number;
@@ -23,6 +29,7 @@ interface MapViewProps {
   onBoundsChange?: (bounds: { neLat: number; neLng: number; swLat: number; swLng: number }) => void;
   useGeolocation?: boolean;
   searchOverlay?: SearchOverlay | null;
+  flyTo?: FlyToTarget | null;
 }
 
 const parsePoint = (point: string): LatLngTuple | null => {
@@ -100,7 +107,7 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   `;
 };
 
-export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, searchOverlay }: MapViewProps) => {
+export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, searchOverlay, flyTo }: MapViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
@@ -245,6 +252,13 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
     // Auto fit bounds to circle
     map.fitBounds(circle.getBounds(), { padding: [40, 40], maxZoom: 15, animate: true });
   }, [searchOverlay]);
+
+  // Fly to a specific location (e.g. from Nominatim geocoding)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !flyTo) return;
+    map.flyTo([flyTo.lat, flyTo.lng], flyTo.zoom, { duration: 1.5 });
+  }, [flyTo]);
 
 
   const handleMyLocation = useCallback(() => {

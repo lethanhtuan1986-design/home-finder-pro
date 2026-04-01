@@ -162,6 +162,10 @@ export interface GetListAdvertisementRequest {
   wardId?: string;
   address?: string;
   isHot?: number;
+  neLat?: number;
+  neLng?: number;
+  swLat?: number;
+  swLng?: number;
 }
 
 export interface GetSimilarAdvertisementRequest {

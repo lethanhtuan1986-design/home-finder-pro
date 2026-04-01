@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { geocodeKeyword, GeoBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
+import { geocodeKeyword, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
@@ -56,13 +56,14 @@ const MapSearchPage = () => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  // Map bounding box state
+  // Map bounding box state (from viewport)
   const [bounds, setBounds] = useState<{
     neLat: number;
     neLng: number;
     swLat: number;
     swLng: number;
   } | null>(null);
+  const [debouncedBounds, setDebouncedBounds] = useState(bounds);
 
   // Filter states from URL
   const [provinceId, setProvinceId] = useState(
@@ -86,25 +87,27 @@ const MapSearchPage = () => {
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
+  // Debounce keyword input
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
     return () => clearTimeout(timer);
   }, [keyword]);
 
-  // Geocoding: wait for bounding box before calling API
-  const [geoBounds, setGeoBounds] = useState<GeoBounds | null>(null);
-  const [isGeocoding, setIsGeocoding] = useState(false);
+  // Debounce map viewport bounds (300ms)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedBounds(bounds), 300);
+    return () => clearTimeout(timer);
+  }, [bounds]);
+
+  // Geocoding: pan map to location when keyword changes
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
 
   useEffect(() => {
-    if (!debouncedKeyword) {
-      setGeoBounds(null);
-      setIsGeocoding(false);
-      return;
-    }
-    setIsGeocoding(true);
+    if (!debouncedKeyword) return;
     geocodeKeyword(debouncedKeyword, radiusKm).then((result) => {
-      setGeoBounds(result);
-      setIsGeocoding(false);
+      if (result) {
+        setMapCenter({ lat: result.centerLat, lng: result.centerLng, zoom: 14 });
+      }
     });
   }, [debouncedKeyword, radiusKm]);
 
@@ -172,23 +175,15 @@ const MapSearchPage = () => {
     if (priceTo) req.priceTo = Number(priceTo);
     if (apartmentSizeFrom) req.apartmentSizeFrom = Number(apartmentSizeFrom);
     if (apartmentSizeTo) req.apartmentSizeTo = Number(apartmentSizeTo);
-    // If keyword search, use geocoded bounds; otherwise use map viewport bounds
-    if (debouncedKeyword && geoBounds) {
-      req.neLat = geoBounds.neLat;
-      req.neLng = geoBounds.neLng;
-      req.swLat = geoBounds.swLat;
-      req.swLng = geoBounds.swLng;
-    } else if (!debouncedKeyword && bounds) {
-      req.neLat = bounds.neLat;
-      req.neLng = bounds.neLng;
-      req.swLat = bounds.swLat;
-      req.swLng = bounds.swLng;
+    // Always use current map viewport bounds
+    if (debouncedBounds) {
+      req.neLat = debouncedBounds.neLat;
+      req.neLng = debouncedBounds.neLng;
+      req.swLat = debouncedBounds.swLat;
+      req.swLng = debouncedBounds.swLng;
     }
     return req;
   };
-
-  // Only fetch after geocoding completes (or if no keyword)
-  const isGeoReady = !debouncedKeyword || (!isGeocoding && geoBounds !== undefined);
 
   const { data: mapData, isLoading: mapLoading } = useQuery({
     queryKey: [
@@ -201,16 +196,16 @@ const MapSearchPage = () => {
       priceTo,
       apartmentSizeFrom,
       apartmentSizeTo,
-      bounds?.neLat,
-      bounds?.swLat,
-      geoBounds?.neLat,
-      geoBounds?.swLat,
+      debouncedBounds?.neLat,
+      debouncedBounds?.swLat,
+      debouncedBounds?.neLng,
+      debouncedBounds?.swLng,
     ],
     queryFn: () =>
       httpRequest({
         http: advertisementService.getForMap(buildMapRequest()),
       }),
-    enabled: isGeoReady,
+    enabled: !!debouncedBounds,
   });
 
   const mapLocations = useMemo(() => {
@@ -549,7 +544,7 @@ const MapSearchPage = () => {
             loading={mapLoading && mapLocations.length === 0}
             onMarkerClick={(id) => navigate(`/advertisement/${id}`)}
             onBoundsChange={handleBoundsChange}
-            searchOverlay={debouncedKeyword && geoBounds ? { centerLat: geoBounds.centerLat, centerLng: geoBounds.centerLng, radiusKm } : null}
+            flyTo={mapCenter}
           />
 
           {/* Mobile: toggle list button */}
