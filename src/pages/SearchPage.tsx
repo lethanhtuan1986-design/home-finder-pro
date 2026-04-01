@@ -264,7 +264,8 @@ const SearchPage = () => {
       {/* Sticky top search & filter bar - single row */}
       <div className="sticky top-16 z-40 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-wrap gap-2 items-center">
+          {/* Desktop: single row */}
+          <div className="hidden md:flex flex-wrap gap-2 items-center">
             {/* Search input */}
             <div className="flex-1 min-w-[200px] max-w-md relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -304,7 +305,7 @@ const SearchPage = () => {
               )}
             >
               <SlidersHorizontal size={16} />
-              <span className="hidden sm:inline">{t("hero.advancedFilters")}</span>
+              <span>{t("hero.advancedFilters")}</span>
               {activeFilterCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
                   {activeFilterCount}
@@ -318,7 +319,7 @@ const SearchPage = () => {
               className="flex items-center gap-1.5 px-3 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-colors h-11"
             >
               <MapIcon size={16} />
-              <span className="hidden sm:inline">{t("search.map")}</span>
+              <span>{t("search.map")}</span>
             </button>
 
             {/* Result count */}
@@ -327,6 +328,76 @@ const SearchPage = () => {
                 {totalCount} {t("search.found")}
               </p>
               {loading && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
+            </div>
+          </div>
+
+          {/* Mobile: 3-row layout */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {/* Row 1: Search input full width */}
+            <div className="relative w-full">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder={t("search.keywordPlaceholder")}
+                className="custom-input w-full pl-9 h-12"
+              />
+            </div>
+
+            {/* Row 2: Sort + Map + Advanced filter - grid 3 cols */}
+            <div className="grid grid-cols-3 gap-2">
+              {/* Sort */}
+              <Select value={typeOrder} onValueChange={setTypeOrder}>
+                <SelectTrigger className="h-10 text-xs rounded-lg bg-secondary/50 border border-border">
+                  <div className="flex items-center justify-center gap-1">
+                    <ArrowUpDown size={14} />
+                    <span className="truncate">{SORT_OPTIONS.find(o => o.value === typeOrder)?.label || 'Sắp xếp'}</span>
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {SORT_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Map button */}
+              <button
+                onClick={goToMapView}
+                className="flex items-center justify-center gap-1.5 h-10 rounded-lg bg-secondary/50 border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+              >
+                <MapIcon size={14} />
+                <span>{t("search.map")}</span>
+              </button>
+
+              {/* Advanced filter */}
+              <button
+                onClick={() => setAdvancedOpen(true)}
+                className={cn(
+                  "relative flex items-center justify-center gap-1.5 h-10 rounded-lg text-sm font-medium transition-colors",
+                  activeFilterCount > 0
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "bg-secondary/50 border border-border text-foreground hover:bg-secondary",
+                )}
+              >
+                <SlidersHorizontal size={14} />
+                <span>{t("hero.advancedFilters")}</span>
+                {activeFilterCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Row 3: Result count */}
+            <div className="flex items-center gap-2 text-left">
+              <p className="text-sm text-muted-foreground font-medium">
+                {totalCount} {t("search.found")}
+              </p>
+              {loading && <Loader2 size={14} className="animate-spin text-muted-foreground" />}
             </div>
           </div>
         </div>

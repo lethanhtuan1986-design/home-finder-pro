@@ -123,9 +123,9 @@ export const HeroSearch = () => {
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
-      {/* Main filters - 2-row on mobile, single row on desktop */}
+      {/* Main filters - single row */}
       <div className="flex flex-col gap-2">
-        {/* Row 1: Province (desktop) + Input */}
+        {/* Row 1: Province (desktop) + Input + mobile icon buttons */}
         <div className="flex flex-row items-stretch gap-2">
           {/* Province select - desktop only */}
           {!isMobile && (
@@ -192,19 +192,19 @@ export const HeroSearch = () => {
           )}
         </div>
 
-        {/* Row 2: Mobile only - two buttons side by side with icon + text */}
+        {/* Mobile: filter + search icon buttons inline with input */}
         {isMobile && (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className={`relative flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-medium transition-colors ${
+              className={`relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors ${
                 showAdvanced
                   ? "bg-primary/10 text-primary border border-primary/20"
                   : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
               }`}
+              title={t("hero.advancedFilters")}
             >
-              <SlidersHorizontal size={16} />
-              <span>{t("hero.advancedFilters")}</span>
+              <SlidersHorizontal size={18} />
               {advancedFilterCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
                   {advancedFilterCount}
@@ -213,10 +213,9 @@ export const HeroSearch = () => {
             </button>
             <button
               onClick={handleSearch}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground w-11 h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center"
             >
-              <Search size={16} />
-              <span>{t("hero.searchBtn")}</span>
+              <Search size={18} />
             </button>
           </div>
         )}
