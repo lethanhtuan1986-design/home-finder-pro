@@ -171,7 +171,7 @@ const PropertyDetail = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8 mt-8">
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 flex flex-col">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
               <div className="flex items-start justify-between gap-4">
                 <div>
