@@ -432,6 +432,29 @@ const MapSearchPage = () => {
           ))}
         </div>
       </div>
+
+      {/* Radius */}
+      <div>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          Bán kính tìm kiếm
+        </p>
+        <div className="flex flex-col gap-1.5">
+          {RADIUS_OPTIONS.map((r) => (
+            <button
+              key={r.value}
+              onClick={() => setRadiusKm(r.value)}
+              className={cn(
+                "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                radiusKm === r.value
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border bg-background text-foreground hover:bg-secondary",
+              )}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
