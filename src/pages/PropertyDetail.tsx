@@ -330,7 +330,7 @@ const PropertyDetail = () => {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="order-3 lg:order-none">
               <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.contact")}</h2>
               <div className="flex items-center gap-4 bg-card border border-border rounded-xl p-4">
                 <Avatar className="h-12 w-12">
