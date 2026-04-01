@@ -170,7 +170,7 @@ const MapSearchPage = () => {
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: 1, pageSize: 100, isHot: 0, typeOrder: 0 };
-    if (debouncedKeyword) req.keyword = debouncedKeyword;
+    if (keyword) req.keyword = keyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
     if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
@@ -191,7 +191,7 @@ const MapSearchPage = () => {
   const { data: mapData, isLoading: mapLoading } = useQuery({
     queryKey: [
       "map-advertisements",
-      debouncedKeyword,
+      keyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
@@ -221,7 +221,7 @@ const MapSearchPage = () => {
   // Sync to URL
   useEffect(() => {
     const params = new URLSearchParams();
-    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (keyword) params.set("q", keyword);
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
@@ -231,7 +231,7 @@ const MapSearchPage = () => {
     if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
     setSearchParams(params, { replace: true });
   }, [
-    debouncedKeyword,
+    keyword,
     provinceId,
     wardId,
     apartmentTypeUuid,
