@@ -25,29 +25,37 @@ export const RADIUS_OPTIONS = [
 
 export const DEFAULT_RADIUS_KM = 5;
 
-export async function geocodeKeyword(keyword: string, radiusKm: number = DEFAULT_RADIUS_KM): Promise<GeoBounds | null> {
-  if (!keyword.trim()) return null;
+export async function searchNominatim(keyword: string, limit: number = 5): Promise<NominatimResult[]> {
+  if (!keyword.trim()) return [];
   try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(keyword)}&format=json&limit=1&countrycodes=vn`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(keyword)}&format=json&limit=${limit}&countrycodes=vn`;
     const res = await fetch(url, {
       headers: { 'Accept-Language': 'vi' },
     });
-    const data: NominatimResult[] = await res.json();
-    if (!data || data.length === 0) return null;
-    const [south, north, west, east] = data[0].boundingbox.map(Number);
-    const latBuffer = radiusKm / 111;
-    const centerLat = (south + north) / 2;
-    const centerLng = (west + east) / 2;
-    const lngBuffer = radiusKm / (111 * Math.cos((centerLat * Math.PI) / 180));
-    return {
-      neLat: north + latBuffer,
-      neLng: east + lngBuffer,
-      swLat: south - latBuffer,
-      swLng: west - lngBuffer,
-      centerLat,
-      centerLng,
-    };
+    return await res.json();
   } catch {
-    return null;
+    return [];
   }
+}
+
+export function nominatimResultToBounds(result: NominatimResult, radiusKm: number = DEFAULT_RADIUS_KM): GeoBounds {
+  const [south, north, west, east] = result.boundingbox.map(Number);
+  const latBuffer = radiusKm / 111;
+  const centerLat = (south + north) / 2;
+  const centerLng = (west + east) / 2;
+  const lngBuffer = radiusKm / (111 * Math.cos((centerLat * Math.PI) / 180));
+  return {
+    neLat: north + latBuffer,
+    neLng: east + lngBuffer,
+    swLat: south - latBuffer,
+    swLng: west - lngBuffer,
+    centerLat,
+    centerLng,
+  };
+}
+
+export async function geocodeKeyword(keyword: string, radiusKm: number = DEFAULT_RADIUS_KM): Promise<GeoBounds | null> {
+  const results = await searchNominatim(keyword, 1);
+  if (results.length === 0) return null;
+  return nominatimResultToBounds(results[0], radiusKm);
 }

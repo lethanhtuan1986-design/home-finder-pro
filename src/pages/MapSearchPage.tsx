@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { geocodeKeyword, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
+import { nominatimResultToBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM, NominatimResult, GeoBounds } from "@/lib/geocoding";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
@@ -18,6 +18,7 @@ import apartmentTypeService, {
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
 import { Search, SlidersHorizontal, Loader2, X, ArrowLeft } from "lucide-react";
+import { LocationAutocomplete } from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -84,14 +85,7 @@ const MapSearchPage = () => {
     searchParams.get("apartmentSizeTo") || "",
   );
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
-  const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
-
-  // Debounce keyword input
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
-    return () => clearTimeout(timer);
-  }, [keyword]);
 
   // Debounce map viewport bounds (300ms)
   useEffect(() => {
@@ -155,9 +149,9 @@ const MapSearchPage = () => {
       }),
   });
 
-  // Build enriched query: append province/ward names for better Nominatim accuracy
-  const enrichedQuery = useMemo(() => {
-    const parts = [debouncedKeyword];
+  // Build enriched suffix for autocomplete
+  const enrichSuffix = useMemo(() => {
+    const parts: string[] = [];
     if (wardId) {
       const ward = wards.find((w) => w.code === wardId);
       if (ward) parts.push(ward.fullName);
@@ -166,22 +160,17 @@ const MapSearchPage = () => {
       const province = provinces.find((p) => p.code === provinceId);
       if (province) parts.push(province.fullName);
     }
-    return parts.filter(Boolean).join(" ");
-  }, [debouncedKeyword, provinceId, wardId, provinces, wards]);
+    return parts.join(" ");
+  }, [provinceId, wardId, provinces, wards]);
 
-  // Geocoding: pan map to location when keyword changes
-  useEffect(() => {
-    if (!debouncedKeyword) return;
-    geocodeKeyword(enrichedQuery, radiusKm).then((result) => {
-      if (result) {
-        setMapCenter({ lat: result.centerLat, lng: result.centerLng, zoom: 14 });
-      }
-    });
-  }, [enrichedQuery, radiusKm]);
+  // Handle autocomplete selection: pan map + update search overlay
+  const handleLocationSelect = useCallback((result: NominatimResult, bounds: GeoBounds) => {
+    setMapCenter({ lat: bounds.centerLat, lng: bounds.centerLng, zoom: 14 });
+  }, []);
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: 1, pageSize: 100, isHot: 0, typeOrder: 0 };
-    if (debouncedKeyword) req.keyword = debouncedKeyword;
+    if (keyword) req.keyword = keyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
     if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
@@ -202,7 +191,7 @@ const MapSearchPage = () => {
   const { data: mapData, isLoading: mapLoading } = useQuery({
     queryKey: [
       "map-advertisements",
-      debouncedKeyword,
+      keyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
@@ -232,7 +221,7 @@ const MapSearchPage = () => {
   // Sync to URL
   useEffect(() => {
     const params = new URLSearchParams();
-    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (keyword) params.set("q", keyword);
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
@@ -242,7 +231,7 @@ const MapSearchPage = () => {
     if (apartmentSizeTo) params.set("apartmentSizeTo", apartmentSizeTo);
     setSearchParams(params, { replace: true });
   }, [
-    debouncedKeyword,
+    keyword,
     provinceId,
     wardId,
     apartmentTypeUuid,
@@ -299,18 +288,14 @@ const MapSearchPage = () => {
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
           {t("search.keyword")}
         </label>
-        <div className="relative">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          />
-          <input
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder={t("search.keywordPlaceholder")}
-            className="custom-input w-full pl-9"
-          />
-        </div>
+        <LocationAutocomplete
+          value={keyword}
+          onChange={setKeyword}
+          onSelect={handleLocationSelect}
+          enrichSuffix={enrichSuffix}
+          radiusKm={radiusKm}
+          placeholder={t("search.keywordPlaceholder")}
+        />
       </div>
 
       {/* Province */}

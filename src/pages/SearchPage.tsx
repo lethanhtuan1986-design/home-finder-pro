@@ -13,12 +13,13 @@ import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentTyp
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
 import { Search, Map as MapIcon, Loader2, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { LocationAutocomplete } from "@/components/LocationAutocomplete";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MiniMapPreview } from "@/components/MiniMapPreview";
-import { geocodeKeyword, GeoBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
+import { GeoBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const PAGE_SIZE = 20;
@@ -47,16 +48,10 @@ const SearchPage = () => {
   const [apartmentSizeFrom, setApartmentSizeFrom] = useState(searchParams.get("apartmentSizeFrom") || "");
   const [apartmentSizeTo, setApartmentSizeTo] = useState(searchParams.get("apartmentSizeTo") || "");
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
-  const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [typeOrder, setTypeOrder] = useState(searchParams.get("typeOrder") || "0");
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
-
-  // Debounce keyword
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
-    return () => clearTimeout(timer);
-  }, [keyword]);
+  const [geoBounds, setGeoBounds] = useState<GeoBounds | null>(null);
 
   const selectedPriceUuid =
     filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
@@ -107,9 +102,9 @@ const SearchPage = () => {
       }),
   });
 
-  // Build enriched query: append province/ward names for better Nominatim accuracy
-  const enrichedQuery = useMemo(() => {
-    const parts = [debouncedKeyword];
+  // Build enriched suffix for autocomplete (province/ward names)
+  const enrichSuffix = useMemo(() => {
+    const parts: string[] = [];
     if (wardId) {
       const ward = wards.find((w) => w.code === wardId);
       if (ward) parts.push(ward.fullName);
@@ -118,19 +113,12 @@ const SearchPage = () => {
       const province = provinces.find((p) => p.code === provinceId);
       if (province) parts.push(province.fullName);
     }
-    return parts.filter(Boolean).join(" ");
-  }, [debouncedKeyword, provinceId, wardId, provinces, wards]);
+    return parts.join(" ");
+  }, [provinceId, wardId, provinces, wards]);
 
-  // Geocode keyword for bounding box
-  const { data: geoBounds, isFetching: isGeocoding } = useQuery<GeoBounds | null>({
-    queryKey: ["geocode", enrichedQuery, radiusKm],
-    queryFn: () => geocodeKeyword(enrichedQuery, radiusKm),
-    enabled: !!debouncedKeyword,
-    staleTime: 1000 * 60 * 10,
-  });
-
-  // Only fetch ads after geocoding completes (or if no keyword)
-  const isGeoReady = !debouncedKeyword || (!isGeocoding && geoBounds !== undefined);
+  const handleLocationSelect = useCallback((_result: any, bounds: GeoBounds) => {
+    setGeoBounds(bounds);
+  }, []);
 
   const buildListRequest = (): GetListAdvertisementRequest => {
     const req: GetListAdvertisementRequest = {
@@ -140,7 +128,7 @@ const SearchPage = () => {
       isHot: 0,
       typeOrder: Number(typeOrder),
     };
-    if (debouncedKeyword) req.keyword = debouncedKeyword;
+    if (keyword) req.keyword = keyword;
     if (provinceId) req.provinceId = provinceId;
     if (wardId) req.wardId = wardId;
     if (apartmentTypeUuid) req.apartmentTypeUuid = apartmentTypeUuid;
@@ -164,7 +152,7 @@ const SearchPage = () => {
   } = useQuery({
     queryKey: [
       "advertisements-list",
-      debouncedKeyword,
+      keyword,
       provinceId,
       wardId,
       apartmentTypeUuid,
@@ -177,7 +165,6 @@ const SearchPage = () => {
       geoBounds?.swLat,
     ],
     queryFn: () => httpRequest({ http: advertisementService.getListPaged(buildListRequest()) }),
-    enabled: isGeoReady,
   });
 
   const advertisements = useMemo(() => {
@@ -189,7 +176,7 @@ const SearchPage = () => {
   // Sync state to URL
   useEffect(() => {
     const params = new URLSearchParams();
-    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (keyword) params.set("q", keyword);
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
@@ -200,7 +187,7 @@ const SearchPage = () => {
     if (typeOrder !== "0") params.set("typeOrder", typeOrder);
     setSearchParams(params, { replace: true });
   }, [
-    debouncedKeyword,
+    keyword,
     provinceId,
     wardId,
     apartmentTypeUuid,
@@ -241,7 +228,7 @@ const SearchPage = () => {
   // Navigate to map view preserving all filters
   const goToMapView = () => {
     const params = new URLSearchParams();
-    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (keyword) params.set("q", keyword);
     if (provinceId) params.set("provinceId", provinceId);
     if (wardId) params.set("wardId", wardId);
     if (apartmentTypeUuid) params.set("apartmentTypeUuid", apartmentTypeUuid);
@@ -266,16 +253,17 @@ const SearchPage = () => {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           {/* Desktop: single row */}
           <div className="hidden md:flex flex-wrap gap-2 items-center">
-            {/* Search input */}
-            <div className="flex-1 min-w-[200px] max-w-md relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder={t("search.keywordPlaceholder")}
-                className="custom-input w-full pl-9 h-11"
-              />
-            </div>
+            {/* Search input with autocomplete */}
+            <LocationAutocomplete
+              value={keyword}
+              onChange={setKeyword}
+              onSelect={handleLocationSelect}
+              enrichSuffix={enrichSuffix}
+              radiusKm={radiusKm}
+              placeholder={t("search.keywordPlaceholder")}
+              className="flex-1 min-w-[200px] max-w-md"
+              inputClassName="h-11"
+            />
 
             {/* Sort */}
             <Select value={typeOrder} onValueChange={setTypeOrder}>
@@ -333,16 +321,17 @@ const SearchPage = () => {
 
           {/* Mobile: 3-row layout */}
           <div className="flex flex-col gap-3 md:hidden">
-            {/* Row 1: Search input full width */}
-            <div className="relative w-full">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder={t("search.keywordPlaceholder")}
-                className="custom-input w-full pl-9 h-12"
-              />
-            </div>
+            {/* Row 1: Search input full width with autocomplete */}
+            <LocationAutocomplete
+              value={keyword}
+              onChange={setKeyword}
+              onSelect={handleLocationSelect}
+              enrichSuffix={enrichSuffix}
+              radiusKm={radiusKm}
+              placeholder={t("search.keywordPlaceholder")}
+              className="w-full"
+              inputClassName="h-12"
+            />
 
             {/* Row 2: Sort + Map + Advanced filter - grid 3 cols */}
             <div className="grid grid-cols-3 gap-2">
@@ -625,8 +614,6 @@ const SearchPage = () => {
                   actionTo="/search"
                 />
               )}
-
-              {/* Pagination hidden - only show first page of 20 items */}
             </div>
           </div>
         </div>
