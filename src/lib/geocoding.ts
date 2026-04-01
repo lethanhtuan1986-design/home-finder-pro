@@ -10,6 +10,8 @@ export interface GeoBounds {
   neLng: number;
   swLat: number;
   swLng: number;
+  centerLat: number;
+  centerLng: number;
 }
 
 export const RADIUS_OPTIONS = [
@@ -35,12 +37,15 @@ export async function geocodeKeyword(keyword: string, radiusKm: number = DEFAULT
     const [south, north, west, east] = data[0].boundingbox.map(Number);
     const latBuffer = radiusKm / 111;
     const centerLat = (south + north) / 2;
+    const centerLng = (west + east) / 2;
     const lngBuffer = radiusKm / (111 * Math.cos((centerLat * Math.PI) / 180));
     return {
       neLat: north + latBuffer,
       neLng: east + lngBuffer,
       swLat: south - latBuffer,
       swLng: west - lngBuffer,
+      centerLat,
+      centerLng,
     };
   } catch {
     return null;

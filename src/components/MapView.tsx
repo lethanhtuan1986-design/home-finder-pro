@@ -9,6 +9,12 @@ import type { MapLocationGroup } from "@/services/advertisement.service";
 const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
 const DEFAULT_ZOOM = 13;
 
+interface SearchOverlay {
+  centerLat: number;
+  centerLng: number;
+  radiusKm: number;
+}
+
 interface MapViewProps {
   locations?: MapLocationGroup[];
   hoveredId?: string | null;
@@ -16,6 +22,7 @@ interface MapViewProps {
   onMarkerClick?: (id: string) => void;
   onBoundsChange?: (bounds: { neLat: number; neLng: number; swLat: number; swLng: number }) => void;
   useGeolocation?: boolean;
+  searchOverlay?: SearchOverlay | null;
 }
 
 const parsePoint = (point: string): LatLngTuple | null => {
@@ -93,10 +100,11 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   `;
 };
 
-export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange }: MapViewProps) => {
+export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, searchOverlay }: MapViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const circleRef = useRef<L.Circle | null>(null);
   const initialFitDoneRef = useRef(false);
   const [locating, setLocating] = useState(false);
 
@@ -207,7 +215,38 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
     return () => observer.disconnect();
   }, []);
 
-  // My Location handler
+  // Search area circle overlay
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // Remove previous circle
+    if (circleRef.current) {
+      circleRef.current.remove();
+      circleRef.current = null;
+    }
+
+    if (!searchOverlay) return;
+
+    const { centerLat, centerLng, radiusKm } = searchOverlay;
+    const circle = L.circle([centerLat, centerLng], {
+      radius: radiusKm * 1000,
+      color: 'hsl(160, 84%, 39%)',
+      weight: 2,
+      dashArray: '8, 6',
+      fillColor: 'hsl(160, 84%, 39%)',
+      fillOpacity: 0.12,
+      interactive: false,
+    });
+
+    circle.addTo(map);
+    circleRef.current = circle;
+
+    // Auto fit bounds to circle
+    map.fitBounds(circle.getBounds(), { padding: [40, 40], maxZoom: 15, animate: true });
+  }, [searchOverlay]);
+
+
   const handleMyLocation = useCallback(() => {
     const map = mapRef.current;
     if (!map || !navigator.geolocation) return;
