@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { geocodeKeyword, GeoBounds } from "@/lib/geocoding";
+import { geocodeKeyword, GeoBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
@@ -84,6 +84,7 @@ const MapSearchPage = () => {
   );
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
+  const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
@@ -101,11 +102,11 @@ const MapSearchPage = () => {
       return;
     }
     setIsGeocoding(true);
-    geocodeKeyword(debouncedKeyword).then((result) => {
+    geocodeKeyword(debouncedKeyword, radiusKm).then((result) => {
       setGeoBounds(result);
       setIsGeocoding(false);
     });
-  }, [debouncedKeyword]);
+  }, [debouncedKeyword, radiusKm]);
 
   const selectedPriceUuid =
     filterPrices.find(
@@ -427,6 +428,29 @@ const MapSearchPage = () => {
               )}
             >
               {fs.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Radius */}
+      <div>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          Bán kính tìm kiếm
+        </p>
+        <div className="flex flex-col gap-1.5">
+          {RADIUS_OPTIONS.map((r) => (
+            <button
+              key={r.value}
+              onClick={() => setRadiusKm(r.value)}
+              className={cn(
+                "px-3 py-2 rounded-lg border text-sm text-left transition-colors",
+                radiusKm === r.value
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border bg-background text-foreground hover:bg-secondary",
+              )}
+            >
+              {r.label}
             </button>
           ))}
         </div>

@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { httpRequest, getImageUrl } from '@/services/index';
 import feedbackService, { FeedbackItem } from '@/services/feedback.service';
-import { Star } from 'lucide-react';
+import { Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 
 export const CustomerReviews = () => {
   const { t } = useTranslation();
@@ -25,7 +27,6 @@ export const CustomerReviews = () => {
 
   if (reviews.length === 0) return null;
 
-  // Duplicate for infinite scroll effect
   const duplicated = [...reviews, ...reviews];
 
   return (
@@ -35,7 +36,6 @@ export const CustomerReviews = () => {
         <p className="section-subtitle mt-2 text-center">{t('reviews.subtitle')}</p>
       </div>
 
-      {/* Marquee container */}
       <div className="relative">
         <div className="flex gap-5 animate-marquee hover:[animation-play-state:paused]">
           {duplicated.map((review, i) => (
@@ -48,12 +48,21 @@ export const CustomerReviews = () => {
 };
 
 const ReviewCard = ({ review }: { review: FeedbackItem }) => {
+  const [expanded, setExpanded] = useState(false);
   const avatar = review.userPostUu?.profileImage
     ? getImageUrl(review.userPostUu.profileImage)
     : null;
 
+  const dateStr = review.createdAt
+    ? format(new Date(review.createdAt), 'dd/MM/yyyy')
+    : null;
+
+  const images = review.images?.length ? review.images : [];
+  const contentLong = (review.content?.length || 0) > 120;
+
   return (
     <div className="shrink-0 w-[300px] sm:w-[340px] bg-card border border-border rounded-2xl p-5 space-y-3">
+      {/* Header: avatar + name + stars + date */}
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
           {avatar && <AvatarImage src={avatar} alt={review.userPostUu?.name || ''} />}
@@ -65,20 +74,55 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
           <p className="text-sm font-semibold text-foreground truncate">
             {review.userPostUu?.name || 'Người dùng'}
           </p>
-          <div className="flex gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                size={12}
-                className={i < review.stars ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/30'}
-              />
-            ))}
+          <div className="flex items-center gap-2">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  size={12}
+                  className={i < review.stars ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/30'}
+                />
+              ))}
+            </div>
+            {dateStr && (
+              <span className="text-[10px] text-muted-foreground">{dateStr}</span>
+            )}
           </div>
         </div>
       </div>
-      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
-        {review.content}
-      </p>
+
+      {/* Content */}
+      <div>
+        <p className={`text-sm text-muted-foreground leading-relaxed ${!expanded && contentLong ? 'line-clamp-3' : ''}`}>
+          {review.content}
+        </p>
+        {contentLong && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-xs text-primary font-medium mt-1 flex items-center gap-0.5 hover:underline"
+          >
+            {expanded ? 'Thu gọn' : 'Xem thêm'}
+            {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          </button>
+        )}
+      </div>
+
+      {/* Images */}
+      {images.length > 0 && (
+        <div className="flex gap-1.5 overflow-x-auto">
+          {images.map((img, idx) => (
+            <img
+              key={idx}
+              src={getImageUrl(img)}
+              alt=""
+              className="w-16 h-16 rounded-lg object-cover shrink-0 border border-border"
+              loading="lazy"
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Apartment name */}
       {review.apartmentUu?.name && (
         <p className="text-xs text-primary font-medium truncate">
           {review.apartmentUu.name}
