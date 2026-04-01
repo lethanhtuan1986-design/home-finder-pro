@@ -106,18 +106,17 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
         )}
       </div>
 
-      {/* Images */}
-      {images.length > 0 && (
-        <div className="flex gap-1.5 overflow-x-auto">
-          {images.map((img, idx) => (
-            <img
-              key={idx}
-              src={getImageUrl(img)}
-              alt=""
-              className="w-16 h-16 rounded-lg object-cover shrink-0 border border-border"
-              loading="lazy"
-            />
-          ))}
+      {/* Apartment info */}
+      {review.apartmentUu?.name && (
+        <div className="text-xs space-y-0.5">
+          <p className="text-primary font-medium truncate">
+            {review.apartmentUu.name}
+          </p>
+          {review.apartmentUu.address && (
+            <p className="text-muted-foreground truncate">
+              {review.apartmentUu.address}, {review.apartmentUu.ward?.fullName}, {review.apartmentUu.province?.fullName}
+            </p>
+          )}
         </div>
       )}
 
