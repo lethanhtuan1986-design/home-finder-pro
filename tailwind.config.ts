@@ -103,6 +103,10 @@ export default {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.2)" },
         },
+        "marquee-promo": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -111,6 +115,7 @@ export default {
         "fade-in-up": "fade-in-up 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)",
         "scale-in": "scale-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
         "pulse-marker": "pulse-marker 1.5s ease-in-out infinite",
+        "marquee-promo": "marquee-promo 25s linear infinite",
       },
     },
   },
