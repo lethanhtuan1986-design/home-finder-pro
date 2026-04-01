@@ -19,7 +19,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MiniMapPreview } from "@/components/MiniMapPreview";
-import { geocodeKeyword, GeoBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
+import { GeoBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const PAGE_SIZE = 20;
