@@ -99,20 +99,15 @@ const MapSearchPage = () => {
     return () => clearTimeout(timer);
   }, [bounds]);
 
-  // Geocoding: wait for bounding box before calling API
-  const [geoBounds, setGeoBounds] = useState<GeoBounds | null>(null);
-  const [isGeocoding, setIsGeocoding] = useState(false);
+  // Geocoding: pan map to location when keyword changes
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
 
   useEffect(() => {
-    if (!debouncedKeyword) {
-      setGeoBounds(null);
-      setIsGeocoding(false);
-      return;
-    }
-    setIsGeocoding(true);
+    if (!debouncedKeyword) return;
     geocodeKeyword(debouncedKeyword, radiusKm).then((result) => {
-      setGeoBounds(result);
-      setIsGeocoding(false);
+      if (result) {
+        setMapCenter({ lat: result.centerLat, lng: result.centerLng, zoom: 14 });
+      }
     });
   }, [debouncedKeyword, radiusKm]);
 
