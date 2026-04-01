@@ -157,7 +157,7 @@ const SearchPage = () => {
     error: queryError,
   } = useQuery({
     queryKey: [
-      "advertisements-map",
+      "advertisements-list",
       debouncedKeyword,
       provinceId,
       wardId,
@@ -170,16 +170,14 @@ const SearchPage = () => {
       geoBounds?.neLat,
       geoBounds?.swLat,
     ],
-    queryFn: () => httpRequest({ http: advertisementService.getForMap(buildMapRequest()) }),
+    queryFn: () => httpRequest({ http: advertisementService.getListPaged(buildListRequest()) }),
     enabled: isGeoReady,
   });
 
-  // Response is { items: MapLocationGroup[], pagination } - flatten ads from location groups
   const advertisements = useMemo(() => {
-    const items = (listData as any)?.items || [];
-    return items.flatMap((loc: any) => loc.ads || []);
+    return (listData as any)?.items || [];
   }, [listData]);
-  const totalCount = advertisements.length;
+  const totalCount = (listData as any)?.pagination?.totalCount || advertisements.length;
   const error = queryError ? t("search.serverError") : null;
 
   // Sync state to URL
