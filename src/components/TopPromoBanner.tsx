@@ -38,7 +38,7 @@ export const TopPromoBanner = () => {
       <div className="flex items-center py-2 px-2">
         <Megaphone size={14} className="shrink-0 opacity-80 ml-2 mr-2" />
         <div className="flex-1 overflow-hidden relative">
-          <div className="animate-marquee-promo whitespace-nowrap inline-block" style={{ animationDuration: "45s" }}>
+          <div className="animate-marquee-promo whitespace-nowrap inline-block" style={{ animationDuration: "60s" }}>
             <span className="font-medium">{marqueeText}</span>
             <span className="font-medium ml-16">{marqueeText}</span>
           </div>
