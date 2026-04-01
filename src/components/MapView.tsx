@@ -15,6 +15,12 @@ interface FlyToTarget {
   zoom: number;
 }
 
+interface SearchOverlay {
+  centerLat: number;
+  centerLng: number;
+  radiusKm: number;
+}
+
 interface MapViewProps {
   locations?: MapLocationGroup[];
   hoveredId?: string | null;
