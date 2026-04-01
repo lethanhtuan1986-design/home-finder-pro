@@ -85,14 +85,7 @@ const MapSearchPage = () => {
     searchParams.get("apartmentSizeTo") || "",
   );
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
-  const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
-
-  // Debounce keyword input
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
-    return () => clearTimeout(timer);
-  }, [keyword]);
 
   // Debounce map viewport bounds (300ms)
   useEffect(() => {
