@@ -128,30 +128,23 @@ const Index = () => {
         <div className="flex items-end justify-between mb-6">
           <div>
             {/* Tabs: Phòng đề xuất / Phòng mới cập nhật */}
-            <div className="relative inline-flex items-center bg-muted/60 rounded-full p-1.5 w-full max-w-xs">
-              {/* Sliding indicator */}
-              <div
-                className="absolute top-1.5 bottom-1.5 rounded-full bg-primary shadow-md transition-all duration-300 ease-in-out"
-                style={{
-                  width: 'calc(50% - 6px)',
-                  left: activeTab === "recommended" ? '6px' : 'calc(50%)',
-                }}
-              />
+            <div className="flex gap-1 bg-secondary rounded-xl p-1">
               <button
                 onClick={() => setActiveTab("recommended")}
-                className={`relative z-10 flex-1 py-2 rounded-full text-sm font-medium text-center transition-all duration-300 ease-in-out ${
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors w-fit ${
                   activeTab === "recommended"
-                    ? "text-primary-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t("listing.recommended")}
               </button>
+              {/* NOTE: This tab can be renamed to "Phòng có khuyến mại" in the future */}
               <button
                 onClick={() => setActiveTab("latest")}
-                className={`relative z-10 flex-1 py-2 rounded-full text-sm font-medium text-center transition-all duration-300 ease-in-out ${
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors w-fit ${
                   activeTab === "latest"
-                    ? "text-primary-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
