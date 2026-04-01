@@ -57,8 +57,7 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
     ? format(new Date(review.createdAt), 'dd/MM/yyyy')
     : null;
 
-  const images = review.images?.length ? review.images : [];
-  const contentLong = (review.content?.length || 0) > 120;
+  const contentLong = (review.comment?.length || 0) > 120;
 
   return (
     <div className="shrink-0 w-[300px] sm:w-[340px] bg-card border border-border rounded-2xl p-5 space-y-3">
@@ -94,7 +93,7 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
       {/* Content */}
       <div>
         <p className={`text-sm text-muted-foreground leading-relaxed ${!expanded && contentLong ? 'line-clamp-3' : ''}`}>
-          {review.content}
+          {review.comment}
         </p>
         {contentLong && (
           <button
@@ -107,18 +106,17 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
         )}
       </div>
 
-      {/* Images */}
-      {images.length > 0 && (
-        <div className="flex gap-1.5 overflow-x-auto">
-          {images.map((img, idx) => (
-            <img
-              key={idx}
-              src={getImageUrl(img)}
-              alt=""
-              className="w-16 h-16 rounded-lg object-cover shrink-0 border border-border"
-              loading="lazy"
-            />
-          ))}
+      {/* Apartment info */}
+      {review.apartmentUu?.name && (
+        <div className="text-xs space-y-0.5">
+          <p className="text-primary font-medium truncate">
+            {review.apartmentUu.name}
+          </p>
+          {review.apartmentUu.address && (
+            <p className="text-muted-foreground truncate">
+              {review.apartmentUu.address}, {review.apartmentUu.ward?.fullName}, {review.apartmentUu.province?.fullName}
+            </p>
+          )}
         </div>
       )}
 

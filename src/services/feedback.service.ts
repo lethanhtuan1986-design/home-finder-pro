@@ -6,20 +6,31 @@ export interface FeedbackItem {
   status: number;
   isMarketplace: number;
   userPostUu: {
-    name: string;
+    username: string;
+    email: string;
     profileImage: string | null;
+    phoneNumber: string;
+    code: string | null;
+    name: string;
     id: number;
     uuid: string;
+    status: number;
+    isMarketplace: number;
   };
   apartmentUu: {
+    ownerUu: { name: string };
+    apartmentTypeUu: { name: string };
+    province: { fullName: string };
+    ward: { fullName: string };
+    address: string;
     name: string;
     id: number;
     uuid: string;
+    status: number;
   };
   stars: number;
-  content: string;
+  comment: string;
   createdAt: string;
-  images: string[];
 }
 
 export interface FeedbackGetRequest {
