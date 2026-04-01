@@ -101,7 +101,7 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   `;
 };
 
-export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, searchOverlay }: MapViewProps) => {
+export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, searchOverlay, flyTo }: MapViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
