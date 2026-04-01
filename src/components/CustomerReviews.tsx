@@ -93,7 +93,7 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
       {/* Content */}
       <div>
         <p className={`text-sm text-muted-foreground leading-relaxed ${!expanded && contentLong ? 'line-clamp-3' : ''}`}>
-          {review.content}
+          {review.comment}
         </p>
         {contentLong && (
           <button
