@@ -53,11 +53,23 @@ const SearchPage = () => {
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
   const [geoBounds, setGeoBounds] = useState<GeoBounds | null>(null);
 
-  // Debounce keyword
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
-    return () => clearTimeout(timer);
-  }, [keyword]);
+  // Build enriched suffix for autocomplete (province/ward names)
+  const enrichSuffix = useMemo(() => {
+    const parts: string[] = [];
+    if (wardId) {
+      const ward = wards.find((w) => w.code === wardId);
+      if (ward) parts.push(ward.fullName);
+    }
+    if (provinceId) {
+      const province = provinces.find((p) => p.code === provinceId);
+      if (province) parts.push(province.fullName);
+    }
+    return parts.join(" ");
+  }, [provinceId, wardId, provinces, wards]);
+
+  const handleLocationSelect = useCallback((_result: any, bounds: GeoBounds) => {
+    setGeoBounds(bounds);
+  }, []);
 
   const selectedPriceUuid =
     filterPrices.find((fp) => String(fp.value || "") === priceFrom && String(fp.valueTo || "") === priceTo)?.uuid || "";
@@ -107,31 +119,6 @@ const SearchPage = () => {
         }),
       }),
   });
-
-  // Build enriched query: append province/ward names for better Nominatim accuracy
-  const enrichedQuery = useMemo(() => {
-    const parts = [debouncedKeyword];
-    if (wardId) {
-      const ward = wards.find((w) => w.code === wardId);
-      if (ward) parts.push(ward.fullName);
-    }
-    if (provinceId) {
-      const province = provinces.find((p) => p.code === provinceId);
-      if (province) parts.push(province.fullName);
-    }
-    return parts.filter(Boolean).join(" ");
-  }, [debouncedKeyword, provinceId, wardId, provinces, wards]);
-
-  // Geocode keyword for bounding box
-  const { data: geoBounds, isFetching: isGeocoding } = useQuery<GeoBounds | null>({
-    queryKey: ["geocode", enrichedQuery, radiusKm],
-    queryFn: () => geocodeKeyword(enrichedQuery, radiusKm),
-    enabled: !!debouncedKeyword,
-    staleTime: 1000 * 60 * 10,
-  });
-
-  // Only fetch ads after geocoding completes (or if no keyword)
-  const isGeoReady = !debouncedKeyword || (!isGeocoding && geoBounds !== undefined);
 
   const buildListRequest = (): GetListAdvertisementRequest => {
     const req: GetListAdvertisementRequest = {
