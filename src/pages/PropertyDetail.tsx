@@ -225,7 +225,7 @@ const PropertyDetail = () => {
             </motion.div>
 
             {descriptionText && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="order-5 lg:order-none">
                 <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.description")}</h2>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{descriptionText}</p>
               </motion.div>
