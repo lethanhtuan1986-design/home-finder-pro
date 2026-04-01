@@ -9,10 +9,10 @@ import type { MapLocationGroup } from "@/services/advertisement.service";
 const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
 const DEFAULT_ZOOM = 13;
 
-interface SearchOverlay {
-  centerLat: number;
-  centerLng: number;
-  radiusKm: number;
+interface FlyToTarget {
+  lat: number;
+  lng: number;
+  zoom: number;
 }
 
 interface MapViewProps {
@@ -23,6 +23,7 @@ interface MapViewProps {
   onBoundsChange?: (bounds: { neLat: number; neLng: number; swLat: number; swLng: number }) => void;
   useGeolocation?: boolean;
   searchOverlay?: SearchOverlay | null;
+  flyTo?: FlyToTarget | null;
 }
 
 const parsePoint = (point: string): LatLngTuple | null => {
