@@ -149,9 +149,9 @@ const MapSearchPage = () => {
       }),
   });
 
-  // Build enriched query: append province/ward names for better Nominatim accuracy
-  const enrichedQuery = useMemo(() => {
-    const parts = [debouncedKeyword];
+  // Build enriched suffix for autocomplete
+  const enrichSuffix = useMemo(() => {
+    const parts: string[] = [];
     if (wardId) {
       const ward = wards.find((w) => w.code === wardId);
       if (ward) parts.push(ward.fullName);
@@ -160,18 +160,13 @@ const MapSearchPage = () => {
       const province = provinces.find((p) => p.code === provinceId);
       if (province) parts.push(province.fullName);
     }
-    return parts.filter(Boolean).join(" ");
-  }, [debouncedKeyword, provinceId, wardId, provinces, wards]);
+    return parts.join(" ");
+  }, [provinceId, wardId, provinces, wards]);
 
-  // Geocoding: pan map to location when keyword changes
-  useEffect(() => {
-    if (!debouncedKeyword) return;
-    geocodeKeyword(enrichedQuery, radiusKm).then((result) => {
-      if (result) {
-        setMapCenter({ lat: result.centerLat, lng: result.centerLng, zoom: 14 });
-      }
-    });
-  }, [enrichedQuery, radiusKm]);
+  // Handle autocomplete selection: pan map + update search overlay
+  const handleLocationSelect = useCallback((result: NominatimResult, bounds: GeoBounds) => {
+    setMapCenter({ lat: bounds.centerLat, lng: bounds.centerLng, zoom: 14 });
+  }, []);
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: 1, pageSize: 100, isHot: 0, typeOrder: 0 };
