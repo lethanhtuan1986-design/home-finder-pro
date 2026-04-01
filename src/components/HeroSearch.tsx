@@ -123,9 +123,9 @@ export const HeroSearch = () => {
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
-      {/* Main filters - 2-row on mobile, single row on desktop */}
+      {/* Main filters - single row */}
       <div className="flex flex-col gap-2">
-        {/* Row 1: Province (desktop) + Input */}
+        {/* Row 1: Province (desktop) + Input + mobile icon buttons */}
         <div className="flex flex-row items-stretch gap-2">
           {/* Province select - desktop only */}
           {!isMobile && (
