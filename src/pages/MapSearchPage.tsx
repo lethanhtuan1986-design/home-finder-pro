@@ -56,13 +56,14 @@ const MapSearchPage = () => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  // Map bounding box state
+  // Map bounding box state (from viewport)
   const [bounds, setBounds] = useState<{
     neLat: number;
     neLng: number;
     swLat: number;
     swLng: number;
   } | null>(null);
+  const [debouncedBounds, setDebouncedBounds] = useState(bounds);
 
   // Filter states from URL
   const [provinceId, setProvinceId] = useState(
