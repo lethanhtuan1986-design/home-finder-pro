@@ -10,6 +10,8 @@ export interface GeoBounds {
   neLng: number;
   swLat: number;
   swLng: number;
+  centerLat: number;
+  centerLng: number;
 }
 
 export const RADIUS_OPTIONS = [
