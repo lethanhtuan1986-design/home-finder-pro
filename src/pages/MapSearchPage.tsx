@@ -549,6 +549,7 @@ const MapSearchPage = () => {
             loading={mapLoading && mapLocations.length === 0}
             onMarkerClick={(id) => navigate(`/advertisement/${id}`)}
             onBoundsChange={handleBoundsChange}
+            searchOverlay={debouncedKeyword && geoBounds ? { centerLat: geoBounds.centerLat, centerLng: geoBounds.centerLng, radiusKm } : null}
           />
 
           {/* Mobile: toggle list button */}
