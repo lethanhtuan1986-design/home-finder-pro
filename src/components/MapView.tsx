@@ -6,7 +6,7 @@ import { formatVNPrice, getImageUrl } from "@/services/index";
 import { Loader2, LocateFixed } from "lucide-react";
 import type { MapLocationGroup } from "@/services/advertisement.service";
 
-const DEFAULT_CENTER: LatLngTuple = [10.79, 106.71];
+const DEFAULT_CENTER: LatLngTuple = [21.0285, 105.8542];
 const DEFAULT_ZOOM = 13;
 
 interface FlyToTarget {
