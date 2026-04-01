@@ -124,30 +124,32 @@ export const HeroSearch = () => {
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
       {/* Main filters row */}
-      <div className="flex flex-col md:flex-row items-stretch gap-2">
-        {/* Province select - first */}
-        <Select
-          value={provinceId}
-          onValueChange={(val) => {
-            setProvinceId(val === "__all__" ? "" : val);
-            setWardId("");
-          }}
-        >
-          <SelectTrigger className="h-11 rounded-xl bg-secondary/50 border-border w-full md:w-auto md:min-w-[160px]">
-            <SelectValue placeholder={t("hero.area")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__all__">{t("hero.area")}</SelectItem>
-            {provinces.map((p) => (
-              <SelectItem key={p.code} value={p.code}>
-                {p.fullName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-row items-stretch gap-2">
+        {/* Province select - desktop only */}
+        {!isMobile && (
+          <Select
+            value={provinceId}
+            onValueChange={(val) => {
+              setProvinceId(val === "__all__" ? "" : val);
+              setWardId("");
+            }}
+          >
+            <SelectTrigger className="h-11 rounded-xl bg-secondary/50 border-border w-auto md:min-w-[160px]">
+              <SelectValue placeholder={t("hero.area")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">{t("hero.area")}</SelectItem>
+              {provinces.map((p) => (
+                <SelectItem key={p.code} value={p.code}>
+                  {p.fullName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         {/* Search input */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-w-0">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             value={searchKeyword}
@@ -158,7 +160,7 @@ export const HeroSearch = () => {
           />
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           {/* Advanced filter - icon only */}
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
@@ -177,12 +179,13 @@ export const HeroSearch = () => {
             )}
           </button>
 
+          {/* Search button - icon only on mobile */}
           <button
             onClick={handleSearch}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap px-3 md:px-6"
           >
             <Search size={20} />
-            <span>{t("hero.searchBtn")}</span>
+            <span className="hidden md:inline">{t("hero.searchBtn")}</span>
           </button>
         </div>
       </div>
@@ -210,7 +213,30 @@ export const HeroSearch = () => {
                 </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
-                {/* Price range - moved here */}
+                {/* Province - mobile only (moved from main row) */}
+                {isMobile && (
+                  <Select
+                    value={provinceId}
+                    onValueChange={(val) => {
+                      setProvinceId(val === "__all__" ? "" : val);
+                      setWardId("");
+                    }}
+                  >
+                    <SelectTrigger className="search-field-select-trigger">
+                      <SelectValue placeholder={t("hero.area")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__all__">{t("hero.area")}</SelectItem>
+                      {provinces.map((p) => (
+                        <SelectItem key={p.code} value={p.code}>
+                          {p.fullName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                {/* Price range */}
                 <Select value={priceUuid} onValueChange={(val) => setPriceUuid(val === "__all__" ? "" : val)}>
                   <SelectTrigger className="search-field-select-trigger">
                     <SelectValue placeholder={t("hero.priceRange")} />
