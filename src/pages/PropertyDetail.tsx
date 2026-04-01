@@ -391,11 +391,10 @@ const PropertyDetail = () => {
             )}
           </div>
 
-          <div className="lg:col-span-1">
-            <div className="sticky top-20 space-y-4">
+          {/* Sidebar: Schedule + Deposit - shown as order-2 on mobile (after title), sticky on desktop */}
+          <div className="lg:col-span-1 order-2 lg:order-none">
+            <div className="lg:sticky lg:top-20 space-y-4">
               <ScheduleForm propertyTitle={detail.title} apartmentUuid={apt.uuid} advertisementUuid={detail.uuid} />
-
-              {/* Nút Đặt cọc */}
               <DepositButton />
             </div>
           </div>
