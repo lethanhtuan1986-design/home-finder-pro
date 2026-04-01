@@ -232,7 +232,7 @@ const PropertyDetail = () => {
             )}
 
             {apt.roomTypeGroups && apt.roomTypeGroups.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="order-6 lg:order-none">
                 <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.roomTypes")}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {apt.roomTypeGroups.map((g) => (
