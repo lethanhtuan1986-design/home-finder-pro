@@ -437,6 +437,22 @@ const SearchPage = () => {
               </Select>
             </div>
 
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Bán kính tìm kiếm</label>
+              <Select value={String(radiusKm)} onValueChange={(val) => setRadiusKm(Number(val))}>
+                <SelectTrigger className="w-full h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {RADIUS_OPTIONS.map((r) => (
+                    <SelectItem key={r.value} value={String(r.value)}>
+                      {r.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <button
               onClick={() => setAdvancedOpen(false)}
               className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-colors"
