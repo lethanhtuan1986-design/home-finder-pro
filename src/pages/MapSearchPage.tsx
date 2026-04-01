@@ -18,6 +18,7 @@ import apartmentTypeService, {
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
 import { Search, SlidersHorizontal, Loader2, X, ArrowLeft } from "lucide-react";
+import { LocationAutocomplete } from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
 import {
   Select,
