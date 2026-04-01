@@ -117,8 +117,8 @@ const SearchPage = () => {
 
   // Geocode keyword for bounding box
   const { data: geoBounds, isFetching: isGeocoding } = useQuery<GeoBounds | null>({
-    queryKey: ["geocode", debouncedKeyword],
-    queryFn: () => geocodeKeyword(debouncedKeyword),
+    queryKey: ["geocode", debouncedKeyword, radiusKm],
+    queryFn: () => geocodeKeyword(debouncedKeyword, radiusKm),
     enabled: !!debouncedKeyword,
     staleTime: 1000 * 60 * 10,
   });
