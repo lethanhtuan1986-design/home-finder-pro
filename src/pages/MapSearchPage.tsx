@@ -87,10 +87,17 @@ const MapSearchPage = () => {
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
+  // Debounce keyword input
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedKeyword(keyword), 1000);
     return () => clearTimeout(timer);
   }, [keyword]);
+
+  // Debounce map viewport bounds (300ms)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedBounds(bounds), 300);
+    return () => clearTimeout(timer);
+  }, [bounds]);
 
   // Geocoding: wait for bounding box before calling API
   const [geoBounds, setGeoBounds] = useState<GeoBounds | null>(null);
