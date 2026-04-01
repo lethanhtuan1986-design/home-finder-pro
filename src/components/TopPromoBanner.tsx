@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { X, Megaphone } from 'lucide-react';
+import { useState, useEffect, useRef } from "react";
+import { X, Megaphone } from "lucide-react";
 
 const promoMessages = [
   "🎉 Ưu đãi đặc biệt: Thanh toán trước 6 tháng giảm 3%, 12 tháng giảm 5%!",
@@ -15,20 +15,20 @@ export const TopPromoBanner = () => {
   useEffect(() => {
     const update = () => {
       const h = visible && ref.current ? ref.current.offsetHeight : 0;
-      document.documentElement.style.setProperty('--promo-banner-height', `${h}px`);
+      document.documentElement.style.setProperty("--promo-banner-height", `${h}px`);
     };
     update();
-    window.addEventListener('resize', update);
+    window.addEventListener("resize", update);
     return () => {
-      window.removeEventListener('resize', update);
-      document.documentElement.style.setProperty('--promo-banner-height', '0px');
+      window.removeEventListener("resize", update);
+      document.documentElement.style.setProperty("--promo-banner-height", "0px");
     };
   }, [visible]);
 
   if (!visible) return null;
 
   // Duplicate messages for seamless loop
-  const marqueeText = promoMessages.join('     ·     ');
+  const marqueeText = promoMessages.join("     ·     ");
 
   return (
     <div
@@ -38,7 +38,7 @@ export const TopPromoBanner = () => {
       <div className="flex items-center py-2 px-2">
         <Megaphone size={14} className="shrink-0 opacity-80 ml-2 mr-2" />
         <div className="flex-1 overflow-hidden relative">
-          <div className="animate-marquee-promo whitespace-nowrap inline-block">
+          <div className="animate-marquee-promo whitespace-nowrap inline-block" style={{ animationDuration: "45s" }}>
             <span className="font-medium">{marqueeText}</span>
             <span className="font-medium ml-16">{marqueeText}</span>
           </div>
