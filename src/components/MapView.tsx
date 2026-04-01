@@ -100,10 +100,11 @@ const buildPopupHtml = (loc: MapLocationGroup) => {
   `;
 };
 
-export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange }: MapViewProps) => {
+export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerClick, onBoundsChange, searchOverlay }: MapViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const circleRef = useRef<L.Circle | null>(null);
   const initialFitDoneRef = useRef(false);
   const [locating, setLocating] = useState(false);
 
