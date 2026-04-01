@@ -57,8 +57,7 @@ const ReviewCard = ({ review }: { review: FeedbackItem }) => {
     ? format(new Date(review.createdAt), 'dd/MM/yyyy')
     : null;
 
-  const images = review.images?.length ? review.images : [];
-  const contentLong = (review.content?.length || 0) > 120;
+  const contentLong = (review.comment?.length || 0) > 120;
 
   return (
     <div className="shrink-0 w-[300px] sm:w-[340px] bg-card border border-border rounded-2xl p-5 space-y-3">
