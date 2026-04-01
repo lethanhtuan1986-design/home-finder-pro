@@ -11,12 +11,8 @@ import { AdBannersSection } from "@/components/AdBannersSection";
 import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { httpRequest } from "@/services/index";
-import apartmentTypeService, {
-  ApartmentTypeItem,
-} from "@/services/apartmentType.service";
-import advertisementService, {
-  AdvertisementData,
-} from "@/services/advertisement.service";
+import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
+import advertisementService, { AdvertisementData } from "@/services/advertisement.service";
 import { filterPrices } from "@/lib/filter-options";
 
 import { ArrowRight } from "lucide-react";
@@ -91,10 +87,7 @@ const Index = () => {
   });
 
   // Shuffle recommended ads
-  const recommendedAds = useMemo(
-    () => shuffleArray((recommendedData?.items ?? []).filter(Boolean)),
-    [recommendedData]
-  );
+  const recommendedAds = useMemo(() => shuffleArray((recommendedData?.items ?? []).filter(Boolean)), [recommendedData]);
   const latestAds = (latestData?.items ?? []).filter(Boolean);
 
   const currentAds = activeTab === "recommended" ? recommendedAds : latestAds;
@@ -158,11 +151,6 @@ const Index = () => {
                 {t("listing.latest")}
               </button>
             </div>
-            <p className="section-subtitle mt-2">
-              {activeTab === "recommended"
-                ? t("listing.recommendedSub")
-                : t("listing.latestSub")}
-            </p>
           </div>
           <Link
             to="/search"
@@ -173,26 +161,12 @@ const Index = () => {
         </div>
 
         {/* Quick filter chips */}
-        <div className="flex gap-2 overflow-x-auto pb-2 thin-scrollbar">
-          {quickFilters.map((qf, i) => (
-            <button
-              key={i}
-              onClick={() => handleFilterClick(qf.params)}
-              className="filter-chip whitespace-nowrap"
-            >
-              {qf.label}
-            </button>
-          ))}
-        </div>
 
         <div className="mt-6">
           {currentLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-card rounded-2xl overflow-hidden border border-border"
-                >
+                <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
                   <Skeleton className="aspect-[3/2] w-full" />
                   <div className="p-4 space-y-2">
                     <Skeleton className="h-4 w-3/4" />
