@@ -128,17 +128,17 @@ const Index = () => {
         <div className="flex items-end justify-between mb-6">
           <div>
             {/* Tabs: Phòng đề xuất / Phòng mới cập nhật */}
-            <div className="relative flex gap-1 bg-secondary rounded-xl p-1">
+            <div className="relative inline-flex bg-secondary/80 rounded-full p-0.5 border border-border/50">
               <div
-                className="absolute top-1 bottom-1 rounded-lg bg-primary shadow-md transition-all duration-300 ease-out"
+                className="absolute top-0.5 bottom-0.5 rounded-full bg-primary shadow-sm transition-all duration-300 ease-out"
                 style={{
-                  width: 'calc(50% - 4px)',
-                  left: activeTab === "recommended" ? '4px' : 'calc(50%)',
+                  width: 'calc(50% - 2px)',
+                  left: activeTab === "recommended" ? '2px' : 'calc(50%)',
                 }}
               />
               <button
                 onClick={() => setActiveTab("recommended")}
-                className={`relative z-10 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors duration-300 flex-1 ${
+                className={`relative z-10 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors duration-300 ${
                   activeTab === "recommended"
                     ? "text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -146,10 +146,9 @@ const Index = () => {
               >
                 {t("listing.recommended")}
               </button>
-              {/* NOTE: This tab can be renamed to "Phòng có khuyến mại" in the future */}
               <button
                 onClick={() => setActiveTab("latest")}
-                className={`relative z-10 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors duration-300 flex-1 ${
+                className={`relative z-10 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors duration-300 ${
                   activeTab === "latest"
                     ? "text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
