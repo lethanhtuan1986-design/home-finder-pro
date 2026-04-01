@@ -13,6 +13,7 @@ import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentTyp
 import { httpRequest } from "@/services/index";
 import { useTranslation } from "react-i18next";
 import { Search, Map as MapIcon, Loader2, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { LocationAutocomplete } from "@/components/LocationAutocomplete";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
