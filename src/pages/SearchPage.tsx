@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 import { FloatingCallButton } from "@/components/FloatingCallButton";
 import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
 import advertisementService, {
-  GetAdvertisementsForMapRequest,
+  GetListAdvertisementRequest,
   AdvertisementData,
 } from "@/services/advertisement.service";
 import provinceService, { ProvinceItem } from "@/services/province.service";
