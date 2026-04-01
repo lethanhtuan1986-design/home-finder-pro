@@ -150,15 +150,14 @@ export const HeroSearch = () => {
           </Select>
         )}
 
-        {/* Search input */}
-        <div className="flex-1 relative min-w-0">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input
+        {/* Search input with autocomplete */}
+        <div className="flex-1 min-w-0">
+          <LocationAutocomplete
             value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            onChange={setSearchKeyword}
+            onSelect={() => handleSearch()}
             placeholder={t("search.keywordPlaceholder")}
-            className="w-full h-11 pl-9 pr-3 rounded-xl bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            inputClassName="h-11"
           />
         </div>
 
