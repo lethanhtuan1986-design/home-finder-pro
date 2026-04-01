@@ -58,6 +58,7 @@ const SearchPage = () => {
   const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
   const [typeOrder, setTypeOrder] = useState(searchParams.get("typeOrder") || "0");
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
   // Debounce keyword
   useEffect(() => {
