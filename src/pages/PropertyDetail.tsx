@@ -170,8 +170,8 @@ const PropertyDetail = () => {
           <PropertyGallery images={images} title={detail.title} />
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8 mt-8">
-          <div className="lg:col-span-2 space-y-6 flex flex-col">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 lg:gap-8 mt-8">
+          <div className="lg:col-span-2 space-y-6 flex flex-col contents lg:!block lg:!space-y-6">
             {/* Title, price, stats - always first */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="order-1">
               <div className="flex items-start justify-between gap-4">
