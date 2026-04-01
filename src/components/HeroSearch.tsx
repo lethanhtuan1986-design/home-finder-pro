@@ -119,7 +119,7 @@ export const HeroSearch = () => {
     navigate(`/search?${params.toString()}`);
   };
 
-  const advancedFilterCount = [wardId, priceUuid, sizeUuid, apartmentTypeUuid].filter(Boolean).length;
+  const advancedFilterCount = [wardId, priceUuid, sizeUuid, apartmentTypeUuid, ...(isMobile && provinceId ? [provinceId] : [])].filter(Boolean).length;
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">

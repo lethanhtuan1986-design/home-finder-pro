@@ -1,5 +1,8 @@
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import useEmblaCarousel from "embla-carousel-react";
 import bannerAd1 from "@/assets/banner-ad-1.jpg";
 import bannerAd2 from "@/assets/banner-ad-2.jpg";
 import bannerAd3 from "@/assets/banner-ad-3.jpg";
@@ -28,33 +31,96 @@ const banners = [
   },
 ];
 
-export const AdBannersSection = () => (
-  <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {banners.map((b, i) => (
-        <Link
-          key={i}
-          to={b.link}
-          className="group relative rounded-2xl overflow-hidden aspect-[8/3] block"
-        >
-          <img
-            src={b.image}
-            alt={b.title}
-            loading="lazy"
-            width={800}
-            height={512}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/5" />
-          <div className="absolute bottom-0 left-0 right-0 p-5">
-            <h3 className="text-lg font-bold mb-1 text-white drop-shadow-md">{b.title}</h3>
-            <p className="text-sm text-white/90 mb-3 drop-shadow-sm">{b.description}</p>
-            <span className="inline-flex items-center gap-1 text-sm font-semibold text-white drop-shadow-sm group-hover:underline">
-              {b.cta} <ArrowRight size={14} />
-            </span>
-          </div>
-        </Link>
-      ))}
+const BannerCard = ({ b }: { b: typeof banners[0] }) => (
+  <Link
+    to={b.link}
+    className="group relative rounded-2xl overflow-hidden aspect-[8/3] block"
+  >
+    <img
+      src={b.image}
+      alt={b.title}
+      loading="lazy"
+      width={800}
+      height={512}
+      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/5" />
+    <div className="absolute bottom-0 left-0 right-0 p-5">
+      <h3 className="text-lg font-bold mb-1 text-white drop-shadow-md">{b.title}</h3>
+      <p className="text-sm text-white/90 mb-3 drop-shadow-sm">{b.description}</p>
+      <span className="inline-flex items-center gap-1 text-sm font-semibold text-white drop-shadow-sm group-hover:underline">
+        {b.cta} <ArrowRight size={14} />
+      </span>
     </div>
-  </section>
+  </Link>
 );
+
+export const AdBannersSection = () => {
+  const isMobile = useIsMobile();
+
+  if (!isMobile) {
+    return (
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {banners.map((b, i) => (
+            <BannerCard key={i} b={b} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  return <MobileCarousel />;
+};
+
+const MobileCarousel = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi, onSelect]);
+
+  // Autoplay 5s
+  useEffect(() => {
+    if (!emblaApi) return;
+    const timer = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [emblaApi]);
+
+  return (
+    <section className="px-4 py-6">
+      <div ref={emblaRef} className="overflow-hidden rounded-2xl">
+        <div className="flex">
+          {banners.map((b, i) => (
+            <div key={i} className="flex-[0_0_100%] min-w-0">
+              <BannerCard b={b} />
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Pagination dots */}
+      <div className="flex justify-center gap-1.5 mt-3">
+        {banners.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => emblaApi?.scrollTo(i)}
+            className={`w-2 h-2 rounded-full transition-all ${
+              i === selectedIndex ? "bg-primary w-5" : "bg-muted-foreground/30"
+            }`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+};

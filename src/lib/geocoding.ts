@@ -12,7 +12,18 @@ export interface GeoBounds {
   swLng: number;
 }
 
-export async function geocodeKeyword(keyword: string): Promise<GeoBounds | null> {
+export const RADIUS_OPTIONS = [
+  { value: 1, label: '+1 km' },
+  { value: 2, label: '+2 km' },
+  { value: 3, label: '+3 km' },
+  { value: 5, label: '+5 km' },
+  { value: 10, label: '+10 km' },
+  { value: 20, label: '+20 km' },
+];
+
+export const DEFAULT_RADIUS_KM = 5;
+
+export async function geocodeKeyword(keyword: string, radiusKm: number = DEFAULT_RADIUS_KM): Promise<GeoBounds | null> {
   if (!keyword.trim()) return null;
   try {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(keyword)}&format=json&limit=1&countrycodes=vn`;
@@ -22,10 +33,9 @@ export async function geocodeKeyword(keyword: string): Promise<GeoBounds | null>
     const data: NominatimResult[] = await res.json();
     if (!data || data.length === 0) return null;
     const [south, north, west, east] = data[0].boundingbox.map(Number);
-    const KM_BUFFER = 5;
-    const latBuffer = KM_BUFFER / 111;
+    const latBuffer = radiusKm / 111;
     const centerLat = (south + north) / 2;
-    const lngBuffer = KM_BUFFER / (111 * Math.cos((centerLat * Math.PI) / 180));
+    const lngBuffer = radiusKm / (111 * Math.cos((centerLat * Math.PI) / 180));
     return {
       neLat: north + latBuffer,
       neLng: east + lngBuffer,
