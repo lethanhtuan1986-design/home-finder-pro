@@ -107,10 +107,24 @@ const SearchPage = () => {
       }),
   });
 
+  // Build enriched query: append province/ward names for better Nominatim accuracy
+  const enrichedQuery = useMemo(() => {
+    const parts = [debouncedKeyword];
+    if (wardId) {
+      const ward = wards.find((w) => w.code === wardId);
+      if (ward) parts.push(ward.fullName);
+    }
+    if (provinceId) {
+      const province = provinces.find((p) => p.code === provinceId);
+      if (province) parts.push(province.fullName);
+    }
+    return parts.filter(Boolean).join(" ");
+  }, [debouncedKeyword, provinceId, wardId, provinces, wards]);
+
   // Geocode keyword for bounding box
   const { data: geoBounds, isFetching: isGeocoding } = useQuery<GeoBounds | null>({
-    queryKey: ["geocode", debouncedKeyword, radiusKm],
-    queryFn: () => geocodeKeyword(debouncedKeyword, radiusKm),
+    queryKey: ["geocode", enrichedQuery, radiusKm],
+    queryFn: () => geocodeKeyword(enrichedQuery, radiusKm),
     enabled: !!debouncedKeyword,
     staleTime: 1000 * 60 * 10,
   });

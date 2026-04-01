@@ -99,17 +99,7 @@ const MapSearchPage = () => {
     return () => clearTimeout(timer);
   }, [bounds]);
 
-  // Geocoding: pan map to location when keyword changes
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
-
-  useEffect(() => {
-    if (!debouncedKeyword) return;
-    geocodeKeyword(debouncedKeyword, radiusKm).then((result) => {
-      if (result) {
-        setMapCenter({ lat: result.centerLat, lng: result.centerLng, zoom: 14 });
-      }
-    });
-  }, [debouncedKeyword, radiusKm]);
 
   const selectedPriceUuid =
     filterPrices.find(
@@ -164,6 +154,30 @@ const MapSearchPage = () => {
         }),
       }),
   });
+
+  // Build enriched query: append province/ward names for better Nominatim accuracy
+  const enrichedQuery = useMemo(() => {
+    const parts = [debouncedKeyword];
+    if (wardId) {
+      const ward = wards.find((w) => w.code === wardId);
+      if (ward) parts.push(ward.fullName);
+    }
+    if (provinceId) {
+      const province = provinces.find((p) => p.code === provinceId);
+      if (province) parts.push(province.fullName);
+    }
+    return parts.filter(Boolean).join(" ");
+  }, [debouncedKeyword, provinceId, wardId, provinces, wards]);
+
+  // Geocoding: pan map to location when keyword changes
+  useEffect(() => {
+    if (!debouncedKeyword) return;
+    geocodeKeyword(enrichedQuery, radiusKm).then((result) => {
+      if (result) {
+        setMapCenter({ lat: result.centerLat, lng: result.centerLng, zoom: 14 });
+      }
+    });
+  }, [enrichedQuery, radiusKm]);
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: 1, pageSize: 100, isHot: 0, typeOrder: 0 };

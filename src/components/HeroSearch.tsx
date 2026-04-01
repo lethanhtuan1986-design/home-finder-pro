@@ -123,71 +123,103 @@ export const HeroSearch = () => {
 
   const searchPanel = (
     <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-soft border border-border p-3 sm:p-4">
-      {/* Main filters row */}
-      <div className="flex flex-row items-stretch gap-2">
-        {/* Province select - desktop only */}
-        {!isMobile && (
-          <Select
-            value={provinceId}
-            onValueChange={(val) => {
-              setProvinceId(val === "__all__" ? "" : val);
-              setWardId("");
-            }}
-          >
-            <SelectTrigger className="h-11 rounded-xl bg-secondary/50 border-border w-auto md:min-w-[160px]">
-              <SelectValue placeholder={t("hero.area")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">{t("hero.area")}</SelectItem>
-              {provinces.map((p) => (
-                <SelectItem key={p.code} value={p.code}>
-                  {p.fullName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Main filters - 2-row on mobile, single row on desktop */}
+      <div className="flex flex-col gap-2">
+        {/* Row 1: Province (desktop) + Input */}
+        <div className="flex flex-row items-stretch gap-2">
+          {/* Province select - desktop only */}
+          {!isMobile && (
+            <Select
+              value={provinceId}
+              onValueChange={(val) => {
+                setProvinceId(val === "__all__" ? "" : val);
+                setWardId("");
+              }}
+            >
+              <SelectTrigger className="h-11 rounded-xl bg-secondary/50 border-border w-auto md:min-w-[160px]">
+                <SelectValue placeholder={t("hero.area")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">{t("hero.area")}</SelectItem>
+                {provinces.map((p) => (
+                  <SelectItem key={p.code} value={p.code}>
+                    {p.fullName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+
+          {/* Search input - full width on mobile */}
+          <div className="flex-1 relative min-w-0">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              placeholder={t("search.keywordPlaceholder")}
+              className="w-full h-11 pl-9 pr-3 rounded-xl bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          {/* Desktop: buttons inline */}
+          {!isMobile && (
+            <div className="flex gap-2 shrink-0">
+              <button
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className={`relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors ${
+                  showAdvanced
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                }`}
+                title={t("hero.advancedFilters")}
+              >
+                <SlidersHorizontal size={18} />
+                {advancedFilterCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {advancedFilterCount}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={handleSearch}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap px-6"
+              >
+                <Search size={20} />
+                <span>{t("hero.searchBtn")}</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Row 2: Mobile only - two buttons side by side with icon + text */}
+        {isMobile && (
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className={`relative flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-medium transition-colors ${
+                showAdvanced
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+              }`}
+            >
+              <SlidersHorizontal size={16} />
+              <span>{t("hero.advancedFilters")}</span>
+              {advancedFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {advancedFilterCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={handleSearch}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+              <Search size={16} />
+              <span>{t("hero.searchBtn")}</span>
+            </button>
+          </div>
         )}
-
-        {/* Search input */}
-        <div className="flex-1 relative min-w-0">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder={t("search.keywordPlaceholder")}
-            className="w-full h-11 pl-9 pr-3 rounded-xl bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-
-        <div className="flex gap-2 shrink-0">
-          {/* Advanced filter - icon only */}
-          <button
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className={`relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors ${
-              showAdvanced
-                ? "bg-primary/10 text-primary border border-primary/20"
-                : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
-            }`}
-            title={t("hero.advancedFilters")}
-          >
-            <SlidersHorizontal size={18} />
-            {advancedFilterCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
-                {advancedFilterCount}
-              </span>
-            )}
-          </button>
-
-          {/* Search button - icon only on mobile */}
-          <button
-            onClick={handleSearch}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground h-11 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap px-3 md:px-6"
-          >
-            <Search size={20} />
-            <span className="hidden md:inline">{t("hero.searchBtn")}</span>
-          </button>
-        </div>
       </div>
 
       {/* Advanced filters panel */}
