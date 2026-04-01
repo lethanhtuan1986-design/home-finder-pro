@@ -7,10 +7,7 @@ import { AdvertisementCard } from "@/components/AdvertisementCard";
 import { Footer } from "@/components/Footer";
 import { FloatingCallButton } from "@/components/FloatingCallButton";
 import { filterPrices, filterApartmentSizes } from "@/lib/filter-options";
-import advertisementService, {
-  GetListAdvertisementRequest,
-  AdvertisementData,
-} from "@/services/advertisement.service";
+import advertisementService, { GetListAdvertisementRequest, AdvertisementData } from "@/services/advertisement.service";
 import provinceService, { ProvinceItem } from "@/services/province.service";
 import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
 import { httpRequest } from "@/services/index";
@@ -22,12 +19,7 @@ import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MiniMapPreview } from "@/components/MiniMapPreview";
 import { geocodeKeyword, GeoBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const PAGE_SIZE = 20;
 
@@ -246,7 +238,9 @@ const SearchPage = () => {
     navigate(`/search/map?${params.toString()}`);
   };
 
-  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid, provinceId, wardId].filter(Boolean).length;
+  const activeFilterCount = [apartmentTypeUuid, selectedPriceUuid, selectedSizeUuid, provinceId, wardId].filter(
+    Boolean,
+  ).length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col pt-16">
@@ -292,7 +286,7 @@ const SearchPage = () => {
                 "relative flex items-center gap-1.5 px-3 rounded-lg text-sm font-medium transition-colors h-11",
                 activeFilterCount > 0
                   ? "bg-primary/10 text-primary border border-primary/20"
-                  : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary",
               )}
             >
               <SlidersHorizontal size={16} />
@@ -474,7 +468,7 @@ const SearchPage = () => {
                   onClick={goToMapView}
                   title={t("search.openMapView")}
                 >
-                  <div className="h-[220px] relative">
+                  <div className="h-[230px] relative">
                     <MiniMapPreview locations={[]} loading={loading} />
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors flex items-center justify-center">
                       <span className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-lg group-hover:scale-105 transition-transform">
