@@ -56,6 +56,7 @@ const MapSearchPage = () => {
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [mobileShowList, setMobileShowList] = useState(false);
 
   // Map bounding box state (from viewport)
   const [bounds, setBounds] = useState<{
