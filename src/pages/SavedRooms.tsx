@@ -41,8 +41,8 @@ const SavedRooms = () => {
       <SEO title={t("saved.title")} description={t("saved.title")} />
       <Navbar />
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="section-title mb-2">{t({ count: savedIds.length }, "saved.title")}</h1>
-        <p className="section-subtitle mb-8">{t("saved.count")}</p>
+        <h1 className="section-title mb-2">{t("saved.title")}</h1>
+        <p className="section-subtitle mb-8">{t("saved.count", { count: savedIds.length })}</p>
 
         {isLoading && savedIds.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
