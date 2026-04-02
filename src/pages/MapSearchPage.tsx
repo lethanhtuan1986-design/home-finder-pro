@@ -465,23 +465,32 @@ const MapSearchPage = () => {
           className={cn(
             "flex flex-col border-r border-border bg-card",
             isMobile
-              ? "w-full absolute inset-0 top-16 z-30"
+              ? "w-full absolute inset-0 top-16 z-30 transition-transform duration-300"
               : "w-[380px] shrink-0",
           )}
           style={
             isMobile
-              ? { display: isMobile && bounds ? "none" : "flex" }
+              ? { transform: mobileShowList ? "translateX(0)" : "translateX(-100%)" }
               : undefined
           }
         >
           {/* Header */}
           <div className="p-3 border-b border-border flex items-center gap-2">
-            <button
-              onClick={() => navigate(-1)}
-              className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-secondary transition-colors text-muted-foreground"
-            >
-              <ArrowLeft size={18} />
-            </button>
+            {isMobile ? (
+              <button
+                onClick={() => setMobileShowList(false)}
+                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-secondary transition-colors text-muted-foreground"
+              >
+                <X size={18} />
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate(-1)}
+                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-secondary transition-colors text-muted-foreground"
+              >
+                <ArrowLeft size={18} />
+              </button>
+            )}
             <p className="text-sm font-medium text-foreground flex-1">
               {visibleAds.length} {t("search.found")}
             </p>
@@ -538,6 +547,20 @@ const MapSearchPage = () => {
 
         {/* Right: Map */}
         <div className="flex-1 relative">
+          {/* Floating search bar on map */}
+          <div className="absolute top-4 left-4 z-[1000] w-[calc(100%-2rem)] md:w-80">
+            <LocationAutocomplete
+              value={keyword}
+              onChange={setKeyword}
+              onSelect={handleLocationSelect}
+              enrichSuffix={enrichSuffix}
+              radiusKm={radiusKm}
+              placeholder={t("search.keywordPlaceholder")}
+              className="w-full"
+              inputClassName="bg-card shadow-lg border-border"
+            />
+          </div>
+
           <MapView
             locations={mapLocations}
             hoveredId={hoveredId}
@@ -550,14 +573,10 @@ const MapSearchPage = () => {
           {/* Mobile: toggle list button */}
           {isMobile && (
             <button
-              onClick={() =>
-                setBounds(
-                  bounds ? null : { neLat: 0, neLng: 0, swLat: 0, swLng: 0 },
-                )
-              }
+              onClick={() => setMobileShowList((v) => !v)}
               className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] bg-primary text-primary-foreground px-4 py-2.5 rounded-full shadow-lg text-sm font-medium"
             >
-              {bounds ? t("search.showList") : t("search.showMap")}
+              {mobileShowList ? t("search.showMap") : t("search.showList")}
             </button>
           )}
         </div>
