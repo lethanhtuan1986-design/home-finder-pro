@@ -465,7 +465,7 @@ const MapSearchPage = () => {
           className={cn(
             "flex flex-col border-r border-border bg-card",
             isMobile
-              ? "w-full absolute inset-0 top-16 z-30 transition-transform duration-300"
+              ? "w-full absolute inset-0 top-16 z-[1100] transition-transform duration-300"
               : "w-[380px] shrink-0",
           )}
           style={
