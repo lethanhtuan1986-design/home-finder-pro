@@ -1,24 +1,24 @@
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
-import { FloatingCallButton } from '@/components/FloatingCallButton';
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { FloatingCallButton } from "@/components/FloatingCallButton";
 
-import { SEO } from '@/components/SEO';
-import { AdvertisementCard } from '@/components/AdvertisementCard';
-import { useSavedRooms } from '@/hooks/useSavedRooms';
-import { useQuery } from '@tanstack/react-query';
-import advertisementService, { AdvertisementData } from '@/services/advertisement.service';
-import { httpRequest } from '@/services/index';
-import { Heart } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { Skeleton } from '@/components/ui/skeleton';
-import { EmptyState } from '@/components/EmptyState';
+import { SEO } from "@/components/SEO";
+import { AdvertisementCard } from "@/components/AdvertisementCard";
+import { useSavedRooms } from "@/hooks/useSavedRooms";
+import { useQuery } from "@tanstack/react-query";
+import advertisementService, { AdvertisementData } from "@/services/advertisement.service";
+import { httpRequest } from "@/services/index";
+import { Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/EmptyState";
 
 const SavedRooms = () => {
   const { savedIds } = useSavedRooms();
   const { t } = useTranslation();
 
   const { data: savedData, isLoading } = useQuery<AdvertisementData[] | { items: AdvertisementData[] }>({
-    queryKey: ['saved-advertisements', savedIds],
+    queryKey: ["saved-advertisements", savedIds],
     queryFn: () =>
       httpRequest({
         http: advertisementService.getListPaged({
@@ -34,17 +34,15 @@ const SavedRooms = () => {
   });
 
   // Handle both array and { items: [] } response formats
-  const savedProperties: AdvertisementData[] = Array.isArray(savedData)
-    ? savedData
-    : (savedData as any)?.items ?? [];
+  const savedProperties: AdvertisementData[] = Array.isArray(savedData) ? savedData : ((savedData as any)?.items ?? []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-14 md:pb-0 pt-16">
-      <SEO title={t('saved.title')} description={t('saved.title')} />
+      <SEO title={t("saved.title")} description={t("saved.title")} />
       <Navbar />
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="section-title mb-2">{t('saved.title')}</h1>
-        <p className="section-subtitle mb-8">{t('saved.count', { count: savedIds.length })}</p>
+        <h1 className="section-title mb-2">{t({ count: savedIds.length }, "saved.title")}</h1>
+        <p className="section-subtitle mb-8">{t("saved.count")}</p>
 
         {isLoading && savedIds.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -72,19 +70,15 @@ const SavedRooms = () => {
         {!isLoading && savedIds.length === 0 && (
           <EmptyState
             icon={Heart}
-            title={t('saved.empty')}
-            description={t('saved.emptyHint')}
-            actionLabel={t('nav.searchNow')}
+            title={t("saved.empty")}
+            description={t("saved.emptyHint")}
+            actionLabel={t("nav.searchNow")}
             actionTo="/search"
           />
         )}
 
         {!isLoading && savedIds.length > 0 && savedProperties.length === 0 && (
-          <EmptyState
-            icon={Heart}
-            title={t('search.noResult')}
-            description={t('search.noResultHint')}
-          />
+          <EmptyState icon={Heart} title={t("search.noResult")} description={t("search.noResultHint")} />
         )}
       </div>
       <FloatingCallButton />
