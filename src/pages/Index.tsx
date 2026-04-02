@@ -11,8 +11,12 @@ import { AdBannersSection } from "@/components/AdBannersSection";
 import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { httpRequest } from "@/services/index";
-import apartmentTypeService, { ApartmentTypeItem } from "@/services/apartmentType.service";
-import advertisementService, { AdvertisementData } from "@/services/advertisement.service";
+import apartmentTypeService, {
+  ApartmentTypeItem,
+} from "@/services/apartmentType.service";
+import advertisementService, {
+  AdvertisementData,
+} from "@/services/advertisement.service";
 import { filterPrices } from "@/lib/filter-options";
 
 import { ArrowRight } from "lucide-react";
@@ -34,7 +38,9 @@ function shuffleArray<T>(arr: T[]): T[] {
 const Index = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"recommended" | "latest">("recommended");
+  const [activeTab, setActiveTab] = useState<"recommended" | "latest">(
+    "recommended",
+  );
 
   const { data: apartmentTypesRaw = [] } = useQuery({
     queryKey: ["dropdown-apartment-type"],
@@ -87,11 +93,15 @@ const Index = () => {
   });
 
   // Shuffle recommended ads
-  const recommendedAds = useMemo(() => shuffleArray((recommendedData?.items ?? []).filter(Boolean)), [recommendedData]);
+  const recommendedAds = useMemo(
+    () => shuffleArray((recommendedData?.items ?? []).filter(Boolean)),
+    [recommendedData],
+  );
   const latestAds = (latestData?.items ?? []).filter(Boolean);
 
   const currentAds = activeTab === "recommended" ? recommendedAds : latestAds;
-  const currentLoading = activeTab === "recommended" ? recommendedLoading : latestLoading;
+  const currentLoading =
+    activeTab === "recommended" ? recommendedLoading : latestLoading;
 
   const handleFilterClick = (params: Record<string, string>) => {
     const searchParams = new URLSearchParams(params);
@@ -124,7 +134,7 @@ const Index = () => {
       <AdBannersSection />
 
       {/* Listings */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-6">
           <div>
             {/* Tabs: Phòng đề xuất / Phòng mới cập nhật */}
@@ -166,7 +176,10 @@ const Index = () => {
           {currentLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border">
+                <div
+                  key={i}
+                  className="bg-card rounded-2xl overflow-hidden border border-border"
+                >
                   <Skeleton className="aspect-[3/2] w-full" />
                   <div className="p-4 space-y-2">
                     <Skeleton className="h-4 w-3/4" />
