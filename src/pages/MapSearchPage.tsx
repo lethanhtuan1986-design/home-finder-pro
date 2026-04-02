@@ -506,7 +506,7 @@ const MapSearchPage = () => {
                   )}
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[320px] overflow-y-auto">
+              <SheetContent side="left" className="w-[320px] overflow-y-auto z-[1200]">
                 <SheetHeader>
                   <SheetTitle>{t("search.filter")}</SheetTitle>
                 </SheetHeader>
