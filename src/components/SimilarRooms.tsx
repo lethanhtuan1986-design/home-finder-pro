@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { httpRequest } from "@/services/index";
 import advertisementService, { AdvertisementData } from "@/services/advertisement.service";
 import { AdvertisementCard } from "@/components/AdvertisementCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 
 interface SimilarRoomsProps {
