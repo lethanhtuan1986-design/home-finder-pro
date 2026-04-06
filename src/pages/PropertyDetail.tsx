@@ -405,6 +405,12 @@ const PropertyDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Reviews section */}
+        <PropertyReviews apartmentUuid={apt.uuid} />
+
+        {/* Similar rooms section */}
+        <SimilarRooms advertisementUuid={detail.uuid} />
       </div>
 
       {/* Sticky Bottom Bar on Mobile */}
