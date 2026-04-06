@@ -13,6 +13,9 @@ import { useRecentRooms } from "@/hooks/useRecentRooms";
 import { useTranslation } from "react-i18next";
 import advertisementService, { AdvertisementDetailData } from "@/services/advertisement.service";
 import { formatVNPrice, getImageUrl, httpRequest, formatVNPhone } from "@/services/index";
+import { SimilarRooms } from "@/components/SimilarRooms";
+import { PropertyReviews } from "@/components/PropertyReviews";
+import { ShareButton } from "@/components/ShareButton";
 import {
   MapPin,
   Maximize,
