@@ -14,22 +14,17 @@ interface PropertyReviewsProps {
 export const PropertyReviews = ({ apartmentUuid }: PropertyReviewsProps) => {
   const { t } = useTranslation();
 
-  const { data: feedbackData } = useQuery<{ items: FeedbackItem[] }>({
+  const { data: feedbackData } = useQuery({
     queryKey: ["property-reviews", apartmentUuid],
     queryFn: () =>
       httpRequest({
-        http: feedbackService.getListPaged({
-          isPaging: 1,
-          page: 1,
-          pageSize: 20,
-          apartmentUuid,
-          status: 1,
-        }),
+        http: feedbackService.getByUuid(apartmentUuid),
       }),
     enabled: !!apartmentUuid,
   });
 
-  const reviews = feedbackData?.items ?? [];
+  const rawData = feedbackData as any;
+  const reviews: FeedbackItem[] = Array.isArray(rawData?.items) ? rawData.items : Array.isArray(rawData) ? rawData : rawData ? [rawData] : [];
   if (reviews.length === 0) return null;
 
   const avgStars = reviews.reduce((sum, r) => sum + r.stars, 0) / reviews.length;
