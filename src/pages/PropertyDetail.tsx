@@ -176,7 +176,12 @@ const PropertyDetail = () => {
         <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 lg:gap-8 mt-8">
           <div className="lg:col-span-2 space-y-6 flex flex-col contents lg:!block lg:!space-y-6">
             {/* Title, price, stats - always first */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="order-1">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="order-1"
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
@@ -231,14 +236,24 @@ const PropertyDetail = () => {
             </motion.div>
 
             {descriptionText && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="order-5 lg:order-none">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="order-5 lg:order-none"
+              >
                 <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.description")}</h2>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{descriptionText}</p>
               </motion.div>
             )}
 
             {apt.roomTypeGroups && apt.roomTypeGroups.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="order-6 lg:order-none">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="order-6 lg:order-none"
+              >
                 <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.roomTypes")}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {apt.roomTypeGroups.map((g) => (
@@ -259,13 +274,22 @@ const PropertyDetail = () => {
             )}
 
             {apt.furnitureTypeGroups && apt.furnitureTypeGroups.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="order-7 lg:order-none">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="order-7 lg:order-none"
+              >
                 <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.furniture")}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {apt.furnitureTypeGroups.map((g) => (
                     <div key={g.furnitureUu.uuid} className="flex items-center gap-2 text-sm text-muted-foreground">
                       {g.furnitureUu.iconPath ? (
-                        <img src={getImageUrl(g.furnitureUu.iconPath)} alt={g.furnitureUu.name} className="w-4 h-4 shrink-0" />
+                        <img
+                          src={getImageUrl(g.furnitureUu.iconPath)}
+                          alt={g.furnitureUu.name}
+                          className="w-4 h-4 shrink-0"
+                        />
                       ) : (
                         <Check size={16} className="text-primary shrink-0" />
                       )}
@@ -277,7 +301,12 @@ const PropertyDetail = () => {
             )}
 
             {detail.adPrices && detail.adPrices.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="order-8 lg:order-none">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                className="order-8 lg:order-none"
+              >
                 <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.serviceCost")}</h2>
                 <div className="border border-border rounded-xl overflow-hidden">
                   <table className="w-full text-sm">
@@ -321,7 +350,12 @@ const PropertyDetail = () => {
               </motion.div>
             )}
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="order-9 lg:order-none">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="order-9 lg:order-none"
+            >
               <div className="bg-accent/50 rounded-xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t("listing.deposit")}</span>
@@ -336,7 +370,7 @@ const PropertyDetail = () => {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="order-3 lg:order-none">
+            {/* <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="order-3 lg:order-none">
               <h2 className="font-semibold text-lg mb-3 text-foreground">{t("detail.contact")}</h2>
               <div className="flex items-center gap-4 bg-card border border-border rounded-xl p-4">
                 <Avatar className="h-12 w-12">
@@ -358,11 +392,16 @@ const PropertyDetail = () => {
                   </a>
                 )}
               </div>
-            </motion.div>
+            </motion.div> */}
 
             {/* Google Maps Embed */}
             {mapCoords && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="order-10 lg:order-none">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="order-10 lg:order-none"
+              >
                 <h2 className="font-semibold text-lg mb-3 text-foreground flex items-center gap-2">
                   <MapPin size={18} className="text-primary" />
                   Bản đồ
