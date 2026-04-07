@@ -3,45 +3,56 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { httpRequest, getImageUrl } from "@/services/index";
 import feedbackService, { FeedbackItem } from "@/services/feedback.service";
-import { Star, ChevronDown, ChevronUp } from "lucide-react";
+import { Star, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 
 interface PropertyReviewsProps {
   apartmentUuid: string;
 }
 
+const PAGE_SIZE = 5;
+
 export const PropertyReviews = ({ apartmentUuid }: PropertyReviewsProps) => {
   const { t } = useTranslation();
   const sectionRef = useRef<HTMLElement>(null);
   const [allReviews, setAllReviews] = useState<FeedbackItem[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [hasMore, setHasMore] = useState(true);
+  const [totalPage, setTotalPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [initialLoaded, setInitialLoaded] = useState(false);
 
   const { isFetching } = useQuery({
-    queryKey: ["property-reviews", apartmentUuid, page, pageSize],
+    queryKey: ["property-reviews", apartmentUuid, page],
     queryFn: async () => {
       const result = await httpRequest({
         http: feedbackService.getListPaged({
           apartmentUuid,
           isPaging: 1,
           page,
-          pageSize,
+          pageSize: PAGE_SIZE,
         }),
       });
       const raw = result as any;
       const items: FeedbackItem[] = Array.isArray(raw?.items) ? raw.items : Array.isArray(raw) ? raw : [];
+      const pagination = raw?.pagination;
 
-      if (page === 1 && pageSize === 5) {
+      if (page === 1) {
         setAllReviews(items);
       } else {
         setAllReviews((prev) => [...prev, ...items]);
       }
 
-      setHasMore(items.length >= pageSize);
+      if (pagination) {
+        setTotalPage(pagination.totalPage || 1);
+        setTotalCount(pagination.totalCount || 0);
+      } else {
+        setTotalPage(items.length < PAGE_SIZE ? page : page + 1);
+        setTotalCount(0);
+      }
+
       setInitialLoaded(true);
       return items;
     },
@@ -50,20 +61,18 @@ export const PropertyReviews = ({ apartmentUuid }: PropertyReviewsProps) => {
 
   const handleLoadMore = useCallback(() => {
     setPage((p) => p + 1);
-    setPageSize(20);
   }, []);
 
   const handleCollapse = useCallback(() => {
-    setAllReviews((prev) => prev.slice(0, 5));
+    setAllReviews((prev) => prev.slice(0, PAGE_SIZE));
     setPage(1);
-    setPageSize(5);
-    setHasMore(true);
     sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   const avgStars = allReviews.length > 0 ? allReviews.reduce((sum, r) => sum + r.stars, 0) / allReviews.length : 0;
-  const totalReviews = allReviews.length;
-  const showCollapse = allReviews.length > 5;
+  const displayCount = allReviews.length;
+  const showLoadMore = page < totalPage;
+  const showCollapse = page > 1;
 
   return (
     <section ref={sectionRef} className="mt-8">
@@ -95,13 +104,13 @@ export const PropertyReviews = ({ apartmentUuid }: PropertyReviewsProps) => {
                 ))}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {totalReviews} {t("detail.reviewCount", "đánh giá")}
+                {totalCount > 0 ? totalCount : displayCount} {t("detail.reviewCount", "đánh giá")}
               </p>
             </div>
             <div className="flex-1 space-y-1">
               {[5, 4, 3, 2, 1].map((star) => {
                 const count = allReviews.filter((r) => r.stars === star).length;
-                const pct = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+                const pct = displayCount > 0 ? (count / displayCount) * 100 : 0;
                 return (
                   <div key={star} className="flex items-center gap-2 text-xs">
                     <span className="w-3 text-muted-foreground">{star}</span>
@@ -123,12 +132,40 @@ export const PropertyReviews = ({ apartmentUuid }: PropertyReviewsProps) => {
             ))}
           </div>
 
+          {/* Loading skeleton */}
+          {isFetching && page > 1 && (
+            <div className="space-y-4 mt-4">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="border border-border rounded-xl p-4 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-9 w-9 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Load more / Collapse buttons */}
           <div className="flex items-center justify-center gap-3 mt-6">
-            {hasMore && (
+            {showLoadMore && (
               <Button variant="outline" size="sm" onClick={handleLoadMore} disabled={isFetching} className="gap-1.5">
-                {isFetching ? t("common.loading", "Đang tải...") : t("detail.loadMoreReviews", "Xem thêm đánh giá")}
-                {!isFetching && <ChevronDown size={14} />}
+                {isFetching && page > 1 ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    {t("common.loading", "Đang tải...")}
+                  </>
+                ) : (
+                  <>
+                    {t("detail.loadMoreReviews", "Xem thêm đánh giá")}
+                    <ChevronDown size={14} />
+                  </>
+                )}
               </Button>
             )}
             {showCollapse && (
