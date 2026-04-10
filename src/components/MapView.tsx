@@ -289,14 +289,6 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
         <LocateFixed size={18} className={`text-primary ${locating ? "animate-pulse" : ""}`} />
       </button>
 
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-[500] pointer-events-none">
-          <div className="flex items-center gap-2 bg-card px-4 py-2.5 rounded-xl shadow-lg border border-border">
-            <Loader2 size={18} className="animate-spin text-primary" />
-            <span className="text-sm font-medium text-foreground">Đang tải bản đồ...</span>
-          </div>
-        </div>
-      )}
 
       {!loading && validLocations.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-secondary/30 pointer-events-none z-[500]">
