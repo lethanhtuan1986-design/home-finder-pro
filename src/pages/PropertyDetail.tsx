@@ -187,7 +187,7 @@ const PropertyDetail = () => {
                   <span className="inline-block text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
                     {apt.apartmentTypeUu?.name || t("listing.room")}
                   </span>
-                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground break-words">{detail.title}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground whitespace-nowrap overflow-hidden text-ellipsis">{detail.title}</h1>
                   <p className="text-muted-foreground flex items-center gap-1 mt-2">
                     <MapPin size={16} /> {address}
                   </p>
