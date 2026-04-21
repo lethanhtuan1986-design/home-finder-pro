@@ -29,6 +29,7 @@ interface FormErrors {
 
 export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }: ScheduleFormProps) => {
   const [form, setForm] = useState({ name: '', phone: '', email: '', date: undefined as Date | undefined });
+  const [dateOpen, setDateOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [shakeField, setShakeField] = useState<string | null>(null);
   const { t } = useTranslation();
@@ -47,7 +48,9 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
     } else if (!VN_PHONE_REGEX.test(form.phone.trim())) {
       errs.phone = t('schedule.errorPhoneInvalid', 'Số điện thoại không hợp lệ (VD: 0912345678)');
     }
-    if (form.email.trim() && !EMAIL_REGEX.test(form.email.trim())) {
+    if (!form.email.trim()) {
+      errs.email = t('schedule.errorEmailRequired', 'Vui lòng nhập email');
+    } else if (!EMAIL_REGEX.test(form.email.trim())) {
       errs.email = t('schedule.errorEmail', 'Email không hợp lệ');
     }
     return errs;
@@ -108,7 +111,7 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Date picker */}
       <div className={cn(shakeField === 'date' && 'animate-shake')}>
-        <Popover>
+        <Popover open={dateOpen} onOpenChange={setDateOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -126,7 +129,11 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
             <CalendarUI
               mode="single"
               selected={form.date}
-              onSelect={(d) => { setForm(f => ({ ...f, date: d })); clearError('date'); }}
+              onSelect={(d) => {
+                setForm(f => ({ ...f, date: d }));
+                clearError('date');
+                if (d) setDateOpen(false);
+              }}
               disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
               initialFocus
               className="p-3 pointer-events-auto"
