@@ -57,8 +57,8 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
     return `${Math.floor(diffSec / 31536000)} năm trước`;
   };
 
-  const viewCount = data?.countView;
-  const updatedText = formatRelativeTime(data?.updateDate);
+  const viewCount = data?.viewCount;
+  const updatedText = formatRelativeTime(data?.startDate);
   const showMeta = (viewCount != null && viewCount > 0) || updatedText;
 
   return (

@@ -106,6 +106,8 @@ export interface AdvertisementData {
   point: number | null;
   countView?: number;
   updateDate?: string;
+  viewCount?: number;
+  startDate?: string;
   id: number;
   uuid: string;
   status: number;
