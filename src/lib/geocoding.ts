@@ -28,14 +28,16 @@ function getAddressRank(r: NominatimResult): number {
   // Có số nhà — ưu tiên kế tiếp
   if (r.address?.house_number) return -1;
   return ADDRESS_PRIORITY[cls] ?? 99;
+}
+
 /**
  * Bỏ dấu tiếng Việt: "Đội Cấn" -> "doi can"
- * Nominatim đôi khi cho kết quả tốt hơn với chuỗi không dấu (ASCII).
+ * Nominatim cho kết quả tốt hơn với chuỗi không dấu (ASCII).
  */
 export function removeVietnameseTones(str: string): string {
   return str
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // bỏ dấu thanh & dấu mũ
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/đ/g, "d")
     .replace(/Đ/g, "D");
 }
