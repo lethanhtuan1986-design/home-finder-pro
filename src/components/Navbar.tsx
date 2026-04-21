@@ -4,6 +4,15 @@ import { Search, Heart, Home, Building2, Download, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { AppDownloadButtons } from './AppDownloadButtons';
+import { detectPlatform, APP_STORE_URL, GOOGLE_PLAY_URL } from '@/lib/app-links';
 
 export const Navbar = () => {
   const location = useLocation();
