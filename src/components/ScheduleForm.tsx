@@ -29,6 +29,7 @@ interface FormErrors {
 
 export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }: ScheduleFormProps) => {
   const [form, setForm] = useState({ name: '', phone: '', email: '', date: undefined as Date | undefined });
+  const [dateOpen, setDateOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [shakeField, setShakeField] = useState<string | null>(null);
   const { t } = useTranslation();
