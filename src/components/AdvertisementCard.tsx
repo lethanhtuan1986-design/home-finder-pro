@@ -116,6 +116,23 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
               <span className="truncate">{locationText}</span>
             </p>
 
+            {showMeta && (
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                {viewCount != null && viewCount > 0 && (
+                  <span className="flex items-center gap-1">
+                    <Eye size={12} />
+                    {viewCount.toLocaleString("vi-VN")}
+                  </span>
+                )}
+                {updatedText && (
+                  <span className="flex items-center gap-1">
+                    <Clock size={12} />
+                    {updatedText}
+                  </span>
+                )}
+              </div>
+            )}
+
             {statsParts.length > 0 && (
               <div className="bg-secondary rounded-lg px-3 py-2 text-xs text-muted-foreground font-medium">
                 {statsParts.join(" • ")}
