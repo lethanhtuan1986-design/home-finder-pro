@@ -114,7 +114,9 @@ export async function searchNominatim(keyword: string, limit: number = 5): Promi
     const fetchLimit = Math.max(limit * 4, 20);
     const userLoc = cachedUserLocation ?? (await getUserLocation(2500));
 
-    let url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(keyword)}&format=json&limit=${fetchLimit}&countrycodes=vn&addressdetails=1`;
+    // Chuyển query sang ASCII không dấu để Nominatim match tốt hơn
+    const asciiKeyword = removeVietnameseTones(keyword);
+    let url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(asciiKeyword)}&format=json&limit=${fetchLimit}&countrycodes=vn&addressdetails=1`;
 
     // Bias kết quả quanh vị trí user (~50km box, không bounded để vẫn nhận kết quả ngoài vùng)
     if (userLoc) {
