@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { nominatimResultToBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM, NominatimResult, GeoBounds } from "@/lib/geocoding";
+import { nominatimResultToBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM, NominatimResult, GeoBounds, getUserLocation } from "@/lib/geocoding";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
@@ -87,6 +87,11 @@ const MapSearchPage = () => {
   );
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
+
+  // Yêu cầu vị trí người dùng sớm để bias kết quả tìm kiếm
+  useEffect(() => {
+    getUserLocation().catch(() => {});
+  }, []);
 
   // Debounce map viewport bounds (300ms)
   useEffect(() => {
