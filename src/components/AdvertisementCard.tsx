@@ -44,6 +44,23 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
   if (apartmentSize != null && apartmentSize > 0) statsParts.push(`${apartmentSize}m²`);
   if (roomCount != null && roomCount > 0) statsParts.push(`${roomCount} ${t("listing.rooms")}`);
 
+  const formatRelativeTime = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "";
+    const diffSec = Math.floor((Date.now() - d.getTime()) / 1000);
+    if (diffSec < 60) return "Vừa xong";
+    if (diffSec < 3600) return `${Math.floor(diffSec / 60)} phút trước`;
+    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} giờ trước`;
+    if (diffSec < 2592000) return `${Math.floor(diffSec / 86400)} ngày trước`;
+    if (diffSec < 31536000) return `${Math.floor(diffSec / 2592000)} tháng trước`;
+    return `${Math.floor(diffSec / 31536000)} năm trước`;
+  };
+
+  const viewCount = data?.countView;
+  const updatedText = formatRelativeTime(data?.updateDate);
+  const showMeta = (viewCount != null && viewCount > 0) || updatedText;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
