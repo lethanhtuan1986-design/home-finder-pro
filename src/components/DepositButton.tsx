@@ -7,8 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import appleLogo from "@/assets/apple.svg";
-import ggPlayLogo from "@/assets/gg_play.svg";
+import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 
 export const DepositButton = () => {
   const [open, setOpen] = useState(false);
@@ -38,19 +37,8 @@ export const DepositButton = () => {
                 "Để đặt cọc phòng, vui lòng tải ứng dụng XanhStay trên điện thoại."
               )}
             </p>
-            <div className="flex justify-center gap-3">
-              <button className="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity">
-                <img
-                  src={appleLogo}
-                  alt="Apple"
-                  className="h-5 w-5 invert dark:invert-0"
-                />
-                App Store
-              </button>
-              <button className="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity">
-                <img src={ggPlayLogo} alt="Google Play" className="h-5 w-5" />
-                Google Play
-              </button>
+            <div className="flex justify-center">
+              <AppDownloadButtons />
             </div>
           </div>
         </DialogContent>
