@@ -100,10 +100,9 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
-            <a
-              href="https://apps.apple.com"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={handleDownloadClick}
               className={`ml-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
                 isTransparent
                   ? 'border border-white/50 text-white hover:bg-white/10'
@@ -112,15 +111,14 @@ export const Navbar = () => {
             >
               <Download size={16} />
               {t('nav.download')}
-            </a>
+            </button>
           </div>
 
           {/* Mobile header right */}
           <div className="md:hidden flex items-center gap-1">
-            <a
-              href="https://apps.apple.com"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={handleDownloadClick}
               className={`p-2 rounded-lg transition-colors ${
                 isTransparent
                   ? 'text-white hover:bg-white/10'
@@ -129,12 +127,28 @@ export const Navbar = () => {
               aria-label={t('nav.download')}
             >
               <Download size={20} />
-            </a>
+            </button>
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </div>
       </div>
+
+      <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              {t('appDownload.title', 'Tải ứng dụng XanhStay')}
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              {t('appDownload.subtitle', 'Chọn nền tảng để xem mã QR và tải ứng dụng.')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center pt-2">
+            <AppDownloadButtons />
+          </div>
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };
