@@ -104,6 +104,8 @@ export interface AdvertisementData {
   canPreDeposit: boolean;
   userPreDeposit: string;
   point: number | null;
+  countView?: number;
+  updateDate?: string;
   id: number;
   uuid: string;
   status: number;
