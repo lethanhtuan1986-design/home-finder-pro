@@ -3,6 +3,29 @@ export interface NominatimResult {
   lon: string;
   boundingbox: [string, string, string, string]; // [south, north, west, east]
   display_name: string;
+  class?: string;
+  type?: string;
+  address?: Record<string, string>;
+}
+
+// Ưu tiên các loại kết quả mang tính "địa chỉ" cụ thể (số nhà, đường, toà nhà...)
+const ADDRESS_PRIORITY: Record<string, number> = {
+  building: 0,
+  house: 0,
+  place: 1,
+  highway: 2,
+  amenity: 3,
+  shop: 3,
+  tourism: 3,
+  leisure: 4,
+  boundary: 5,
+};
+
+function getAddressRank(r: NominatimResult): number {
+  const hasHouseNumber = !!r.address?.house_number;
+  if (hasHouseNumber) return -1; // ưu tiên cao nhất
+  const cls = r.class ?? "";
+  return ADDRESS_PRIORITY[cls] ?? 99;
 }
 
 export interface GeoBounds {
@@ -28,11 +51,16 @@ export const DEFAULT_RADIUS_KM = 5;
 export async function searchNominatim(keyword: string, limit: number = 5): Promise<NominatimResult[]> {
   if (!keyword.trim()) return [];
   try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(keyword)}&format=json&limit=${limit}&countrycodes=vn`;
+    // Lấy nhiều hơn limit để có dư địa sắp xếp ưu tiên address
+    const fetchLimit = Math.max(limit * 2, 10);
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(keyword)}&format=json&limit=${fetchLimit}&countrycodes=vn&addressdetails=1`;
     const res = await fetch(url, {
       headers: { 'Accept-Language': 'vi' },
     });
-    return await res.json();
+    const data: NominatimResult[] = await res.json();
+    // Ưu tiên kết quả dạng address (số nhà, đường, building, place...)
+    const sorted = [...data].sort((a, b) => getAddressRank(a) - getAddressRank(b));
+    return sorted.slice(0, limit);
   } catch {
     return [];
   }
