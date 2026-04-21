@@ -15,8 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScheduleForm } from "@/components/ScheduleForm";
-import appleLogo from "@/assets/apple.svg";
-import ggPlayLogo from "@/assets/gg_play.svg";
+import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 
 interface AdvertisementCardProps {
   data: AdvertisementData;
@@ -208,33 +207,8 @@ export const AdvertisementCard = ({ data, index = 0, showScheduleButton = false 
                   <p className="text-sm text-muted-foreground mb-4">
                     {t("listing.depositDownloadApp")}
                   </p>
-                  <div className="flex flex-col gap-3">
-                    <a
-                      href="https://apps.apple.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity"
-                    >
-                      <img src={appleLogo} alt="Apple" className="h-6 w-6 invert dark:invert-0" />
-                      <div>
-                        <div className="text-[10px] opacity-70">{t("appDownload.downloadOn")}</div>
-                        <div className="text-sm font-semibold">App Store</div>
-                      </div>
-                    </a>
-                    <a
-                      href="https://play.google.com/store"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity"
-                    >
-                      <img src={ggPlayLogo} alt="Google Play" className="h-6 w-6" />
-                      <div>
-                        <div className="text-[10px] opacity-70">{t("appDownload.getItOn")}</div>
-                        <div className="text-sm font-semibold">Google Play</div>
-                      </div>
-                    </a>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <AppDownloadButtons />
                   </div>
                 </DialogContent>
               </Dialog>
