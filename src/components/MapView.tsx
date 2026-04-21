@@ -291,11 +291,6 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
       </button>
 
 
-      {!loading && validLocations.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-secondary/30 pointer-events-none z-[500]">
-          <p className="text-sm text-muted-foreground">Chưa có dữ liệu bản đồ</p>
-        </div>
-      )}
     </div>
   );
 };
