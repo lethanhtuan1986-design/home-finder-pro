@@ -18,7 +18,22 @@ export const Navbar = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const isHome = location.pathname === '/';
+
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const platform = detectPlatform();
+    if (platform === 'ios') {
+      window.open(APP_STORE_URL, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if (platform === 'android') {
+      window.open(GOOGLE_PLAY_URL, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    setDownloadOpen(true);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
