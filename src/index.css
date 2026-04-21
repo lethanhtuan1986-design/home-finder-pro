@@ -149,7 +149,7 @@
   }
 
   .search-field-select-trigger {
-    @apply h-11 rounded-xl bg-secondary/50 border border-border text-sm text-foreground px-3;
+    @apply h-11 rounded-xl bg-secondary/60 border-0 ring-1 ring-inset ring-border text-sm text-foreground px-3 focus:ring-2 focus:ring-ring;
   }
 
   .search-field-select-trigger [data-placeholder] {
