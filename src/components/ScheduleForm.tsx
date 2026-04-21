@@ -48,7 +48,9 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
     } else if (!VN_PHONE_REGEX.test(form.phone.trim())) {
       errs.phone = t('schedule.errorPhoneInvalid', 'Số điện thoại không hợp lệ (VD: 0912345678)');
     }
-    if (form.email.trim() && !EMAIL_REGEX.test(form.email.trim())) {
+    if (!form.email.trim()) {
+      errs.email = t('schedule.errorEmailRequired', 'Vui lòng nhập email');
+    } else if (!EMAIL_REGEX.test(form.email.trim())) {
       errs.email = t('schedule.errorEmail', 'Email không hợp lệ');
     }
     return errs;
