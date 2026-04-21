@@ -8,12 +8,12 @@ export interface NominatimResult {
   address?: Record<string, string>;
 }
 
-// Ưu tiên các loại kết quả mang tính "địa chỉ" cụ thể (số nhà, đường, toà nhà...)
+// Ưu tiên các loại kết quả mang tính "địa chỉ" cụ thể (đường, số nhà, toà nhà...)
 const ADDRESS_PRIORITY: Record<string, number> = {
-  building: 0,
-  house: 0,
-  place: 1,
-  highway: 2,
+  highway: 0, // đường — ưu tiên cao nhất
+  building: 1,
+  house: 1,
+  place: 2,
   amenity: 3,
   shop: 3,
   tourism: 3,
@@ -22,9 +22,11 @@ const ADDRESS_PRIORITY: Record<string, number> = {
 };
 
 function getAddressRank(r: NominatimResult): number {
-  const hasHouseNumber = !!r.address?.house_number;
-  if (hasHouseNumber) return -1; // ưu tiên cao nhất
   const cls = r.class ?? "";
+  // Đường (highway) luôn lên đầu
+  if (cls === "highway") return -2;
+  // Có số nhà — ưu tiên kế tiếp
+  if (r.address?.house_number) return -1;
   return ADDRESS_PRIORITY[cls] ?? 99;
 }
 
