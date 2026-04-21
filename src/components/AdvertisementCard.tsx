@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Heart, CalendarCheck, Smartphone } from "lucide-react";
+import { MapPin, Heart, CalendarCheck, Smartphone, Eye, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { AdvertisementData } from "@/services/advertisement.service";
