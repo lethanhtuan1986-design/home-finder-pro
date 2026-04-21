@@ -183,11 +183,11 @@ const PropertyDetail = () => {
               className="order-1"
             >
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
+                <div className="flex-1 min-w-0">
+                  <span className="inline-block text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
                     {apt.apartmentTypeUu?.name || t("listing.room")}
                   </span>
-                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground">{detail.title}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground break-words">{detail.title}</h1>
                   <p className="text-muted-foreground flex items-center gap-1 mt-2">
                     <MapPin size={16} /> {address}
                   </p>
