@@ -40,7 +40,11 @@ export const MiniMapPreview = ({ locations = [], loading = false }: MiniMapPrevi
       touchZoom: false,
     });
 
-    L.tileLayer("https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", { maxZoom: 20 }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap contributors',
+      subdomains: ["a", "b", "c"],
+      maxZoom: 19,
+    }).addTo(map);
     mapRef.current = map;
 
     return () => { map.remove(); mapRef.current = null; };
