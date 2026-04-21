@@ -182,33 +182,35 @@ const PropertyDetail = () => {
               transition={{ delay: 0.1 }}
               className="order-1"
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-4">
                 <div className="flex-1 min-w-0">
-                  <span className="inline-block text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
-                    {apt.apartmentTypeUu?.name || t("listing.room")}
-                  </span>
-                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground whitespace-nowrap overflow-hidden text-ellipsis">{detail.title}</h1>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="inline-block text-xs font-bold uppercase tracking-wider text-primary bg-accent px-2 py-1 rounded">
+                      {apt.apartmentTypeUu?.name || t("listing.room")}
+                    </span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <ShareButton title={detail.title} />
+                      <motion.button
+                        onClick={() => toggleSave(detail.uuid)}
+                        whileTap={{ scale: 0.7 }}
+                        animate={isSaved(detail.uuid) ? { scale: [1, 1.3, 0.9, 1.1, 1] } : { scale: 1 }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-full border border-border hover:bg-secondary hover:shadow-md transition-all"
+                      >
+                        <Heart
+                          size={20}
+                          className={`transition-colors duration-200 ${isSaved(detail.uuid) ? "fill-destructive text-destructive" : "text-muted-foreground"}`}
+                        />
+                        <span className="text-sm font-medium text-foreground whitespace-nowrap">
+                          {isSaved(detail.uuid) ? t("listing.savedLabel") : t("listing.saveLabel")}
+                        </span>
+                      </motion.button>
+                    </div>
+                  </div>
+                  <h1 className="text-2xl md:text-3xl font-bold mt-3 text-foreground break-words">{detail.title}</h1>
                   <p className="text-muted-foreground flex items-center gap-1 mt-2">
                     <MapPin size={16} /> {address}
                   </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <ShareButton title={detail.title} />
-                  <motion.button
-                    onClick={() => toggleSave(detail.uuid)}
-                    whileTap={{ scale: 0.7 }}
-                    animate={isSaved(detail.uuid) ? { scale: [1, 1.3, 0.9, 1.1, 1] } : { scale: 1 }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-full border border-border hover:bg-secondary hover:shadow-md transition-all"
-                  >
-                    <Heart
-                      size={20}
-                      className={`transition-colors duration-200 ${isSaved(detail.uuid) ? "fill-destructive text-destructive" : "text-muted-foreground"}`}
-                    />
-                    <span className="text-sm font-medium text-foreground whitespace-nowrap">
-                      {isSaved(detail.uuid) ? t("listing.savedLabel") : t("listing.saveLabel")}
-                    </span>
-                  </motion.button>
                 </div>
               </div>
 
