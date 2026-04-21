@@ -131,9 +131,10 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
       zoomControl: false,
     });
 
-    L.tileLayer("https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-      attribution: "Google",
-      maxZoom: 20,
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      subdomains: ["a", "b", "c"],
+      maxZoom: 19,
     }).addTo(map);
 
     mapRef.current = map;
