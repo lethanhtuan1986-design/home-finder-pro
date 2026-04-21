@@ -315,7 +315,7 @@ export const HeroSearch = () => {
 
   return (
     <>
-      <section ref={heroSectionRef} className="relative overflow-hidden">
+      <section ref={heroSectionRef} className="relative">
         {/* Banner slideshow background */}
         <div className="absolute inset-0">
           <div className="relative w-full h-full overflow-hidden">
