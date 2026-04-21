@@ -111,7 +111,7 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Date picker */}
       <div className={cn(shakeField === 'date' && 'animate-shake')}>
-        <Popover>
+        <Popover open={dateOpen} onOpenChange={setDateOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -129,7 +129,11 @@ export const ScheduleForm = ({ propertyTitle, apartmentUuid, advertisementUuid }
             <CalendarUI
               mode="single"
               selected={form.date}
-              onSelect={(d) => { setForm(f => ({ ...f, date: d })); clearError('date'); }}
+              onSelect={(d) => {
+                setForm(f => ({ ...f, date: d }));
+                clearError('date');
+                if (d) setDateOpen(false);
+              }}
               disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
               initialFocus
               className="p-3 pointer-events-auto"
