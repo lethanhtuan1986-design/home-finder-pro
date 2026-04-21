@@ -88,6 +88,11 @@ const MapSearchPage = () => {
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
+  // Yêu cầu vị trí người dùng sớm để bias kết quả tìm kiếm
+  useEffect(() => {
+    getUserLocation().catch(() => {});
+  }, []);
+
   // Debounce map viewport bounds (300ms)
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedBounds(bounds), 300);
