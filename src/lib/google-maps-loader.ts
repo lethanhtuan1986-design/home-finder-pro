@@ -1,3 +1,4 @@
+/// <reference types="google.maps" />
 /**
  * Loader cho Google Maps JS SDK (chỉ load 1 lần, dedupe nhiều caller song song).
  * Trả về `null` nếu thiếu VITE_GOOGLE_MAPS_API_KEY → caller sẽ fallback sang Nominatim.
