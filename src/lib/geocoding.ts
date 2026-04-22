@@ -148,11 +148,24 @@ export async function searchNominatim(keyword: string, limit: number = 5): Promi
   }
 }
 
+export function latLngToBounds(lat: number, lng: number, radiusKm: number = DEFAULT_RADIUS_KM): GeoBounds {
+  const latBuffer = radiusKm / 111;
+  const lngBuffer = radiusKm / (111 * Math.cos((lat * Math.PI) / 180));
+  return {
+    neLat: lat + latBuffer,
+    neLng: lng + lngBuffer,
+    swLat: lat - latBuffer,
+    swLng: lng - lngBuffer,
+    centerLat: lat,
+    centerLng: lng,
+  };
+}
+
 export function nominatimResultToBounds(result: NominatimResult, radiusKm: number = DEFAULT_RADIUS_KM): GeoBounds {
   const [south, north, west, east] = result.boundingbox.map(Number);
-  const latBuffer = radiusKm / 111;
   const centerLat = (south + north) / 2;
   const centerLng = (west + east) / 2;
+  const latBuffer = radiusKm / 111;
   const lngBuffer = radiusKm / (111 * Math.cos((centerLat * Math.PI) / 180));
   return {
     neLat: north + latBuffer,

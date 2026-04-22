@@ -1,18 +1,39 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, MapPin, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { searchNominatim, NominatimResult, nominatimResultToBounds, GeoBounds, DEFAULT_RADIUS_KM } from "@/lib/geocoding";
+import {
+  searchNominatim,
+  NominatimResult,
+  nominatimResultToBounds,
+  latLngToBounds,
+  GeoBounds,
+  DEFAULT_RADIUS_KM,
+} from "@/lib/geocoding";
+import { useGooglePlaces, PlacePrediction } from "@/hooks/useGooglePlaces";
 
 interface LocationAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
-  onSelect: (result: NominatimResult, bounds: GeoBounds) => void;
+  onSelect: (
+    result: NominatimResult | PlacePrediction,
+    bounds: GeoBounds,
+  ) => void;
   enrichSuffix?: string;
   radiusKm?: number;
   placeholder?: string;
   className?: string;
   inputClassName?: string;
 }
+
+interface DropdownItem {
+  id: string;
+  main: string;
+  secondary: string;
+  source: "google" | "nominatim";
+  raw: PlacePrediction | NominatimResult;
+}
+
+const NOMINATIM_DEBOUNCE_MS = 500;
 
 export const LocationAutocomplete = ({
   value,
@@ -24,40 +45,85 @@ export const LocationAutocomplete = ({
   className,
   inputClassName,
 }: LocationAutocompleteProps) => {
-  const [results, setResults] = useState<NominatimResult[]>([]);
+  const google = useGooglePlaces();
+  const [items, setItems] = useState<DropdownItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [nominatimLoading, setNominatimLoading] = useState(false);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const lastQueryRef = useRef<string>("");
 
-  // Debounced search
+  const useGoogle = google.ready;
+  const loading = useGoogle ? google.loading : nominatimLoading;
+
+  // ---- Google: map predictions → items
   useEffect(() => {
+    if (!useGoogle) return;
+    const mapped: DropdownItem[] = google.predictions.map((p) => ({
+      id: p.place_id,
+      main: p.main_text,
+      secondary: p.secondary_text,
+      source: "google",
+      raw: p,
+    }));
+    setItems(mapped);
+    if (mapped.length > 0 && lastQueryRef.current.length > 0) setIsOpen(true);
+  }, [google.predictions, useGoogle]);
+
+  // ---- Trigger search (Google or Nominatim fallback)
+  useEffect(() => {
+    lastQueryRef.current = value;
+
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!value.trim()) {
-      setResults([]);
+      setItems([]);
       setIsOpen(false);
+      setNominatimLoading(false);
+      if (useGoogle) google.clear();
       return;
     }
 
+    if (useGoogle) {
+      // Hook tự debounce 500ms
+      google.search(value);
+      return;
+    }
+
+    // Nominatim fallback
     debounceRef.current = setTimeout(async () => {
-      setLoading(true);
+      setNominatimLoading(true);
       const query = enrichSuffix ? `${value} ${enrichSuffix}`.trim() : value;
       const data = await searchNominatim(query, 5);
-      setResults(data);
-      setIsOpen(data.length > 0);
-      setLoading(false);
-    }, 400);
+      const mapped: DropdownItem[] = data.map((r, idx) => {
+        const parts = r.display_name.split(",").map((s) => s.trim());
+        return {
+          id: `${r.lat}-${r.lon}-${idx}`,
+          main: parts[0] || r.display_name,
+          secondary: parts.slice(1).join(", "),
+          source: "nominatim",
+          raw: r,
+        };
+      });
+      setItems(mapped);
+      setIsOpen(mapped.length > 0);
+      setNominatimLoading(false);
+    }, NOMINATIM_DEBOUNCE_MS);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [value, enrichSuffix]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, enrichSuffix, useGoogle]);
 
-  // Close on click outside
+  // ---- Close on click outside
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -66,63 +132,104 @@ export const LocationAutocomplete = ({
   }, []);
 
   const handleSelect = useCallback(
-    (result: NominatimResult) => {
-      const shortName = result.display_name.split(",")[0]?.trim() || result.display_name;
-      onChange(shortName);
+    async (item: DropdownItem) => {
+      onChange(item.main);
       setIsOpen(false);
-      setResults([]);
-      const bounds = nominatimResultToBounds(result, radiusKm);
-      onSelect(result, bounds);
+
+      if (item.source === "google") {
+        const pred = item.raw as PlacePrediction;
+        setDetailsLoading(true);
+        const details = await google.getDetails(pred.place_id);
+        setDetailsLoading(false);
+        if (!details) return;
+        const bounds = latLngToBounds(details.lat, details.lng, radiusKm);
+        onSelect(pred, bounds);
+      } else {
+        const r = item.raw as NominatimResult;
+        const bounds = nominatimResultToBounds(r, radiusKm);
+        onSelect(r, bounds);
+      }
+      setItems([]);
     },
-    [onChange, onSelect, radiusKm],
+    [google, onChange, onSelect, radiusKm],
   );
 
   const handleClear = () => {
     onChange("");
-    setResults([]);
+    setItems([]);
     setIsOpen(false);
+    if (useGoogle) google.clear();
   };
+
+  const showSpinner = loading || detailsLoading;
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
-      <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
+      <Search
+        size={16}
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10"
+      />
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onFocus={() => results.length > 0 && setIsOpen(true)}
+        onFocus={() => items.length > 0 && setIsOpen(true)}
         placeholder={placeholder}
         className={cn(
-          "w-full pl-9 pr-8 h-11 rounded-xl bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+          "w-full pl-9 pr-9 h-11 rounded-xl bg-secondary/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow",
           inputClassName,
         )}
       />
-      {loading && (
-        <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-muted-foreground" />
+      {showSpinner && (
+        <Loader2
+          size={14}
+          className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-muted-foreground"
+        />
       )}
-      {!loading && value && (
+      {!showSpinner && value && (
         <button
+          type="button"
           onClick={handleClear}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Xoá"
         >
           <X size={14} />
         </button>
       )}
 
       {/* Dropdown */}
-      {isOpen && results.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-popover border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
-          {results.map((result, idx) => (
-            <button
-              key={`${result.lat}-${result.lon}-${idx}`}
-              onClick={() => handleSelect(result)}
-              className="w-full flex items-start gap-2.5 px-3 py-2.5 text-left hover:bg-accent transition-colors first:rounded-t-xl last:rounded-b-xl"
-            >
-              <MapPin size={14} className="shrink-0 mt-0.5 text-primary" />
-              <span className="text-sm text-foreground leading-snug line-clamp-2">
-                {result.display_name}
-              </span>
-            </button>
-          ))}
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-2 z-50 bg-popover border border-border rounded-2xl shadow-xl max-h-80 overflow-y-auto animate-in fade-in-0 slide-in-from-top-1">
+          {items.length > 0 ? (
+            items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleSelect(item)}
+                className="w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-accent focus:bg-accent focus:outline-none transition-colors first:rounded-t-2xl last:rounded-b-2xl"
+              >
+                <span className="shrink-0 mt-0.5 w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                  <MapPin size={14} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium text-foreground leading-snug truncate">
+                    {item.main}
+                  </span>
+                  {item.secondary && (
+                    <span className="block text-xs text-muted-foreground leading-snug truncate mt-0.5">
+                      {item.secondary}
+                    </span>
+                  )}
+                </span>
+              </button>
+            ))
+          ) : (
+            !loading &&
+            value.trim() && (
+              <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+                Không tìm thấy địa điểm
+              </div>
+            )
+          )}
         </div>
       )}
     </div>

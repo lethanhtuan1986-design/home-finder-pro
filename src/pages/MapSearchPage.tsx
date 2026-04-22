@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { nominatimResultToBounds, RADIUS_OPTIONS, DEFAULT_RADIUS_KM, NominatimResult, GeoBounds, getUserLocation } from "@/lib/geocoding";
+import { RADIUS_OPTIONS, DEFAULT_RADIUS_KM, NominatimResult, GeoBounds, getUserLocation } from "@/lib/geocoding";
+import type { PlacePrediction } from "@/hooks/useGooglePlaces";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
@@ -99,7 +100,7 @@ const MapSearchPage = () => {
     return () => clearTimeout(timer);
   }, [bounds]);
 
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number; zoom: number; label?: string } | null>(null);
 
   const selectedPriceUuid =
     filterPrices.find(
@@ -170,9 +171,16 @@ const MapSearchPage = () => {
   }, [provinceId, wardId, provinces, wards]);
 
   // Handle autocomplete selection: pan map + update search overlay
-  const handleLocationSelect = useCallback((result: NominatimResult, bounds: GeoBounds) => {
-    setMapCenter({ lat: bounds.centerLat, lng: bounds.centerLng, zoom: 14 });
-  }, []);
+  const handleLocationSelect = useCallback(
+    (result: NominatimResult | PlacePrediction, bounds: GeoBounds) => {
+      const label =
+        "description" in result
+          ? (result as PlacePrediction).description
+          : (result as NominatimResult).display_name;
+      setMapCenter({ lat: bounds.centerLat, lng: bounds.centerLng, zoom: 16, label });
+    },
+    [],
+  );
 
   const buildMapRequest = (): GetAdvertisementsForMapRequest => {
     const req: GetAdvertisementsForMapRequest = { isPaging: 1, page: 1, pageSize: 100, isHot: 0, typeOrder: 0 };
