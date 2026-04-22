@@ -13,6 +13,7 @@ interface FlyToTarget {
   lat: number;
   lng: number;
   zoom: number;
+  label?: string;
 }
 
 interface SearchOverlay {
@@ -112,6 +113,7 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const circleRef = useRef<L.Circle | null>(null);
+  const flyToMarkerRef = useRef<L.Marker | null>(null);
   const initialFitDoneRef = useRef(false);
   const [locating, setLocating] = useState(false);
 
@@ -254,11 +256,37 @@ export const MapView = ({ locations = [], hoveredId, loading = false, onMarkerCl
     map.fitBounds(circle.getBounds(), { padding: [40, 40], maxZoom: 15, animate: true });
   }, [searchOverlay]);
 
-  // Fly to a specific location (e.g. from Nominatim geocoding)
+  // Fly to a specific location (from Google Places / Nominatim)
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !flyTo) return;
+    if (!map) return;
+
+    // Clear previous fly-to marker
+    if (flyToMarkerRef.current) {
+      flyToMarkerRef.current.remove();
+      flyToMarkerRef.current = null;
+    }
+
+    if (!flyTo) return;
+
     map.flyTo([flyTo.lat, flyTo.lng], flyTo.zoom, { duration: 1.5 });
+
+    if (flyTo.label) {
+      const pinIcon = L.divIcon({
+        className: "flyto-marker",
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:hsl(var(--primary));border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+      });
+      const marker = L.marker([flyTo.lat, flyTo.lng], { icon: pinIcon, zIndexOffset: 2000 });
+      marker.bindPopup(
+        `<div style="font-size:13px;font-weight:500;color:hsl(var(--foreground));max-width:240px;">${flyTo.label}</div>`,
+        { closeButton: false, className: "leaflet-popup-premium" },
+      );
+      marker.addTo(map);
+      marker.openPopup();
+      flyToMarkerRef.current = marker;
+    }
   }, [flyTo]);
 
 
